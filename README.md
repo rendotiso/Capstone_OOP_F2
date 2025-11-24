@@ -16,5 +16,5 @@ Can't remember or locate your household item? Organizer is here to help. Our sle
 1. Anne Gwyn Amaya
 2. Laraine Keisha Capacio
 3. Ravenelle Celeres
-4. Andrea Nicole Cloma
+4. Nicole Andrea Cloma
 5. Celfer Ronsh Paradela
