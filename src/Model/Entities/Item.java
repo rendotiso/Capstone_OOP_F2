@@ -58,11 +58,6 @@ public class Item {
         this.vendor = vendor;
     }
 
-    public void updateQuantity(int){
-
-    }
-
-    public double calculateValue(){
-
-    }
+    public abstract void updateQuantity(int n);
+    public abstract double calculateValue();
 }
