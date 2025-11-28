@@ -6,7 +6,12 @@ public class Electronics extends Item implements Maintenanable {
     private String model;
     private String lastMaintenanceDate;
 
-
+    public Electronics(String warrantyPeriod, String brand, String model, String lastMaintenanceDate){
+        this.warrantyPeriod = warrantyPeriod;
+        this.brand = brand;
+        this.model = model;
+        this.lastMaintenanceDate = lastMaintenanceDate;
+    }
     public String getWarrantyPeriod() {
         return warrantyPeriod;
     }

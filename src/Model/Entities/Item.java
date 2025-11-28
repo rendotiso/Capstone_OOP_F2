@@ -17,6 +17,7 @@ public class Item {
         return name;
     }
 
+
     public String getDescription() {
         return description;
     }

@@ -5,6 +5,11 @@ public class Food extends Item{
     private boolean isCanned;
     private boolean isPerishable;
 
+    public Food(String expiryDate, boolean isCanned, boolean isPerishable){
+        this.expiryDate = expiryDate;
+        this.isCanned = isCanned;
+        this.isPerishable = isPerishable;
+    }
     public String getExpiryDate() {
         return expiryDate;
     }
