@@ -1,12 +1,16 @@
 package Model.Entities;
 
+import Model.Enums.Category;
+import Model.Enums.Location;
+
 public class Miscellaneous extends Item {
   
     private String condition;
     private String fabricType;
     private char size;
 
-    public Miscellaneous(String condition, String fabricType, char size){
+    public Miscellaneous(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String condition, String fabricType, char size){
+        super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("Miscellaneous"), location);
         this.condition = condition;
         this.fabricType = fabricType;
         this.size = size;
@@ -37,6 +41,12 @@ public class Miscellaneous extends Item {
     }
 
     @Override
+    public void updateQuantity(int n) {
+        setQuantity(getQuantity() + 1);
+    }
+
+    @Override
     public double calculateValue() {
+        return getPurchasePrice() * getQuantity();
     }
 }

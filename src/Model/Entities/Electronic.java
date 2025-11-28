@@ -1,12 +1,16 @@
 package Model.Entities;
 
-public class Electronics extends Item implements Maintenanable {
+import Model.Enums.Category;
+import Model.Enums.Location;
+
+public class Electronic extends Item implements Maintenanable {
     private String warrantyPeriod;
     private String brand;
     private String model;
     private String lastMaintenanceDate;
 
-    public Electronics(String warrantyPeriod, String brand, String model, String lastMaintenanceDate){
+    public Electronic(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String warrantyPeriod, String brand, String model, String lastMaintenanceDate){
+        super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("Electronics"), location);
         this.warrantyPeriod = warrantyPeriod;
         this.brand = brand;
         this.model = model;
@@ -45,27 +49,36 @@ public class Electronics extends Item implements Maintenanable {
     }
 
     @Override
-    public boolean needsMaintenance(){
-
+    public boolean needsMaintenance() {
+        return true;
     }
 
     @Override
     public void doMaintenance(){
-
+        return;
     }
 
     @Override
-    public String getLastMaintenanceDates(){
-
+    public String getLastMaintenanceDates() {
+        return lastMaintenanceDate;
     }
 
     @Override
-    public void setLastMaintenanceDates(String ){
+    public void setLastMaintenanceDates() {
+        return;
+    }
 
+    public void setLastMaintenanceDates(String lastMaintenanceDate) {
+        this.lastMaintenanceDate = lastMaintenanceDate;
     }
 
     @Override
-    public double calculateValue(){
+    public void updateQuantity(int n) {
+        setQuantity(getQuantity() + 1);
+    }
 
+    @Override
+    public double calculateValue() {
+        return getPurchasePrice() * getQuantity();
     }
 }

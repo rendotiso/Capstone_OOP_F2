@@ -1,12 +1,16 @@
 package Model.Entities;
 
-public class Tools extends Item implements Maintenanable{
+import Model.Enums.Category;
+import Model.Enums.Location;
+
+public class Tool extends Item implements Maintenanable{
     private String toolType;
     private boolean requiresMaintenance;
     private String material;
     private String lastMaintenanceDate;
 
-    public Tools(String toolType, boolean requiresMaintenance, String material, String lastMaintenanceDate){
+    public Tool(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String toolType, boolean requiresMaintenance, String material, String lastMaintenanceDate){
+        super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("Tools"), location);
         this.toolType = toolType;
         this.requiresMaintenance = requiresMaintenance;
         this.material = material;
@@ -62,7 +66,12 @@ public class Tools extends Item implements Maintenanable{
     }
 
     @Override
-    public double calculateValue(){
-        return 1.5;
+    public void updateQuantity(int n) {
+        setQuantity(getQuantity() + 1);
+    }
+
+    @Override
+    public double calculateValue() {
+        return getPurchasePrice() * getQuantity();
     }
 }
