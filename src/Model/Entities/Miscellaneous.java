@@ -38,6 +38,5 @@ public class Miscellaneous extends Item {
 
     @Override
     public double calculateValue() {
-        return purchasePrice * quantity;
     }
 }
