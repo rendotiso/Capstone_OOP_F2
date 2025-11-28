@@ -50,12 +50,12 @@ public class Electronics extends Item implements Maintenanable {
     }
 
     @Override
-    public String getLastMaintenanceDate(){
+    public String getLastMaintenanceDates(){
 
     }
 
     @Override
-    public void setLastMaintenanceDate(String ){
+    public void setLastMaintenanceDates(String ){
 
     }
 
