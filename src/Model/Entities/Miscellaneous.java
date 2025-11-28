@@ -6,6 +6,12 @@ public class Miscellaneous extends Item {
     private String fabricType;
     private char size;
 
+    public Miscellaneous(String condition, String fabricType, char size){
+        this.condition = condition;
+        this.fabricType = fabricType;
+        this.size = size;
+    }
+
     public String getCondition(){
         return condition;
     }
