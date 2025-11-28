@@ -1,15 +1,11 @@
 package Model.Entities;
 
-import Model.Enums.Category;
-import Model.Enums.Location;
-
 public class Food extends Item{
     private String expiryDate;
     private boolean isCanned;
     private boolean isPerishable;
 
-    public Food(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String expiryDate, boolean isCanned, boolean isPerishable){
-        super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("Food"), location);
+    public Food(String expiryDate, boolean isCanned, boolean isPerishable){
         this.expiryDate = expiryDate;
         this.isCanned = isCanned;
         this.isPerishable = isPerishable;
@@ -23,7 +19,7 @@ public class Food extends Item{
     }
 
     public boolean getIsCanned(){
-        return isCanned;
+
     }
 
     public void setIsCanned(boolean isCanned){
@@ -38,17 +34,12 @@ public class Food extends Item{
     }
 
     public boolean isExpired(){
-        return false;
+
     }
 
     @Override
-    public void updateQuantity(int n) {
-        setQuantity(getQuantity() + 1);
-    }
+    public double calculateValue(){
 
-    @Override
-    public double calculateValue() {
-        return getPurchasePrice() * getQuantity();
     }
 
 }
