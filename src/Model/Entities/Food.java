@@ -38,7 +38,7 @@ public class Food extends Item{
     }
 
     public boolean isExpired(){
-
+        return false;
     }
 
     @Override
