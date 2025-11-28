@@ -6,6 +6,11 @@ public class Clothing extends Item {
     private String fabricType;
     private char size;
 
+    public Clothing(String condition, String fabricType, char size){
+        this.condition = condition;
+        this.fabricType = fabricType;
+        this.size = size;
+    }
     public String getCondition(){
         return condition;
     }
