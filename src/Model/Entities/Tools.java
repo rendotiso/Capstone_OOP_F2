@@ -6,6 +6,13 @@ public class Tools extends Item implements Maintenanable{
     private String material;
     private String lastMaintenanceDate;
 
+    public Tools(String toolType, boolean requiresMaintenance, String material, String lastMaintenanceDate){
+        this.toolType = toolType;
+        this.requiresMaintenance = requiresMaintenance;
+        this.material = material;
+        this.lastMaintenanceDate = lastMaintenanceDate;
+    }
+
     public String getToolType() {
         return toolType;
     }
@@ -41,12 +48,16 @@ public class Tools extends Item implements Maintenanable{
     }
 
     @Override
-    public String getLastMaintenanceDate() {
+    public String getLastMaintenanceDates() {
         return lastMaintenanceDate;
     }
 
     @Override
-    public void setLastMaintenanceDate(String lastMaintenanceDate) {
+    public void setLastMaintenanceDates() {
+        return;
+    }
+
+    public void setLastMaintenanceDates(String lastMaintenanceDate) {
         this.lastMaintenanceDate = lastMaintenanceDate;
     }
 
