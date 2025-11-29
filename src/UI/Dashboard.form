@@ -5,10 +5,12 @@
     <constraints>
       <xy x="20" y="20" width="1544" height="864"/>
     </constraints>
-    <properties/>
+    <properties>
+      <background color="-7618067"/>
+    </properties>
     <border type="none"/>
     <children>
-      <grid id="f5bf2" layout-manager="GridLayoutManager" row-count="7" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="f5bf2" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
@@ -17,66 +19,135 @@
             <maximum-size width="330" height="860"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <background color="-7618067"/>
+        </properties>
         <border type="none"/>
         <children>
-          <component id="7ba5e" class="javax.swing.JButton" binding="miscellaneousButton">
+          <grid id="f2def" layout-manager="GridLayoutManager" row-count="7" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Miscellaneous"/>
+              <background color="-4660737"/>
             </properties>
-          </component>
-          <component id="2ec45" class="javax.swing.JButton" binding="toolsButton">
+            <border type="none"/>
+            <children>
+              <component id="8c70" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-16777216"/>
+                  <foreground color="-16777216"/>
+                  <text value="Organizer"/>
+                </properties>
+              </component>
+              <component id="67d0f" class="javax.swing.JButton" binding="homeButton">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                    <minimum-size width="150" height="-1"/>
+                    <preferred-size width="150" height="-1"/>
+                    <maximum-size width="150" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-7222793"/>
+                  <enabled value="true"/>
+                  <foreground color="-16777216"/>
+                  <hideActionText value="false"/>
+                  <text value="View All"/>
+                </properties>
+              </component>
+              <component id="77eb5" class="javax.swing.JButton" binding="electronicsButton" default-binding="true">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                    <minimum-size width="150" height="-1"/>
+                    <preferred-size width="150" height="-1"/>
+                    <maximum-size width="150" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-7222793"/>
+                  <foreground color="-16777216"/>
+                  <text value="Electronics"/>
+                </properties>
+              </component>
+              <component id="5cd74" class="javax.swing.JButton" binding="foodButton">
+                <constraints>
+                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                    <minimum-size width="150" height="-1"/>
+                    <preferred-size width="150" height="-1"/>
+                    <maximum-size width="150" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-7222793"/>
+                  <foreground color="-16777216"/>
+                  <text value="Clothing"/>
+                </properties>
+              </component>
+              <component id="44fb" class="javax.swing.JButton" binding="clothingButton">
+                <constraints>
+                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                    <minimum-size width="150" height="-1"/>
+                    <preferred-size width="150" height="-1"/>
+                    <maximum-size width="150" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-7222793"/>
+                  <foreground color="-16777216"/>
+                  <text value="Food"/>
+                </properties>
+              </component>
+              <component id="2ec45" class="javax.swing.JButton" binding="toolsButton">
+                <constraints>
+                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                    <minimum-size width="150" height="-1"/>
+                    <preferred-size width="150" height="-1"/>
+                    <maximum-size width="150" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-7222793"/>
+                  <foreground color="-16777216"/>
+                  <text value="Tools"/>
+                </properties>
+              </component>
+              <component id="7ba5e" class="javax.swing.JButton" binding="miscellaneousButton">
+                <constraints>
+                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                    <minimum-size width="150" height="-1"/>
+                    <preferred-size width="150" height="-1"/>
+                    <maximum-size width="150" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-7222793"/>
+                  <foreground color="-16777216"/>
+                  <text value="Miscellaneous"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="38036" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                <minimum-size width="10" height="-1"/>
+                <preferred-size width="10" height="-1"/>
+                <maximum-size width="10" height="-1"/>
+              </grid>
             </constraints>
             <properties>
-              <text value="Tools"/>
+              <background color="-7618067"/>
+              <foreground color="-16777216"/>
             </properties>
-          </component>
-          <component id="44fb" class="javax.swing.JButton" binding="clothingButton">
-            <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Food"/>
-            </properties>
-          </component>
-          <component id="5cd74" class="javax.swing.JButton" binding="foodButton">
-            <constraints>
-              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Clothing"/>
-            </properties>
-          </component>
-          <component id="77eb5" class="javax.swing.JButton" binding="electronicsButton" default-binding="true">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Electronics"/>
-            </properties>
-          </component>
-          <component id="67d0f" class="javax.swing.JButton" binding="homeButton">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="View All"/>
-            </properties>
-          </component>
-          <component id="8c70" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <background color="-9787304"/>
-              <text value="Organizer"/>
-            </properties>
-          </component>
+            <border type="none"/>
+            <children/>
+          </grid>
         </children>
       </grid>
       <grid id="a9d67" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -88,7 +159,9 @@
             <maximum-size width="1180" height="860"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <background color="-7618067"/>
+        </properties>
         <border type="none"/>
         <children/>
       </grid>
