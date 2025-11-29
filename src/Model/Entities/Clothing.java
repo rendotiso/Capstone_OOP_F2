@@ -1,6 +1,5 @@
 package Model.Entities;
 
-
 import Model.Enums.Category;
 import Model.Enums.Location;
 
@@ -47,6 +46,7 @@ public class Clothing extends Item {
 
     @Override
     public double calculateValue() {
+        return getPurchasePrice() * getQuantity();
         return purchasePrice * quantity;
     }
 }
