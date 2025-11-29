@@ -47,6 +47,5 @@ public class Clothing extends Item {
     @Override
     public double calculateValue() {
         return getPurchasePrice() * getQuantity();
-        return purchasePrice * quantity;
     }
 }
