@@ -10,7 +10,7 @@ public class Dashboard extends JFrame{
     private JButton clothingButton;
     private JButton foodButton;
     private JPanel Panel;
-    private JLabel Organizer;
+    private JLabel organizerLabel;
 
     public Dashboard(){
         setContentPane(Panel);
@@ -21,6 +21,7 @@ public class Dashboard extends JFrame{
         setResizable(false);
         setters();
         setVisible(true);
+
     }
 
     private void setters(){
@@ -30,6 +31,7 @@ public class Dashboard extends JFrame{
         miscellaneousButton.setName("miscellaneousButton");
         clothingButton.setName("clothingButton");
         foodButton.setName("foodButton");
+        organizerLabel.setName("organizerLabel");
     }
 
     public static void main(String[] args) {
