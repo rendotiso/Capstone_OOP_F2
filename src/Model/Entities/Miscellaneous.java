@@ -1,37 +1,52 @@
 package Model.Entities;
 
-public class Miscellaneous extends Item {
-  
-    private String condition;
-    private String fabricType;
-    private char size;
+import Model.Enums.Category;
+import Model.Enums.Location;
 
-    public String getCondition(){
+public class Miscellaneous extends Item {
+
+    private String itemType;
+    private String usage;
+    private String condition;
+
+    public Miscellaneous(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String itemType, String usage, String condition) {
+        super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.MISCELLANEOUS, location);
+        this.itemType = itemType;
+        this.usage = usage;
+        this.condition = condition;
+    }
+
+    public String getItemType() {
+        return itemType;
+    }
+
+    public String getUsage() {
+        return usage;
+    }
+
+    public String getCondition() {
         return condition;
+    }
+
+    public void setItemType(String itemType) {
+        this.itemType = itemType;
+    }
+
+    public void setUsage(String usage) {
+        this.usage = usage;
     }
 
     public void setCondition(String condition) {
         this.condition = condition;
     }
 
-    public String getFabricType() {
-        return fabricType;
-    }
-
-    public void setFabricType(String fabricType) {
-        this.fabricType = fabricType;
-    }
-
-    public char getSize() {
-        return size;
-    }
-
-    public void setSize(char size) {
-        this.size = size;
+    @Override
+    public void updateQuantity(int n) {
+        setQuantity(getQuantity() + n);
     }
 
     @Override
     public double calculateValue() {
-        return purchasePrice * quantity;
+        return getPurchasePrice() * getQuantity();
     }
 }

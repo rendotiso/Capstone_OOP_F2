@@ -41,7 +41,7 @@ public class Clothing extends Item {
 
     @Override
     public void updateQuantity(int n) {
-        setQuantity(getQuantity() + 1);
+        setQuantity(getQuantity() + n);
     }
 
     @Override
