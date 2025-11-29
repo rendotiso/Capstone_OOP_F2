@@ -8,13 +8,18 @@ public abstract class Item {
     private String description;
     private int quantity;
     private double purchasePrice;
-    String purchaseDate;
+    private String purchaseDate;
     private String vendor;
     private Category category;
     private Location location;
 
     public Item(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Category category, Location location) {
-
+        this.name = name;
+        this.description = description;
+        this.quantity = quantity;
+        this.purchasePrice = purchasePrice;
+        this.purchaseDate = purchaseDate;
+        this.vendor = vendor;
     }
 
     public static boolean getCategory() {
