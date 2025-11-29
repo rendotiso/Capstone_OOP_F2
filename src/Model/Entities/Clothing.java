@@ -1,12 +1,16 @@
 package Model.Entities;
 
+import Model.Enums.Category;
+import Model.Enums.Location;
+
 public class Clothing extends Item {
   
     private String condition;
     private String fabricType;
     private char size;
 
-    public Clothing(String condition, String fabricType, char size){
+    public Clothing(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String condition, String fabricType, char size){
+        super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("Clothing"), location);
         this.condition = condition;
         this.fabricType = fabricType;
         this.size = size;
