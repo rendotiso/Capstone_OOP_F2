@@ -22,9 +22,6 @@ public abstract class Item {
         this.vendor = vendor;
     }
 
-    public static boolean getCategory() {
-    }
-
     public String getName() {
         return name;
     }
