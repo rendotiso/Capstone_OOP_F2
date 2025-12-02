@@ -11,15 +11,15 @@ public class Food {
     private JTextField textField5;
     private JTextField textField6;
     private JTextField textField7;
-    private JTextField textField8;
     private JComboBox comboBox1;
-    private JTextArea helloTextArea;
     private JTable table1;
     private JPanel rootPanel;
     private JButton ADDButton;
     private JButton CLEARButton;
     private JButton UPDATEButton;
     private JButton REMOVEButton;
+    private JComboBox comboBox2;
+    private JTextArea textArea1;
 
     public Food(){
         createTable();
