@@ -33,7 +33,7 @@
             </properties>
             <border type="none"/>
             <children>
-              <grid id="c5d8d" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="c5d8d" binding="ELECT_PANEL" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
@@ -46,7 +46,7 @@
                 </properties>
                 <border type="none"/>
                 <children>
-                  <component id="5feea" class="javax.swing.JLabel">
+                  <component id="5feea" class="javax.swing.JLabel" binding="ELECTRONICS_LABEL">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -57,7 +57,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="8bf4c" layout-manager="GridLayoutManager" row-count="10" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="8bf4c" binding="panel1" layout-manager="GridLayoutManager" row-count="10" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="20" left="20" bottom="20" right="20"/>
                 <constraints>
                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -67,7 +67,7 @@
                 </properties>
                 <border type="none"/>
                 <children>
-                  <component id="7fe37" class="javax.swing.JTextField" binding="textField1" default-binding="true">
+                  <component id="7fe37" class="javax.swing.JTextField" binding="name_field">
                     <constraints>
                       <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="-1"/>
@@ -78,7 +78,7 @@
                       <foreground color="-16777216"/>
                     </properties>
                   </component>
-                  <component id="f39b" class="javax.swing.JTextField" binding="textField2" default-binding="true">
+                  <component id="f39b" class="javax.swing.JTextField" binding="quantity_field">
                     <constraints>
                       <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="-1"/>
@@ -89,7 +89,7 @@
                       <foreground color="-16777216"/>
                     </properties>
                   </component>
-                  <component id="c97ac" class="javax.swing.JTextField" binding="textField4" default-binding="true">
+                  <component id="c97ac" class="javax.swing.JTextField" binding="vendor_field">
                     <constraints>
                       <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="-1"/>
@@ -100,7 +100,7 @@
                       <foreground color="-16777216"/>
                     </properties>
                   </component>
-                  <component id="4f8c7" class="javax.swing.JTextField" binding="textField5" default-binding="true">
+                  <component id="4f8c7" class="javax.swing.JTextField" binding="price_field">
                     <constraints>
                       <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="-1"/>
@@ -111,7 +111,7 @@
                       <foreground color="-16777216"/>
                     </properties>
                   </component>
-                  <component id="4dd9e" class="javax.swing.JTextField" binding="textField6" default-binding="true">
+                  <component id="4dd9e" class="javax.swing.JTextField" binding="warranty_field">
                     <constraints>
                       <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="-1"/>
@@ -122,7 +122,7 @@
                       <foreground color="-16777216"/>
                     </properties>
                   </component>
-                  <component id="4d5fa" class="javax.swing.JTextField" binding="textField7" default-binding="true">
+                  <component id="4d5fa" class="javax.swing.JTextField" binding="model_field">
                     <constraints>
                       <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="-1"/>
@@ -133,7 +133,7 @@
                       <foreground color="-16777216"/>
                     </properties>
                   </component>
-                  <component id="c96bc" class="javax.swing.JTextField" binding="textField8" default-binding="true">
+                  <component id="c96bc" class="javax.swing.JTextField" binding="brand_field">
                     <constraints>
                       <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="-1"/>
@@ -144,7 +144,7 @@
                       <foreground color="-16777216"/>
                     </properties>
                   </component>
-                  <grid id="491e6" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                  <grid id="491e6" binding="description_panel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="20" left="0" bottom="0" right="0"/>
                     <constraints>
                       <grid row="9" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -235,7 +235,7 @@
                       </scrollpane>
                     </children>
                   </grid>
-                  <component id="4865" class="javax.swing.JLabel">
+                  <component id="4865" class="javax.swing.JLabel" binding="name_label">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -244,7 +244,7 @@
                       <text value="NAME:"/>
                     </properties>
                   </component>
-                  <component id="f026b" class="javax.swing.JLabel">
+                  <component id="f026b" class="javax.swing.JLabel" binding="quantity_label">
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -253,7 +253,7 @@
                       <text value="QUANTITY: "/>
                     </properties>
                   </component>
-                  <component id="6a624" class="javax.swing.JLabel">
+                  <component id="6a624" class="javax.swing.JLabel" binding="location_label">
                     <constraints>
                       <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -262,7 +262,7 @@
                       <text value="LOCATION: "/>
                     </properties>
                   </component>
-                  <component id="261c1" class="javax.swing.JLabel">
+                  <component id="261c1" class="javax.swing.JLabel" binding="vendor_label">
                     <constraints>
                       <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -271,7 +271,7 @@
                       <text value="VENDOR: "/>
                     </properties>
                   </component>
-                  <component id="cbecb" class="javax.swing.JLabel">
+                  <component id="cbecb" class="javax.swing.JLabel" binding="price_label">
                     <constraints>
                       <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -280,7 +280,7 @@
                       <text value="PRICE: "/>
                     </properties>
                   </component>
-                  <component id="be9cf" class="javax.swing.JLabel">
+                  <component id="be9cf" class="javax.swing.JLabel" binding="warranty_label">
                     <constraints>
                       <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -289,7 +289,7 @@
                       <text value="WARRANTY: "/>
                     </properties>
                   </component>
-                  <component id="578be" class="javax.swing.JLabel">
+                  <component id="578be" class="javax.swing.JLabel" binding="model_label">
                     <constraints>
                       <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -298,7 +298,7 @@
                       <text value="MODEL:"/>
                     </properties>
                   </component>
-                  <component id="4e277" class="javax.swing.JLabel">
+                  <component id="4e277" class="javax.swing.JLabel" binding="brand_label">
                     <constraints>
                       <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -307,7 +307,7 @@
                       <text value="BRAND:"/>
                     </properties>
                   </component>
-                  <component id="1926b" class="javax.swing.JLabel">
+                  <component id="1926b" class="javax.swing.JLabel" binding="LMD_label">
                     <constraints>
                       <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -316,7 +316,7 @@
                       <text value="LAST MAINTENANCE DATE:"/>
                     </properties>
                   </component>
-                  <component id="45c0f" class="javax.swing.JComboBox" binding="comboBox2" default-binding="true">
+                  <component id="45c0f" class="javax.swing.JComboBox" binding="location_combobox">
                     <constraints>
                       <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -333,7 +333,7 @@
                       </model>
                     </properties>
                   </component>
-                  <component id="32b2e" class="javax.swing.JTextField" binding="textField3" default-binding="true">
+                  <component id="32b2e" class="javax.swing.JTextField" binding="lastmaintenancedate_field">
                     <constraints>
                       <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="-1"/>
@@ -345,7 +345,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="7f092" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="7f092" binding="table_panel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
                   <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
