@@ -1,27 +1,21 @@
 import UI.Dashboard;
-import UI.Panel.Food;
 
 import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        //new Dashboard();
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                createGUI();
+
+        // TRY CATCH FOR MAIN, will try the GUI Dashboard, and catch any errors to run application.
+        SwingUtilities.invokeLater(() -> {
+            try {
+                new Dashboard();
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null,
+                        "Error starting application: " + e.getMessage(),
+                        "Startup Error", JOptionPane.ERROR_MESSAGE);
             }
         });
-    }
 
-    private static void createGUI(){
-        Food food = new Food();
-        JPanel root = food.getRootPanel();
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setContentPane(root);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
     }
 }
