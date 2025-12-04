@@ -1,6 +1,6 @@
 package UI;
 
-import UI.Panels.*;
+import UI.Panel.*;
 import javax.swing.*;
 import java.awt.*;
 
@@ -43,8 +43,8 @@ public class Dashboard extends JFrame {
         cardlayout.add(clothingPanel, "CLOTHING");
         cardlayout.add(electronicsPanel, "ELECTRONICS");
         cardlayout.add(foodPanel, "FOOD");
-//        cardlayout.add(toolsPanel, "TOOLS");
-//        cardlayout.add(miscPanel, "MISCELLANEOUS");
+        cardlayout.add(toolsPanel, "TOOLS");
+        cardlayout.add(miscPanel, "MISCELLANEOUS");
         cardLayoutManager.show(cardlayout, "VIEW_ALL");
     }
     private void setupListeners() {
