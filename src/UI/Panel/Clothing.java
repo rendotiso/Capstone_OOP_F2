@@ -1,10 +1,12 @@
 package UI.Panel;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.util.Objects;
 
 public class Clothing {
     private JPanel panel1;
-    private JPanel rootPanel;
+    private JPanel panel2;
     private JTextField name_field;
     private JTextField quantity_field;
     private JTextField vendor_field;
@@ -31,4 +33,33 @@ public class Clothing {
     private JLabel condition_label;
     private JLabel fabrictype_label;
     private JLabel size_label;
+
+    public Clothing(){
+        createTable();
+    }
+
+    public JPanel getRootPanelClothing(){
+        return panel1;
+    }
+
+    private void createTable(){
+        Object[][] data = {
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"INPUT", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445}
+        };
+        Objects.requireNonNull(table1).setModel(new DefaultTableModel(
+                data,
+                new String[]{"Name", "Year", "Rating", "Number", "Mali"}
+        ));
+    }
 }

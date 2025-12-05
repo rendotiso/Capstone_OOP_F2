@@ -1,6 +1,8 @@
 package UI.Panel;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.util.Objects;
 
 public class Electronics extends JFrame {
 
@@ -37,15 +39,41 @@ public class Electronics extends JFrame {
     private JLabel LMD_label;
 
     public Electronics() {
-        setContentPane(Panel);
-        setTitle("HomeScreen");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(600, 500);
-        setLocationRelativeTo(null);
-
+//        setContentPane(Panel);
+//        setTitle("HomeScreen");
+//        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        setSize(600, 500);
+//        setLocationRelativeTo(null);
+//
         setters();
-        setVisible(true);
+//        setVisible(true);
         listeners();
+        createTable();
+    }
+
+    public JPanel getRootPanelElectronics(){
+        return Panel;
+    }
+
+    private void createTable(){
+        Object[][] data = {
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"INPUT", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445}
+        };
+        Objects.requireNonNull(table1).setModel(new DefaultTableModel(
+                data,
+                new String[]{"Name", "Year", "Rating", "Number", "Mali"}
+        ));
     }
 
     private void setters() {

@@ -1,8 +1,10 @@
 package UI.Panel;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.util.Objects;
 
-public class Misc {
+public class Misc extends JFrame{
     private JPanel rootPanel;
     private JTextField name_field;
     private JTextField quantity_field;
@@ -33,4 +35,34 @@ public class Misc {
     private JLabel condition_label;
     private JLabel location_label;
     private JPanel table_panel;
+    private JPanel panelist;
+
+    public Misc(){
+        createTable();
+    }
+
+    public JPanel getRootPanelMisc(){
+        return panelist;
+    }
+
+    private void createTable(){
+        Object[][] data = {
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"INPUT", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445}
+        };
+        Objects.requireNonNull(table1).setModel(new DefaultTableModel(
+                data,
+                new String[]{"Name", "Year", "Rating", "Number", "Mali"}
+        ));
+    }
 }

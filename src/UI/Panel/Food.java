@@ -2,8 +2,10 @@ package UI.Panel;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.util.Objects;
 
-public class Food {
+public class Food extends JFrame{
+
     private JTextField name_field;
     private JTextField quantity_field;
     private JTextField vendor_field;
@@ -35,23 +37,34 @@ public class Food {
     private JLabel expireydate_label;
     private JLabel cannedgoods_label;
     private JPanel table_panel;
+    private JPanel panelist;
 
     public Food(){
         createTable();
     }
 
-    public JPanel getRootPanel(){
-        return rootPanel;
+    public JPanel getRootPanelFood(){
+        return panelist;
     }
 
     private void createTable(){
         Object[][] data = {
-                {"Imong papa","Imong mama", "uwu", "uwu"},
-                {"Akoang papa","Akoang mama", "uwu", "uwu"},
-                {"Iyahang papa","Iyahang mama", "uwu", "uwu"}
-            };
-        table1.setModel(new DefaultTableModel(
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"INPUT", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445},
+                {"The Dark Knight", 2008, 9.0, 123445}
+        };
+        Objects.requireNonNull(table1).setModel(new DefaultTableModel(
                 data,
-                new String[]{"Title", "Year", "Rating", "Prices"}));
+                new String[]{"Name", "Year", "Rating", "Number", "Mali"}
+        ));
     }
 }
