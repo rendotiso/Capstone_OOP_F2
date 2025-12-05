@@ -15,37 +15,36 @@ public class Clothing extends Item {
           this.fabricType = fabricType;
           this.size = size;
     }
+
+    //GETTERS
     public String getCondition(){
         return condition;
-    }
-
-    public void setCondition(String condition) {
-        this.condition = condition;
     }
 
     public String getFabricType() {
         return fabricType;
     }
-
-    public void setFabricType(String fabricType) {
-        this.fabricType = fabricType;
-    }
-
     public char getSize() {
         return size;
     }
 
+    //SETTERS
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+    public void setFabricType(String fabricType) {
+        this.fabricType = fabricType;
+    }
     public void setSize(char size) {
+        //ADD SPECIFIC CONTDITIONS, IT SHOULD BE THAT USER CAN ONLY IMPLEMENT XS,S,M,L,XL,XXL, OR ITLL RETURN NULL;
         this.size = size;
     }
 
-    @Override
-    public String descriptionDetails() {
-        return "";
-    }
-
+    //METHODS
     @Override
     public double calculateValue() {
         return getPurchasePrice() * getQuantity();
     }
+
+    // MISSING METHOD DESCRIPTIONDETAILS;
 }

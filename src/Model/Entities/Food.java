@@ -15,47 +15,31 @@ public class Food extends Item{
         this.isPerishable = isPerishable;
     }
 
+    //GETTERS
     public String getExpiryDate() {
         return expiryDate;
     }
-
-    public void setExpiryDate(String expiryDate) {
-        this.expiryDate = expiryDate;
-    }
-
     public boolean getIsCanned(){
         return isCanned;
     }
-
-    public void setIsCanned(boolean isCanned){
-        this.isCanned = isCanned;
-    }
-
     public boolean getIsPerishable(){
         return isPerishable;
     }
 
+    //SETTERS
+    public void setExpiryDate(String expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+    public void setIsCanned(boolean isCanned){
+        this.isCanned = isCanned;
+    }
     public void setIsPerishable(boolean perishable) {
         isPerishable = perishable;
     }
 
-    public boolean isExpired(){
-        return expiryDate.isEmpty();
-    }
 
-    public boolean isExpiringSoon(){
-        return expiryDate.isEmpty();
-    }
-
-    public int getDaysUntilExpiry(){
-        return 0;
-    }
-
-    @Override
-    public String descriptionDetails(){
-        return "";
-    }
-
+    //METHODS
+    //MISSING METHODS ; CHECK CLASS DIAGRAM PLSSSSSSSS
     @Override
     public double calculateValue(){
         return getPurchasePrice() * getQuantity();

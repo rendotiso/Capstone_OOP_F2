@@ -2,75 +2,53 @@ package Model.Entities;
 
 import Model.Enums.Category;
 import Model.Enums.Location;
-import Model.Data.Maintainable;
+import Model.Interface.Maintainable;
 
 public class Tool extends Item implements Maintainable {
     private String toolType;
-    private boolean requiresMaintenance;
     private String material;
+    private String steelGrade;
     private String lastMaintenanceDate;
 
-    public Tool(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String toolType, boolean requiresMaintenance, String material, String lastMaintenanceDate){
+    public Tool(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String toolType, String steelGrade, String material, String lastMaintenanceDate){
         super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("Tools"), location);
         this.toolType = toolType;
-        this.requiresMaintenance = requiresMaintenance;
         this.material = material;
+        this.steelGrade = steelGrade;
         this.lastMaintenanceDate = lastMaintenanceDate;
     }
 
+    //GETTERS
     public String getToolType() {
         return toolType;
     }
-
-    public void setToolType(String toolType) {
-        this.toolType = toolType;
-    }
-
     public String getMaterial() {
         return material;
     }
-
-    public void setMaterial(String material) {
-        this.material = material;
-    }
-
-    public boolean getRequiresMaintenance() {
-        return requiresMaintenance;
-    }
-
-    public void setRequiresMaintenance(boolean requiresMaintenance) {
-        this.requiresMaintenance = requiresMaintenance;
-    }
-
-    @Override
-    public boolean needsMaintenance() {
-        return requiresMaintenance;
-    }
-
-    @Override
-    public void doMaintenance(){
-        return;
-    }
-
-    @Override
-    public String getLastMaintenanceDates() {
+    public String getSteelGrade(){ return steelGrade;}
+    public String getLastMaintenanceDate() {
         return lastMaintenanceDate;
     }
 
-    @Override
-    public void setLastMaintenanceDates() {
-        return;
+    //SETTERS
+    public void setToolType(String toolType) {
+        this.toolType = toolType;
     }
+    public void setSteelGrade(String steelGrade) {this.steelGrade = steelGrade;}
+    public void setMaterial(String material) {
+        this.material = material;
+    }
+    // maintendancedate
 
+    //METHODS
+    //HAS MISSING METHODS ; CHECK CLASSDIAGRAM ; FIX RTETURN STATEMENTS;
+    @Override
+    public boolean needsMaintenance() {
+        return true;
+    }
     public void setLastMaintenanceDates(String lastMaintenanceDate) {
         this.lastMaintenanceDate = lastMaintenanceDate;
     }
-
-    @Override
-    public void updateQuantity(int n) {
-        setQuantity(getQuantity() + 1);
-    }
-
     @Override
     public double calculateValue() {
         return getPurchasePrice() * getQuantity();

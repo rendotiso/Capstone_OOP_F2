@@ -2,7 +2,7 @@ package Model.Entities;
 
 import Model.Enums.Category;
 import Model.Enums.Location;
-import Model.Data.Maintainable;
+import Model.Interface.Maintainable;
 
 public class Electronic extends Item implements Maintainable {
     private String warrantyPeriod;
@@ -17,65 +17,41 @@ public class Electronic extends Item implements Maintainable {
         this.model = model;
         this.lastMaintenanceDate = lastMaintenanceDate;
     }
+
+    //GETTERS
     public String getWarrantyPeriod() {
         return warrantyPeriod;
     }
-
     public String getBrand() {
         return brand;
     }
-
     public String getModel() {
         return model;
     }
-
     public String getLastMaintenanceDate() {
         return lastMaintenanceDate;
     }
 
+    //SETTERS
     public void setWarrantyPeriod(String warrantyPeriod) {
         this.warrantyPeriod = warrantyPeriod;
     }
-
     public void setBrand(String brand) {
         this.brand = brand;
     }
-
     public void setModel(String model) {
         this.model = model;
     }
-
     public void setLastMaintenanceDate(String lastMaintenanceDate) {
         this.lastMaintenanceDate = lastMaintenanceDate;
     }
 
+    // LACKING IMPLEMENT
+    // public int getDaysUntilMaintenanceDue();
+    // DESCRIPTIONDETAILS();
     @Override
     public boolean needsMaintenance() {
         return true;
-    }
-
-    @Override
-    public void doMaintenance(){
-        return;
-    }
-
-    @Override
-    public String getLastMaintenanceDates() {
-        return lastMaintenanceDate;
-    }
-
-    @Override
-    public void setLastMaintenanceDates() {
-        return;
-    }
-
-    public void setLastMaintenanceDates(String lastMaintenanceDate) {
-        this.lastMaintenanceDate = lastMaintenanceDate;
-    }
-
-    @Override
-    public void updateQuantity(int n) {
-        setQuantity(getQuantity() + 1);
     }
 
     @Override
