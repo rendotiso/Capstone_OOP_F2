@@ -22,30 +22,29 @@ public class Food extends Item{
         this.isPerishable = isPerishable;
     }
 
+    //GETTERS
     public String getExpiryDate() {
         return expiryDate;
     }
-
-    public void setExpiryDate(String expiryDate) {
-        this.expiryDate = expiryDate;
-    }
-
     public boolean getIsCanned(){
         return isCanned;
     }
-
-    public void setIsCanned(boolean isCanned){
-        this.isCanned = isCanned;
-    }
-
     public boolean getIsPerishable(){
         return isPerishable;
     }
 
+    //SETTERS
+    public void setExpiryDate(String expiryDate) {
+        this.expiryDate = expiryDate;
+    }
     public void setIsPerishable(boolean perishable) {
         isPerishable = perishable;
     }
+    public void setIsCanned(boolean isCanned){
+        this.isCanned = isCanned;
+    }
 
+    //METHODS
     private LocalDate getExpiryLocalDate() {
         if (expiryDate == null || expiryDate.isEmpty()) {
             return null;
@@ -83,19 +82,15 @@ public class Food extends Item{
     public String descriptionDetails(){
         String itemType = (getIsPerishable() ? "Perishable" : "Non-Perishable") + (getIsCanned() ? " (Canned)" : "");
         String status = isExpired() ? "EXPIRED" : (isExpiringSoon() ? "Expiring Soon" : "OK");
-
         return super.descriptionDetails() +
                 String.format(" | Type: %s, Expiry Date: %s, Status: %s (%d days left)",
                         itemType, expiryDate, status, getDaysUntilExpiry());
     }
 
-
     @Override
     public double calculateValue(){
         return getPurchasePrice() * getQuantity();
     }
-
-
 
 }
 
