@@ -2,9 +2,9 @@ package Model.Entities;
 
 import Model.Enums.Category;
 import Model.Enums.Location;
-import Model.Entities.Maintenanable;
+import Model.Data.Maintainable;
 
-public class Electronic extends Item implements Maintenanable {
+public class Electronic extends Item implements Maintainable {
     private String warrantyPeriod;
     private String brand;
     private String model;
