@@ -3,7 +3,7 @@ package Model.Entities;
 import Model.Enums.Category;
 import Model.Enums.Location;
 
-public class Tool extends Item implements Maintenanable{
+public class Tool extends Item implements Model.Entities.Maintenanable {
     private String toolType;
     private boolean requiresMaintenance;
     private String material;
