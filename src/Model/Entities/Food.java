@@ -35,6 +35,9 @@ public class Food extends Item{
 
     //SETTERS
     public void setExpiryDate(String expiryDate) {
+        if (expiryDate == null || expiryDate.trim().isEmpty()) {
+            throw new IllegalArgumentException("Expiry Date cannot be empty");
+        }
         this.expiryDate = expiryDate;
     }
     public void setIsPerishable(boolean perishable) {
