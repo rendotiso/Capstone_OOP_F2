@@ -10,7 +10,7 @@ public class Miscellaneous extends Item {
     private String condition;
 
     public Miscellaneous(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String itemType, String usage, String condition) {
-        super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.MISCELLANEOUS, location);
+        super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("MISCELLANEOUS"), location);
         this.itemType = itemType;
         this.usage = usage;
         this.condition = condition;
