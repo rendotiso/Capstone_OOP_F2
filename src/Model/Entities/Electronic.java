@@ -7,14 +7,14 @@ public class Electronic extends Item implements Model.Entities.Maintenanable {
     private String warrantyPeriod;
     private String brand;
     private String model;
-    private String lastMaintenanceDate;
+    private boolean maintenanceNeeded;
 
-    public Electronic(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String warrantyPeriod, String brand, String model, String lastMaintenanceDate){
+    public Electronic(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String warrantyPeriod, String brand, String model, boolean maintenanceNeeded){
         super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("Electronics"), location);
         this.warrantyPeriod = warrantyPeriod;
         this.brand = brand;
         this.model = model;
-        this.lastMaintenanceDate = lastMaintenanceDate;
+        this.maintenanceNeeded = maintenanceNeeded;
     }
     public String getWarrantyPeriod() {
         return warrantyPeriod;
@@ -28,9 +28,7 @@ public class Electronic extends Item implements Model.Entities.Maintenanable {
         return model;
     }
 
-    public String getLastMaintenanceDate() {
-        return lastMaintenanceDate;
-    }
+    public boolean getMaintenanceNeeded() { return maintenanceNeeded; }
 
     public void setWarrantyPeriod(String warrantyPeriod) {
         this.warrantyPeriod = warrantyPeriod;
@@ -44,8 +42,8 @@ public class Electronic extends Item implements Model.Entities.Maintenanable {
         this.model = model;
     }
 
-    public void setLastMaintenanceDate(String lastMaintenanceDate) {
-        this.lastMaintenanceDate = lastMaintenanceDate;
+    public void setMaintenanceNeeded(boolean maintenanceNeeded) {
+        this.maintenanceNeeded = maintenanceNeeded;
     }
 
     @Override
@@ -54,27 +52,13 @@ public class Electronic extends Item implements Model.Entities.Maintenanable {
     }
 
     @Override
-    public void doMaintenance(){
-        return;
+    public int getDaysUntilMaintenanceDue() {
+        return 0;
     }
 
     @Override
-    public String getLastMaintenanceDates() {
-        return lastMaintenanceDate;
-    }
-
-    @Override
-    public void setLastMaintenanceDates() {
-        return;
-    }
-
-    public void setLastMaintenanceDates(String lastMaintenanceDate) {
-        this.lastMaintenanceDate = lastMaintenanceDate;
-    }
-
-    @Override
-    public void updateQuantity(int n) {
-        setQuantity(getQuantity() + 1);
+    public String descriptionDetails() {
+        return "";
     }
 
     @Override

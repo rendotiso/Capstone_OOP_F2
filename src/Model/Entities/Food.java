@@ -39,10 +39,21 @@ public class Food extends Item{
         isPerishable = perishable;
     }
 
+    public boolean isExpired(){
+        return expiryDate.isEmpty();
+    }
+
+    public boolean isExpiringSoon(){
+        return expiryDate.isEmpty();
+    }
+
+    public int getDaysUntilExpiry(){
+        return 0;
+    }
 
     @Override
-    public void updateQuantity(int n) {
-        setQuantity(getQuantity() + n);
+    public String descriptionDetails(){
+        return "";
     }
 
     @Override

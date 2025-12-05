@@ -68,7 +68,7 @@ public abstract class Item {
     }
 
 
-    public abstract void updateQuantity(int n);
+    public abstract String descriptionDetails();
 
     public abstract double calculateValue();
 

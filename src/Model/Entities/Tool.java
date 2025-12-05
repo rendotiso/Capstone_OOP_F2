@@ -7,14 +7,14 @@ public class Tool extends Item implements Model.Entities.Maintenanable {
     private String toolType;
     private boolean requiresMaintenance;
     private String material;
-    private String lastMaintenanceDate;
+    private boolean maintenanceNeeded;
 
-    public Tool(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String toolType, boolean requiresMaintenance, String material, String lastMaintenanceDate){
+    public Tool(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String toolType, boolean requiresMaintenance, String material, boolean maintenanceNeeded) {
         super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("Tools"), location);
         this.toolType = toolType;
         this.requiresMaintenance = requiresMaintenance;
         this.material = material;
-        this.lastMaintenanceDate = lastMaintenanceDate;
+        this.maintenanceNeeded = maintenanceNeeded;
     }
 
     public String getToolType() {
@@ -47,27 +47,13 @@ public class Tool extends Item implements Model.Entities.Maintenanable {
     }
 
     @Override
-    public void doMaintenance(){
-        return;
+    public int getDaysUntilMaintenanceDue() {
+        return 0;
     }
 
     @Override
-    public String getLastMaintenanceDates() {
-        return lastMaintenanceDate;
-    }
-
-    @Override
-    public void setLastMaintenanceDates() {
-        return;
-    }
-
-    public void setLastMaintenanceDates(String lastMaintenanceDate) {
-        this.lastMaintenanceDate = lastMaintenanceDate;
-    }
-
-    @Override
-    public void updateQuantity(int n) {
-        setQuantity(getQuantity() + 1);
+    public String descriptionDetails() {
+        return "";
     }
 
     @Override

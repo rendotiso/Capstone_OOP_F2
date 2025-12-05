@@ -41,8 +41,8 @@ public class Miscellaneous extends Item {
     }
 
     @Override
-    public void updateQuantity(int n) {
-        setQuantity(getQuantity() + n);
+    public String descriptionDetails(){
+        return "";
     }
 
     @Override
