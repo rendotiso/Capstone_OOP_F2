@@ -2,9 +2,9 @@ package Model.Entities;
 
 import Model.Enums.Category;
 import Model.Enums.Location;
-import Model.Entities.Maintenanable;
+import Model.Data.Maintainable;
 
-public class Tool extends Item implements Maintenanable {
+public class Tool extends Item implements Maintainable {
     private String toolType;
     private boolean requiresMaintenance;
     private String material;
