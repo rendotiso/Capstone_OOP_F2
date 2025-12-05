@@ -68,15 +68,13 @@ public class Electronic extends Item implements Maintainable {
         if (lastMaintenanceDate == null) {
             return 0;
         }
-
-        // Electronics need maintenance every 1 year (365 days)
         LocalDate nextMaintenanceDate = lastMaintenanceDate.plusDays(365);
         LocalDate today = LocalDate.now();
 
         if (today.isBefore(nextMaintenanceDate)) {
             return (int) ChronoUnit.DAYS.between(today, nextMaintenanceDate);
         } else {
-            return 0; // Maintenance na overdue
+            return 0;
         }
     }
     @Override
