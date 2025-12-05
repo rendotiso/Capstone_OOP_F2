@@ -22,54 +22,46 @@ public abstract class Item {
         this.vendor = vendor;
     }
 
+    //GETTERS
     public String getName() {
         return name;
     }
-
-
     public String getDescription() {
         return description;
     }
-
     public int getQuantity() {
         return quantity;
     }
-
     public double getPurchasePrice() {
         return purchasePrice;
     }
-
     public String getVendor() {
         return vendor;
     }
 
+    //SETTERS
     public void setName(String name) {
         this.name = name;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
-
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
-
     public void setPurchasePrice(double purchasePrice) {
         this.purchasePrice = purchasePrice;
     }
-
     public void setPurchaseDate(String purchaseDate) {
         this.purchaseDate = purchaseDate;
     }
-
     public void setVendor(String vendor) {
         this.vendor = vendor;
     }
 
 
+    //ABSTRACT METHODS
     public abstract String descriptionDetails();
-
     public abstract double calculateValue();
 
 }

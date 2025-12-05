@@ -40,8 +40,8 @@ public class Clothing extends Item {
     }
 
     @Override
-    public String descriptionDetails(){
-        return "Clothing";
+    public String descriptionDetails() {
+        return "";
     }
 
     @Override

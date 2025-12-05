@@ -40,11 +40,11 @@ public class Food extends Item{
     }
 
     public boolean isExpired(){
-        return true;
+        return expiryDate.isEmpty();
     }
 
     public boolean isExpiringSoon(){
-        return true;
+        return expiryDate.isEmpty();
     }
 
     public int getDaysUntilExpiry(){

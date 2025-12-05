@@ -16,35 +16,30 @@ public class Miscellaneous extends Item {
         this.condition = condition;
     }
 
+    //GETTERS
     public String getItemType() {
         return itemType;
     }
-
     public String getUsage() {
         return usage;
     }
-
     public String getCondition() {
         return condition;
     }
 
+    //SETTERS
     public void setItemType(String itemType) {
         this.itemType = itemType;
     }
-
     public void setUsage(String usage) {
         this.usage = usage;
     }
-
     public void setCondition(String condition) {
         this.condition = condition;
     }
 
-    @Override
-    public String descriptionDetails(){
-        return "";
-    }
-
+    //METHODS
+    // MISSING METHODS
     @Override
     public double calculateValue() {
         return getPurchasePrice() * getQuantity();

@@ -1,6 +1,6 @@
-package Model.Entities;
+package Model.Data;
 
-public interface Maintenanable {
+public interface Maintainable {
     public boolean needsMaintenance();
     public int getDaysUntilMaintenanceDue();
 }
