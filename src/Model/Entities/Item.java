@@ -61,7 +61,9 @@ public abstract class Item {
 
 
     //ABSTRACT METHODS
-    public abstract String descriptionDetails();
+    public String descriptionDetails() {
+        return String.format("%s - %s (Qty: %d)", name, category, quantity);
+    }
     public abstract double calculateValue();
 
 }
