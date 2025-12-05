@@ -16,7 +16,7 @@ public class Dashboard extends JFrame {
         setContentPane(Panel);
         setTitle("Home Inventory Management System");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(1435, 880);
+        setSize(1300, 750);
         setResizable(false);
         setLocationRelativeTo(null);
 
