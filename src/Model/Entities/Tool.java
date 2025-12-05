@@ -1,8 +1,8 @@
 package Model.Entities;
 
+import Model.Data.Maintainable;
 import Model.Enums.Category;
 import Model.Enums.Location;
-import Model.Interface.Maintainable;
 
 public class Tool extends Item implements Maintainable {
     private String toolType;
@@ -46,9 +46,17 @@ public class Tool extends Item implements Maintainable {
     public boolean needsMaintenance() {
         return true;
     }
-    public void setLastMaintenanceDates(String lastMaintenanceDate) {
-        this.lastMaintenanceDate = lastMaintenanceDate;
+
+    @Override
+    public int getDaysUntilMaintenanceDue() {
+        return 0;
     }
+
+    @Override
+    public String descriptionDetails() {
+        return "";
+    }
+
     @Override
     public double calculateValue() {
         return getPurchasePrice() * getQuantity();

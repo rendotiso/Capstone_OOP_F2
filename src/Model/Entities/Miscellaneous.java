@@ -38,6 +38,11 @@ public class Miscellaneous extends Item {
         this.condition = condition;
     }
 
+    @Override
+    public String descriptionDetails() {
+        return "";
+    }
+
     //METHODS
     // MISSING METHODS
     @Override
