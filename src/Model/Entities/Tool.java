@@ -2,19 +2,20 @@ package Model.Entities;
 
 import Model.Enums.Category;
 import Model.Enums.Location;
+import Model.Entities.Maintenanable;
 
-public class Tool extends Item implements Model.Entities.Maintenanable {
+public class Tool extends Item implements Maintenanable {
     private String toolType;
     private boolean requiresMaintenance;
     private String material;
-    private boolean maintenanceNeeded;
+    private String lastMaintenanceDate;
 
-    public Tool(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String toolType, boolean requiresMaintenance, String material, boolean maintenanceNeeded) {
+    public Tool(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String toolType, boolean requiresMaintenance, String material, String lastMaintenanceDate){
         super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("Tools"), location);
         this.toolType = toolType;
         this.requiresMaintenance = requiresMaintenance;
         this.material = material;
-        this.maintenanceNeeded = maintenanceNeeded;
+        this.lastMaintenanceDate = lastMaintenanceDate;
     }
 
     public String getToolType() {
@@ -47,13 +48,27 @@ public class Tool extends Item implements Model.Entities.Maintenanable {
     }
 
     @Override
-    public int getDaysUntilMaintenanceDue() {
-        return 0;
+    public void doMaintenance(){
+        return;
     }
 
     @Override
-    public String descriptionDetails() {
-        return "";
+    public String getLastMaintenanceDates() {
+        return lastMaintenanceDate;
+    }
+
+    @Override
+    public void setLastMaintenanceDates() {
+        return;
+    }
+
+    public void setLastMaintenanceDates(String lastMaintenanceDate) {
+        this.lastMaintenanceDate = lastMaintenanceDate;
+    }
+
+    @Override
+    public void updateQuantity(int n) {
+        setQuantity(getQuantity() + 1);
     }
 
     @Override

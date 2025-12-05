@@ -2,19 +2,20 @@ package Model.Entities;
 
 import Model.Enums.Category;
 import Model.Enums.Location;
+import Model.Entities.Maintenanable;
 
-public class Electronic extends Item implements Model.Entities.Maintenanable {
+public class Electronic extends Item implements Maintenanable {
     private String warrantyPeriod;
     private String brand;
     private String model;
-    private boolean maintenanceNeeded;
+    private String lastMaintenanceDate;
 
-    public Electronic(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String warrantyPeriod, String brand, String model, boolean maintenanceNeeded){
+    public Electronic(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String warrantyPeriod, String brand, String model, String lastMaintenanceDate){
         super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("Electronics"), location);
         this.warrantyPeriod = warrantyPeriod;
         this.brand = brand;
         this.model = model;
-        this.maintenanceNeeded = maintenanceNeeded;
+        this.lastMaintenanceDate = lastMaintenanceDate;
     }
     public String getWarrantyPeriod() {
         return warrantyPeriod;
@@ -28,7 +29,9 @@ public class Electronic extends Item implements Model.Entities.Maintenanable {
         return model;
     }
 
-    public boolean getMaintenanceNeeded() { return maintenanceNeeded; }
+    public String getLastMaintenanceDate() {
+        return lastMaintenanceDate;
+    }
 
     public void setWarrantyPeriod(String warrantyPeriod) {
         this.warrantyPeriod = warrantyPeriod;
@@ -42,8 +45,8 @@ public class Electronic extends Item implements Model.Entities.Maintenanable {
         this.model = model;
     }
 
-    public void setMaintenanceNeeded(boolean maintenanceNeeded) {
-        this.maintenanceNeeded = maintenanceNeeded;
+    public void setLastMaintenanceDate(String lastMaintenanceDate) {
+        this.lastMaintenanceDate = lastMaintenanceDate;
     }
 
     @Override
@@ -52,13 +55,27 @@ public class Electronic extends Item implements Model.Entities.Maintenanable {
     }
 
     @Override
-    public int getDaysUntilMaintenanceDue() {
-        return 0;
+    public void doMaintenance(){
+        return;
     }
 
     @Override
-    public String descriptionDetails() {
-        return "";
+    public String getLastMaintenanceDates() {
+        return lastMaintenanceDate;
+    }
+
+    @Override
+    public void setLastMaintenanceDates() {
+        return;
+    }
+
+    public void setLastMaintenanceDates(String lastMaintenanceDate) {
+        this.lastMaintenanceDate = lastMaintenanceDate;
+    }
+
+    @Override
+    public void updateQuantity(int n) {
+        setQuantity(getQuantity() + 1);
     }
 
     @Override
