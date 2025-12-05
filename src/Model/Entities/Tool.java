@@ -11,7 +11,7 @@ public class Tool extends Item implements Maintainable {
     private String lastMaintenanceDate;
 
     public Tool(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String toolType, String steelGrade, String material, String lastMaintenanceDate){
-        super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("Tools"), location);
+        super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("TOOLS"), location);
         this.toolType = toolType;
         this.material = material;
         this.steelGrade = steelGrade;
