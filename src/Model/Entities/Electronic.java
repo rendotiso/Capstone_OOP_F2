@@ -8,14 +8,14 @@ public class Electronic extends Item implements Maintainable {
     private String warrantyPeriod;
     private String brand;
     private String model;
-    private String lastMaintenanceDate;
+    private boolean maintenanceNeeded;
 
-    public Electronic(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String warrantyPeriod, String brand, String model, String lastMaintenanceDate){
+    public Electronic(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String warrantyPeriod, String brand, String model, boolean maintenanceNeeded) {
         super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("Electronics"), location);
         this.warrantyPeriod = warrantyPeriod;
         this.brand = brand;
         this.model = model;
-        this.lastMaintenanceDate = lastMaintenanceDate;
+        this.maintenanceNeeded = false;
     }
 
     //GETTERS
@@ -28,8 +28,8 @@ public class Electronic extends Item implements Maintainable {
     public String getModel() {
         return model;
     }
-    public String getLastMaintenanceDate() {
-        return lastMaintenanceDate;
+    public boolean isMaintenanceNeeded() {
+        return maintenanceNeeded;
     }
 
     //SETTERS
@@ -42,16 +42,27 @@ public class Electronic extends Item implements Maintainable {
     public void setModel(String model) {
         this.model = model;
     }
-    public void setLastMaintenanceDate(String lastMaintenanceDate) {
-        this.lastMaintenanceDate = lastMaintenanceDate;
+
+    public void setMaintenanceNeeded(boolean maintenanceNeeded) {
+        this.maintenanceNeeded = maintenanceNeeded;
     }
 
     // LACKING IMPLEMENT
     // public int getDaysUntilMaintenanceDue();
     // DESCRIPTIONDETAILS();
     @Override
-    public boolean needsMaintenance() {
-        return true;
+    public int getDaysUntilMaintenanceDue(){
+        return 0;
+    }
+
+    @Override
+    public boolean needsMaintenance(){
+        return false;
+    }
+
+    @Override
+    public String descriptionDetails() {
+        return "";
     }
 
     @Override

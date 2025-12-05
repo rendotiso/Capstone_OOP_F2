@@ -47,4 +47,8 @@ public class Clothing extends Item {
     }
 
     // MISSING METHOD DESCRIPTIONDETAILS;
+    @Override
+    public String descriptionDetails() {
+        return "";
+    }
 }
