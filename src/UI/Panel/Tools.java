@@ -11,7 +11,6 @@ public class Tools {
     private JTextField warranty_field;
     private JTextField tool_field;
     private JTextField material_field;
-    private JComboBox requiresmaintenance_combobox;
     private JButton ADDButton;
     private JButton CLEARButton;
     private JButton UPDATEButton;
@@ -34,4 +33,5 @@ public class Tools {
     private JLabel material_label;
     private JLabel requiresmaintenance_label;
     private JPanel table_panel;
+    private JTextField textField1;
 }

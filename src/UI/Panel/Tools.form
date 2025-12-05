@@ -139,19 +139,6 @@
                       <foreground color="-16777216"/>
                     </properties>
                   </component>
-                  <component id="abab4" class="javax.swing.JComboBox" binding="requiresmaintenance_combobox">
-                    <constraints>
-                      <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <background color="-2102785"/>
-                      <foreground color="-16777216"/>
-                      <model>
-                        <item value="YES"/>
-                        <item value="NO"/>
-                      </model>
-                    </properties>
-                  </component>
                   <grid id="17155" binding="description_panel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="20" left="0" bottom="0" right="0"/>
                     <constraints>
@@ -318,7 +305,7 @@
                     </constraints>
                     <properties>
                       <foreground color="-16777216"/>
-                      <text value="REQUIRES MAINTENANCE:                "/>
+                      <text value="SIZE:                "/>
                     </properties>
                   </component>
                   <component id="f8d46" class="javax.swing.JComboBox" binding="location_combobox">
@@ -336,6 +323,17 @@
                         <item value="GARAGE"/>
                         <item value="BASEMENT"/>
                       </model>
+                    </properties>
+                  </component>
+                  <component id="a7b6a" class="javax.swing.JTextField" binding="textField1" default-binding="true">
+                    <constraints>
+                      <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <background color="-2102785"/>
+                      <foreground color="-16777216"/>
                     </properties>
                   </component>
                 </children>
