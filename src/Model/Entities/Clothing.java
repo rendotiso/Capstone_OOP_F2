@@ -7,37 +7,57 @@ public class Clothing extends Item {
   
     private String condition;
     private String fabricType;
-    private char size;
+    private String size;
 
-    public Clothing(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String condition, String fabricType, char size){
+    public Clothing(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String condition, String fabricType, String size){
         super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("Clothing"), location);
-          this.condition = condition;
-          this.fabricType = fabricType;
-          this.size = size;
+          setCondition(condition);
+          setFabricType(fabricType);
+          setSize(size);
     }
 
     //GETTERS
     public String getCondition(){
         return condition;
     }
-
     public String getFabricType() {
         return fabricType;
     }
-    public char getSize() {
+    public String getSize() {
         return size;
     }
 
     //SETTERS
+
     public void setCondition(String condition) {
-        this.condition = condition;
+        if (condition == null || condition.trim().isEmpty()) {
+            throw new IllegalArgumentException("Condition cannot be empty");
+        }
+        this.condition = condition.trim();
     }
+
     public void setFabricType(String fabricType) {
-        this.fabricType = fabricType;
+        this.fabricType = fabricType != null ? fabricType.trim() : "";
     }
-    public void setSize(char size) {
-        //ADD SPECIFIC CONTDITIONS, IT SHOULD BE THAT USER CAN ONLY IMPLEMENT XS,S,M,L,XL,XXL, OR ITLL RETURN NULL;
-        this.size = size;
+
+    public void setSize(String size) {
+        if (size == null) {
+            this.size = null;
+            return;
+        }
+        String normalizedSize = size.trim().toUpperCase();
+        switch (normalizedSize) {
+            case "XS":
+            case "S":
+            case "M":
+            case "L":
+            case "XL":
+            case "XXL":
+                this.size = normalizedSize;
+                break;
+            default:
+                throw new IllegalArgumentException( "Invalid size: '" + size + "'. Must be one of: XS, S, M, L, XL, XXL" );
+        }
     }
 
     //METHODS
@@ -46,9 +66,8 @@ public class Clothing extends Item {
         return getPurchasePrice() * getQuantity();
     }
 
-    // MISSING METHOD DESCRIPTIONDETAILS;
     @Override
     public String descriptionDetails() {
-        return "";
+        return super.descriptionDetails() + String.format(" | Size: %s, Condition: %s", size, condition);
     }
 }
