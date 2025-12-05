@@ -57,7 +57,7 @@ public class Electronic extends Item implements Model.Entities.Maintenanable {
     }
 
     @Override
-    public String descriptionDetails() {
+    public String descriptionDetails(){
         return "";
     }
 

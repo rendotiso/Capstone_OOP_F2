@@ -43,7 +43,7 @@ public class Tool extends Item implements Model.Entities.Maintenanable {
 
     @Override
     public boolean needsMaintenance() {
-        return requiresMaintenance;
+        return true;
     }
 
     @Override
