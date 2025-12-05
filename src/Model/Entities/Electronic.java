@@ -11,7 +11,7 @@ public class Electronic extends Item implements Maintainable {
     private String lastMaintenanceDate;
 
     public Electronic(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String warrantyPeriod, String brand, String model, String lastMaintenanceDate){
-        super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("Electronics"), location);
+        super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("ELECTRONICS"), location);
         this.warrantyPeriod = warrantyPeriod;
         this.brand = brand;
         this.model = model;
