@@ -7,13 +7,13 @@ public class Miscellaneous extends Item {
 
     private String itemType;
     private String usage;
-    private String condition;
+    private boolean isCondition;
 
-    public Miscellaneous(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String itemType, String usage, String condition) {
+    public Miscellaneous(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String itemType, String usage, boolean isCondition) {
         super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("MISCELLANEOUS"), location);
         this.itemType = itemType;
         this.usage = usage;
-        this.condition = condition;
+        this.isCondition = isCondition;
     }
 
     //GETTERS
@@ -23,8 +23,8 @@ public class Miscellaneous extends Item {
     public String getUsage() {
         return usage;
     }
-    public String getCondition() {
-        return condition;
+    public String getIsCondition() {
+        return isCondition ? "Yes" : "No";
     }
 
     //SETTERS
@@ -34,12 +34,17 @@ public class Miscellaneous extends Item {
     public void setUsage(String usage) {
         this.usage = usage;
     }
-    public void setCondition(String condition) {
-        this.condition = condition;
+    public void setIsCondition(boolean isCondition) {
+        this.isCondition = isCondition;
     }
 
     //METHODS
     // MISSING METHODS
+    @Override
+    public String descriptionDetails() {
+        return "";
+    }
+
     @Override
     public double calculateValue() {
         return getPurchasePrice() * getQuantity();

@@ -1,21 +1,21 @@
 package Model.Entities;
 
+import Model.Data.Maintainable;
 import Model.Enums.Category;
 import Model.Enums.Location;
-import Model.Interface.Maintainable;
 
 public class Tool extends Item implements Maintainable {
     private String toolType;
     private String material;
-    private String steelGrade;
-    private String lastMaintenanceDate;
+    private String size;
+    private boolean maintenanceNeeded;
 
-    public Tool(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String toolType, String steelGrade, String material, String lastMaintenanceDate){
+    public Tool(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String toolType, String size, String material, boolean maintenanceNeeded) {
         super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("TOOLS"), location);
         this.toolType = toolType;
         this.material = material;
-        this.steelGrade = steelGrade;
-        this.lastMaintenanceDate = lastMaintenanceDate;
+        this.size = size;
+        this.maintenanceNeeded = true;
     }
 
     //GETTERS
@@ -25,16 +25,13 @@ public class Tool extends Item implements Maintainable {
     public String getMaterial() {
         return material;
     }
-    public String getSteelGrade(){ return steelGrade;}
-    public String getLastMaintenanceDate() {
-        return lastMaintenanceDate;
-    }
+    public String getSize(){ return size;}
 
     //SETTERS
     public void setToolType(String toolType) {
         this.toolType = toolType;
     }
-    public void setSteelGrade(String steelGrade) {this.steelGrade = steelGrade;}
+    public void setSize(String size) {this.size = size;}
     public void setMaterial(String material) {
         this.material = material;
     }
@@ -46,9 +43,17 @@ public class Tool extends Item implements Maintainable {
     public boolean needsMaintenance() {
         return true;
     }
-    public void setLastMaintenanceDates(String lastMaintenanceDate) {
-        this.lastMaintenanceDate = lastMaintenanceDate;
+
+    @Override
+    public int getDaysUntilMaintenanceDue() {
+        return 0;
     }
+
+    @Override
+    public String descriptionDetails() {
+        return "";
+    }
+
     @Override
     public double calculateValue() {
         return getPurchasePrice() * getQuantity();
