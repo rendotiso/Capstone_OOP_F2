@@ -15,20 +15,20 @@ public class Tools extends JPanel {
     private JTextField name_field, size_field, vendor_field, price_field, warranty_field, tooltype_field, material_field;
     private JTextArea textArea1;
     private JLabel tools_label, name_label, quantity_label, location_label, vendor_label, price_label,
-            warranty_label, tooltype_label, material_label, requiresmaintenance_label, size_label, description_label;
+            warranty_label, tooltype_label, material_label, requiresmaintenance_label, size_label, description_label,
+            maintenanceInterval_label; // Added label for maintenance interval
     private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton;
     private JComboBox<String> location_combobox;
     private JTable table1;
     private JPanel panelButton;
-    private JRadioButton YESRadioButton;
-    private JRadioButton NORadioButton;
+    private JCheckBox requiresMaintenanceCheckBox; // Changed from JRadioButton to JCheckBox
     private JPanel radiopanel1;
     private JScrollPane textAreaScroll;
-    private JSpinner spinner1;
+    private JSpinner spinner1, maintenanceIntervalSpinner; // Added maintenance interval spinner
     private JScrollPane scrollPane;
 
-    // Button groups for radio buttons
-    private ButtonGroup maintenanceGroup;
+    // Removed ButtonGroup since we're using a checkbox now
+    // private ButtonGroup maintenanceGroup;
 
     // Placeholder texts
     private static final String WARRANTY_PLACEHOLDER = "MM/DD/YYYY";
@@ -51,7 +51,7 @@ public class Tools extends JPanel {
         description_panel = new JPanel();
         panelButton = new JPanel();
 
-        // Initialize radio panel
+        // Initialize radio panel (will now hold checkbox)
         radiopanel1 = new JPanel();
 
         // Initialize form fields
@@ -91,8 +91,9 @@ public class Tools extends JPanel {
         warranty_label = new JLabel("PURCHASED DATE:");
         tooltype_label = new JLabel("TOOL TYPE:");
         material_label = new JLabel("MATERIAL:");
-        size_label = new JLabel("STEEL GRADE:");  // Will be placed below material
+        size_label = new JLabel("STEEL GRADE:");
         requiresmaintenance_label = new JLabel("REQUIRES MAINTENANCE:");
+        maintenanceInterval_label = new JLabel("MAINTENANCE INTERVAL (DAYS):"); // New label
         description_label = new JLabel("DESCRIPTION/NOTE:");
 
         // Initialize buttons
@@ -107,24 +108,26 @@ public class Tools extends JPanel {
                 "KITCHEN", "LIVING ROOM", "BEDROOM", "STORAGE", "TOOLBOX"
         });
 
-        // Initialize radio buttons
-        YESRadioButton = new JRadioButton("YES");
-        NORadioButton = new JRadioButton("NO");
+        // Initialize checkbox instead of radio buttons
+        requiresMaintenanceCheckBox = new JCheckBox("Requires Maintenance");
 
-        // Create button group
-        maintenanceGroup = new ButtonGroup();
-        maintenanceGroup.add(YESRadioButton);
-        maintenanceGroup.add(NORadioButton);
+        // Initialize maintenance interval spinner
+        maintenanceIntervalSpinner = new JSpinner(new SpinnerNumberModel(30, 1, 365, 1));
+        JSpinner.NumberEditor intervalEditor = new JSpinner.NumberEditor(maintenanceIntervalSpinner, "#");
+        maintenanceIntervalSpinner.setEditor(intervalEditor);
 
-        // Set default selection
-        NORadioButton.setSelected(true);
+        // Force left alignment
+        JComponent intervalEditorComp = maintenanceIntervalSpinner.getEditor();
+        if (intervalEditorComp instanceof JSpinner.DefaultEditor) {
+            JTextField textField = ((JSpinner.DefaultEditor) intervalEditorComp).getTextField();
+            textField.setHorizontalAlignment(SwingConstants.LEFT);
+        }
 
         table1 = new JTable();
         scrollPane = new JScrollPane(table1);
         textAreaScroll = new JScrollPane(textArea1);
 
-        YESRadioButton.setFocusable(false);
-        NORadioButton.setFocusable(false);
+        requiresMaintenanceCheckBox.setFocusable(false);
     }
 
     private void setupLayout() {
@@ -268,7 +271,7 @@ public class Tools extends JPanel {
 
         row++;
 
-        // Row 8: SIZE - MOVED HERE (below material)
+        // Row 8: SIZE
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
@@ -282,7 +285,7 @@ public class Tools extends JPanel {
 
         row++;
 
-        // Row 9: Requires Maintenance (with radio buttons) - similar to Food class radio layout
+        // Row 9: Requires Maintenance (with checkbox)
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
@@ -294,15 +297,30 @@ public class Tools extends JPanel {
         formGbc.weightx = 1.0;
         formGbc.anchor = GridBagConstraints.WEST;
 
-        // Set GridLayout for maintenance radio buttons (1 row, 2 columns, 20px horizontal gap) - same as Food
-        radiopanel1.setLayout(new GridLayout(1, 2, 20, 0));
-        radiopanel1.add(YESRadioButton);
-        radiopanel1.add(NORadioButton);
+        // Add checkbox instead of radio buttons
+        radiopanel1.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        radiopanel1.add(requiresMaintenanceCheckBox);
         panel.add(radiopanel1, formGbc);
 
         row++;
 
-        // Row 10: Description/Note - similar layout to Food class
+        // Row 10: Maintenance Interval (new row)
+        formGbc.gridx = 0; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.NONE;
+        formGbc.weightx = 0;
+        formGbc.anchor = GridBagConstraints.WEST;
+        panel.add(maintenanceInterval_label, formGbc);
+
+        formGbc.gridx = 1; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.HORIZONTAL;
+        formGbc.weightx = 1.0;
+        formGbc.anchor = GridBagConstraints.WEST;
+        maintenanceIntervalSpinner.setPreferredSize(new Dimension(80, 25));
+        panel.add(maintenanceIntervalSpinner, formGbc);
+
+        row++;
+
+        // Row 11: Description/Note - similar layout to Food class
         description_panel.setLayout(new GridBagLayout());
         GridBagConstraints descGbc = new GridBagConstraints();
         descGbc.insets = new Insets(5, 5, 5, 5);
@@ -409,6 +427,7 @@ public class Tools extends JPanel {
 
         // Set spinner background - same as Food class
         spinner1.setBackground(bg);
+        maintenanceIntervalSpinner.setBackground(bg); // Set background for new spinner
 
         // Customize spinner text field - same as Food class
         JComponent editorComp = spinner1.getEditor();
@@ -419,13 +438,18 @@ public class Tools extends JPanel {
             textField.setHorizontalAlignment(SwingConstants.LEFT);
         }
 
-        // Set radio button backgrounds - same as Food class
-        YESRadioButton.setBackground(bg);
-        NORadioButton.setBackground(bg);
+        // Customize maintenance interval spinner text field
+        JComponent intervalEditorComp = maintenanceIntervalSpinner.getEditor();
+        if (intervalEditorComp instanceof JSpinner.DefaultEditor) {
+            JTextField textField = ((JSpinner.DefaultEditor) intervalEditorComp).getTextField();
+            textField.setBackground(bg);
+            textField.setForeground(black);
+            textField.setHorizontalAlignment(SwingConstants.LEFT);
+        }
 
-        // Make radio buttons opaque - same as Food class
-        YESRadioButton.setOpaque(true);
-        NORadioButton.setOpaque(true);
+        // Set checkbox background
+        requiresMaintenanceCheckBox.setBackground(bg);
+        requiresMaintenanceCheckBox.setOpaque(true);
 
         // Set foreground colors - same as Food class
         name_field.setForeground(black);
@@ -438,9 +462,8 @@ public class Tools extends JPanel {
         textArea1.setForeground(black);
         location_combobox.setForeground(black);
 
-        // Set radio button text colors - same as Food class
-        YESRadioButton.setForeground(black);
-        NORadioButton.setForeground(black);
+        // Set checkbox text color
+        requiresMaintenanceCheckBox.setForeground(black);
 
         // Set label colors - same as Food class
         tools_label.setForeground(Color.WHITE);
@@ -454,6 +477,7 @@ public class Tools extends JPanel {
         material_label.setForeground(black);
         size_label.setForeground(black);
         requiresmaintenance_label.setForeground(black);
+        maintenanceInterval_label.setForeground(black); // New label color
         description_label.setForeground(black);
 
         // Set button colors - same as Food class
@@ -476,7 +500,7 @@ public class Tools extends JPanel {
         Font labelFont = new Font("Segoe UI", Font.BOLD, 14);
         Font fieldFont = new Font("Segoe UI", Font.PLAIN, 14);
         Font titleFont = new Font("Segoe UI", Font.BOLD, 18);
-        Font radioFont = new Font("Segoe UI", Font.PLAIN, 14);
+        Font checkboxFont = new Font("Segoe UI", Font.PLAIN, 14); // Checkbox font
         Font buttonFont = new Font("Segoe UI", Font.BOLD, 12);
         Font placeholderFont = new Font("Segoe UI", Font.ITALIC, 13);
 
@@ -491,6 +515,7 @@ public class Tools extends JPanel {
         material_label.setFont(labelFont);
         size_label.setFont(labelFont);
         requiresmaintenance_label.setFont(labelFont);
+        maintenanceInterval_label.setFont(labelFont); // New label font
         description_label.setFont(labelFont);
 
         name_field.setFont(fieldFont);
@@ -505,10 +530,10 @@ public class Tools extends JPanel {
 
         // Set spinner font - same as Food class
         spinner1.setFont(fieldFont);
+        maintenanceIntervalSpinner.setFont(fieldFont); // New spinner font
 
-        // Set radio button fonts - same as Food class
-        YESRadioButton.setFont(radioFont);
-        NORadioButton.setFont(radioFont);
+        // Set checkbox font
+        requiresMaintenanceCheckBox.setFont(checkboxFont);
 
         // Set button fonts - same as Food class
         ADDButton.setFont(buttonFont);
@@ -543,7 +568,7 @@ public class Tools extends JPanel {
         });
     }
 
-    // PUBLIC METHODS - same pattern as Food class
+    // PUBLIC METHODS - updated for checkbox and new spinner
 
     public void clearForm() {
         name_field.setText("");
@@ -562,21 +587,29 @@ public class Tools extends JPanel {
         textArea1.setText("");
         location_combobox.setSelectedIndex(0);
 
-        // Reset radio button to default (NO) - same as Food class
-        NORadioButton.setSelected(true);
+        // Reset checkbox to unchecked
+        requiresMaintenanceCheckBox.setSelected(false);
+
+        // Reset maintenance interval to default value
+        maintenanceIntervalSpinner.setValue(30);
     }
 
-    // Radio button getter methods - same pattern as Food class
+    // Checkbox getter method - updated from radio buttons
     public boolean requiresMaintenance() {
-        return YESRadioButton.isSelected();
+        return requiresMaintenanceCheckBox.isSelected();
     }
 
     public void setRequiresMaintenance(boolean requires) {
-        if (requires) {
-            YESRadioButton.setSelected(true);
-        } else {
-            NORadioButton.setSelected(true);
-        }
+        requiresMaintenanceCheckBox.setSelected(requires);
+    }
+
+    // Maintenance interval getter method
+    public int getMaintenanceInterval() {
+        return (int) maintenanceIntervalSpinner.getValue();
+    }
+
+    public void setMaintenanceInterval(int days) {
+        maintenanceIntervalSpinner.setValue(days);
     }
 
     // Action listener methods - same as Food class
