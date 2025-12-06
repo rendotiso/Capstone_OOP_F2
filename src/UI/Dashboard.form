@@ -175,7 +175,6 @@
                   <background color="-657931"/>
                   <font name="Noto Serif" size="28" style="1"/>
                   <foreground color="-657931"/>
-                  <icon value="Model/Icon/Organizer.ico"/>
                   <text value="Organizer"/>
                 </properties>
               </component>
