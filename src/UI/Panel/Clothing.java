@@ -88,8 +88,8 @@ public class Clothing extends JPanel {
 
         // Initialize combo boxes
         location_combobox = new JComboBox<>(new String[]{
-                "GARAGE", "WORKSHOP", "BASEMENT", "SHED",
-                "KITCHEN", "LIVING ROOM", "BEDROOM", "STORAGE", "TOOLBOX"
+                "STORAGE BOX", "WARDROBE", "UNDERBED STORAGE", "CLOSET",
+                "DRAWER CLOSET", "HANGING RACK"
         });
 
         size_combobox = new JComboBox<>(new String[]{

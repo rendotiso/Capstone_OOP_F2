@@ -110,8 +110,8 @@ public class Food extends JPanel{
 
         // Initialize combo boxes
         location_combobox = new JComboBox<>(new String[]{
-                "LIVING ROOM", "KITCHEN", "BEDROOM",
-                "BATHROOM", "GARAGE", "BASEMENT"
+                "REFRIGERATOR", "PANTRY", "FREEZER",
+                "FOOD STORAGE RACK", "KITCHEN SHELVES", "COUNTERTOP CONTAINERS"
         });
 
         // Initialize radio buttons

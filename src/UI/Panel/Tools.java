@@ -103,8 +103,8 @@ public class Tools extends JPanel {
 
         // Initialize combo boxes
         location_combobox = new JComboBox<>(new String[]{
-                "GARAGE", "WORKSHOP", "BASEMENT", "SHED",
-                "KITCHEN", "LIVING ROOM", "BEDROOM", "STORAGE", "TOOLBOX"
+                "GARAGE", "BASEMENT", "STORAGE ROOM", "TOOLBOX", "UTILITY ROOM",
+                "TOOL RACK"
         });
 
         // Initialize radio buttons

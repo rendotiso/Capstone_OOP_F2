@@ -100,8 +100,8 @@ public class Misc extends JPanel {
 
         // Initialize combo boxes
         location_combobox = new JComboBox<>(new String[]{
-                "LIVING ROOM", "KITCHEN", "BEDROOM",
-                "BATHROOM", "GARAGE", "BASEMENT", "ATTIC", "STORAGE"
+                "STORAGE ROOM", "CABINET", "SHELF",
+                "DRAWER", "HALLWAY CABINET", "CONTAINER RACK", "ATTIC", "STORAGE"
         });
 
         // Initialize radio buttons
