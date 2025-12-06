@@ -12,12 +12,12 @@ public class Clothing extends JPanel {
 
     // ATTRIBUTES
     private JPanel panelist, rootPanel, Clothes_panel, panel, table_panel, description_panel;
-    private JTextField name_field, size_field, vendor_field, price_field, condition_field, fabrictype_field;
+    private JTextField name_field, vendor_field, price_field, condition_field, fabrictype_field;
     private JTextArea textArea1;
     private JLabel Clothes_label, name_label, quantity_label, location_label, vendor_label, price_label,
             condition_label, fabrictype_label, size_label, description_label;
     private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton;
-    private JComboBox<String> location_combobox;
+    private JComboBox<String> location_combobox, size_combobox;
     private JTable table1;
     private JPanel panelButton;
     private JScrollPane textAreaScroll;
@@ -49,7 +49,6 @@ public class Clothing extends JPanel {
         price_field = new JTextField(8);
         condition_field = new JTextField(8);
         fabrictype_field = new JTextField(8);
-        size_field = new JTextField(8);
 
         textArea1 = new JTextArea(3, 15);
         textArea1.setLineWrap(true);
@@ -89,8 +88,12 @@ public class Clothing extends JPanel {
 
         // Initialize combo boxes
         location_combobox = new JComboBox<>(new String[]{
-                "GARAGE", "WORKSHOP", "BASEMENT", "SHED",
-                "KITCHEN", "LIVING ROOM", "BEDROOM", "STORAGE", "TOOLBOX"
+                "STORAGE BOX", "WARDROBE", "UNDERBED STORAGE", "CLOSET",
+                "DRAWER CLOSET", "HANGING RACK"
+        });
+
+        size_combobox = new JComboBox<>(new String[]{
+                "XS", "S", "M", "L", "XL", "XXL"
         });
 
         table1 = new JTable();
@@ -234,8 +237,8 @@ public class Clothing extends JPanel {
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;
         formGbc.weightx = 1.0;
-        size_field.setPreferredSize(new Dimension(80, 25));
-        panel.add(size_field, formGbc);
+        size_combobox.setPreferredSize(new Dimension(80, 25));
+        panel.add(size_combobox, formGbc);
 
         row++;
 
@@ -337,7 +340,7 @@ public class Clothing extends JPanel {
         price_field.setBackground(bg);
         condition_field.setBackground(bg);
         fabrictype_field.setBackground(bg);
-        size_field.setBackground(bg);
+        size_combobox.setBackground(bg);
         textArea1.setBackground(bg);
         location_combobox.setBackground(bg);
 
@@ -359,7 +362,7 @@ public class Clothing extends JPanel {
         price_field.setForeground(black);
         condition_field.setForeground(placeholderColor);
         fabrictype_field.setForeground(black);
-        size_field.setForeground(black);
+        size_combobox.setForeground(black);
         textArea1.setForeground(black);
         location_combobox.setForeground(black);
 
@@ -414,7 +417,7 @@ public class Clothing extends JPanel {
         price_field.setFont(fieldFont);
         condition_field.setFont(placeholderFont);
         fabrictype_field.setFont(fieldFont);
-        size_field.setFont(fieldFont);
+        size_combobox.setFont(fieldFont);
         textArea1.setFont(fieldFont);
         location_combobox.setFont(fieldFont);
 
@@ -434,7 +437,7 @@ public class Clothing extends JPanel {
     public void clearForm() {
         name_field.setText("");
         spinner1.setValue(1);
-        size_field.setText("");
+        size_combobox.setSelectedItem("");
         vendor_field.setText("");
         price_field.setText("");
 
@@ -492,7 +495,7 @@ public class Clothing extends JPanel {
     }
 
     public String getSizeInput() {
-        return size_field.getText();
+        return (String) size_combobox.getSelectedItem();
     }
 
     public String getVendorInput() {
@@ -528,8 +531,8 @@ public class Clothing extends JPanel {
         spinner1.setValue(quantity);
     }
 
-    public void setLMDInput(String size) {
-        size_field.setText(size);
+    public void setSizeInput(String size) {
+        size_combobox.setSelectedItem(size);
     }
 
     public void setVendorInput(String vendor) {

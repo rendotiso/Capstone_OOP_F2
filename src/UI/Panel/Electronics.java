@@ -93,8 +93,7 @@ public class Electronics extends JPanel {
 
         // Initialize combo boxes
         location_combobox = new JComboBox<>(new String[]{
-                "GARAGE", "WORKSHOP", "BASEMENT", "SHED",
-                "KITCHEN", "LIVING ROOM", "BEDROOM", "STORAGE", "TOOLBOX"
+                "GARAGE", "BASEMENT", "UTILITY ROOM", "STORAGE ROOM", "SHELF", "DRAWER", "ELECTRONICS CABINET"
         });
 
         table1 = new JTable();

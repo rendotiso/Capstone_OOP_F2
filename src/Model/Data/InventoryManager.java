@@ -3,9 +3,11 @@ package Model.Data;
 import Model.Entities.*;
 import Model.Data.FileHandler;
 import Model.Enums.Category;
-import Model.Enums.Location;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 // This Class handles the CRUD operations ; ensure usage of Exception Handling
@@ -13,53 +15,76 @@ public class InventoryManager {
     private List<Item> items;
     private final FileHandler fileHandler;
 
-    public InventoryManager(List<Item> items, FileHandler fileHandler) {
-        this.items = items;
-        this.fileHandler = fileHandler;
+    private InventoryManager() {
+        items = new ArrayList<>();
+        fileHandler = new FileHandler();
+        loadFromFile();
     }
 
     // ADDITEM
-    public void addItem(Item item){
+    public void addItem(Item item) throws IOException {
         items.add(item);
-        return;
+        savetoFile();
     }
 
-  //DELETEITEM
-    public void removeItem(Item item){
-        items.remove(item);
-        return;
+    //DELETEITEM
+    public void removeItem(Item item) throws IOException {
+        if (item == null) {
+            throw new IllegalArgumentException("Item cannot be null");
+        }
+
+        boolean removed = items.remove(item);
+        if (!removed) {
+            throw new IllegalArgumentException("Item not found in inventory");
+        }
+
+        savetoFile();
     }
 
-  //UPDATEITEM
-  public void updateItem(int index, Item updatedItem) {
-      if (index >= 0 && index < items.size()) {
-          items.set(index, updatedItem);
-          return;
-      }
-  }
+    //UPDATEITEM
+    public void updateItem(int index, Item item) throws IOException {
+        if (item == null) {
+        throw new IllegalArgumentException("Updated item cannot be null");
+    }
+        if (index >= 0 && index < items.size()) {
+            items.set(index, item);
+            savetoFile();
+        }
+    }
 
-  // GetAllItems, returns the List
-    public List<Item> GetAllItems() {
+    public List<Item> getAllItems() {
         return items;
     }
 
-  // search and filter (get by category, get by location)
-
-    public List<Item> getbyCategory(Category category) {
-        return items.stream().filter(item -> item.getCategory() == category).collect(Collectors.toList());
-    }
-    public List<Item> getbyLocation(Location location) {
-        return items.stream().filter(item -> item.getLocation() == location).collect(Collectors.toList());
-    }
-    public Item getItem(String name){
-        for (Item item : items) {
-            if (item.getName().equals(name)) {
-                return item;
-            }
+    private boolean matchesCondition(Item item, String searchTerm) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return true;
         }
-        return null;
+        String term = searchTerm.toLowerCase().trim();
+        return item.getName().toLowerCase().contains(term) ||
+                  item.getDescription().toLowerCase().contains(term) ||
+                  item.getLocation().toLowerCase().contains(term) ||
+                  item.getVendor().toLowerCase().contains(term) ||
+                  String.valueOf(item.getQuantity()).contains(term) ||
+                  String.valueOf(item.getPurchasePrice()).contains(term) ||
+                  item.getPurchaseDate().toLowerCase().contains(term) ||
+                  item.getCategory().toString().toLowerCase().contains(term);
     }
 
-
-    // save and load file
+    //HELPER
+    private void savetoFile() {
+        try {
+            fileHandler.saveData(items);
+        } catch (Exception e) {
+            System.err.println("Error saving to file: " + e.getMessage());
+        }
+    }
+    private void loadFromFile() {
+        try {
+            items = fileHandler.loadData();
+        } catch (Exception e) {
+            System.err.println("Error loading from file: " + e.getMessage());
+            items = new ArrayList<>();
+        }
+    }
 }
