@@ -770,7 +770,7 @@ public class Food extends JPanel{
         };
         Objects.requireNonNull(table1).setModel(new DefaultTableModel(
                 data,
-                new String[]{"Name", "Year", "Rating", "Number", "Mali"}
+                new String[]{"Name", "Qty", "Location", "Vendor", "Price", "Details"}
         ));
 
         table1.setRowHeight(25);
@@ -782,5 +782,12 @@ public class Food extends JPanel{
         table1.setSelectionForeground(Color.WHITE);
         table1.setGridColor(Color.LIGHT_GRAY);
         table1.setShowGrid(true);
+
+        table1.getColumnModel().getColumn(0).setPreferredWidth(50);
+        table1.getColumnModel().getColumn(1).setPreferredWidth(10);
+        table1.getColumnModel().getColumn(2).setPreferredWidth(50);
+        table1.getColumnModel().getColumn(3).setPreferredWidth(50);
+        table1.getColumnModel().getColumn(4).setPreferredWidth(10);
+        table1.getColumnModel().getColumn(5).setPreferredWidth(150);
     }
 }

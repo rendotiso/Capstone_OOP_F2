@@ -720,14 +720,14 @@ public class Misc extends JPanel {
 
     private void createTable() {
         Object[][] data = {
-                {"Tool Set", 1, "GARAGE", "Hardware Co", "$49.99", "01/15/2023", "Tools", "General", "INTACT", "Complete set with case"},
-                {"First Aid Kit", 2, "BATHROOM", "Medical Supply", "$29.99", "03/22/2023", "Medical", "Emergency", "INTACT", "For minor injuries"},
-                {"Extension Cord", 3, "GARAGE", "Electronics Inc", "$19.99", "", "Electronics", "General", "DAMAGED", "Needs replacement plug"}
+                {"Tool Set", 1, "GARAGE", "Hardware Co", "$49.99"},
+                {"First Aid Kit", 2, "LIVING ROOM", "Medical Supply", "$29.99"},
+                {"Extension Cord", 3, "GARAGE", "Electronics Inc", "$19.99"}
         };
 
         Objects.requireNonNull(table1).setModel(new DefaultTableModel(
                 data,
-                new String[]{"Name", "Quantity", "Location", "Vendor", "Price", "Warranty", "Type", "Usage", "Condition", "Description"}
+                new String[]{"Name", "Qty", "Location", "Vendor", "Price", "Details"}
         ));
 
         table1.setRowHeight(25);
@@ -741,15 +741,11 @@ public class Misc extends JPanel {
         table1.setShowGrid(true);
 
         // Set column widths
-        table1.getColumnModel().getColumn(0).setPreferredWidth(100);
-        table1.getColumnModel().getColumn(1).setPreferredWidth(60);
-        table1.getColumnModel().getColumn(2).setPreferredWidth(80);
-        table1.getColumnModel().getColumn(3).setPreferredWidth(80);
-        table1.getColumnModel().getColumn(4).setPreferredWidth(70);
-        table1.getColumnModel().getColumn(5).setPreferredWidth(80);
-        table1.getColumnModel().getColumn(6).setPreferredWidth(70);
-        table1.getColumnModel().getColumn(7).setPreferredWidth(70);
-        table1.getColumnModel().getColumn(8).setPreferredWidth(70);
-        table1.getColumnModel().getColumn(9).setPreferredWidth(150);
+        table1.getColumnModel().getColumn(0).setPreferredWidth(50);
+        table1.getColumnModel().getColumn(1).setPreferredWidth(10);
+        table1.getColumnModel().getColumn(2).setPreferredWidth(50);
+        table1.getColumnModel().getColumn(3).setPreferredWidth(50);
+        table1.getColumnModel().getColumn(4).setPreferredWidth(10);
+        table1.getColumnModel().getColumn(5).setPreferredWidth(150);
     }
 }

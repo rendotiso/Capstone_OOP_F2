@@ -18,7 +18,7 @@ public class Dashboard extends JFrame {
         setContentPane(Panel);
         setTitle("Home Inventory Management System");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(1300, 800);
+        setSize(1310, 820);
         setResizable(false);
         setLocationRelativeTo(null);
 
@@ -75,13 +75,14 @@ public class Dashboard extends JFrame {
     private void showHelp() {
         JOptionPane.showMessageDialog(this,
                 "<html><body style='width: 300px;'>" +
-                        "<h3>Home Inventory Manager Help</h3>" +
                         "<p><b>How to use:</b></p>" +
                         "<ul>" +
                         "<li>Select a category from the left menu</li>" +
                         "<li>Add new items using the form</li>" +
                         "<li>Click on items in the table to edit</li>" +
                         "<li>Use 'View All' to search all items</li>" +
+                        "<li>Click Refresh on 'View All' to refresh the data and " +
+                        "Delete to delete selected data</li>" +
                         "</ul>" +
                         "<p><b>Features:</b></p>" +
                         "<ul>" +
@@ -90,6 +91,7 @@ public class Dashboard extends JFrame {
                         "<li>Calculate item values</li>" +
                         "<li>Auto-save to file</li>" +
                         "</ul>" +
+                        "<p><b>Thank you for using this small application :) - Team Jewels<b></p>" +
                         "</body></html>",
                 "Help Guide",
                 JOptionPane.INFORMATION_MESSAGE);
