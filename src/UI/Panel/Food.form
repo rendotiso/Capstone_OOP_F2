@@ -65,17 +65,6 @@
                   <foreground color="-16777216"/>
                 </properties>
               </component>
-              <component id="97465" class="javax.swing.JTextField" binding="quantity_field">
-                <constraints>
-                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="-1"/>
-                  </grid>
-                </constraints>
-                <properties>
-                  <background color="-2102785"/>
-                  <foreground color="-16777216"/>
-                </properties>
-              </component>
               <component id="d93fa" class="javax.swing.JTextField" binding="vendor_field">
                 <constraints>
                   <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
@@ -120,19 +109,6 @@
                   <foreground color="-16777216"/>
                 </properties>
               </component>
-              <component id="cfd93" class="javax.swing.JComboBox" binding="cannedgoods_combobox">
-                <constraints>
-                  <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <background color="-2102785"/>
-                  <foreground color="-16777216"/>
-                  <model>
-                    <item value="YES"/>
-                    <item value="NO"/>
-                  </model>
-                </properties>
-              </component>
               <grid id="ca547" binding="description_panel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="20" left="0" bottom="0" right="0"/>
                 <constraints>
@@ -152,7 +128,7 @@
                       <text value="DESCRIPTION/NOTE: "/>
                     </properties>
                   </component>
-                  <grid id="1844" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                  <grid id="1844" binding="panelButton" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="20" left="0" bottom="0" right="0"/>
                     <constraints>
                       <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -204,7 +180,7 @@
                       </component>
                     </children>
                   </grid>
-                  <scrollpane id="7388e">
+                  <scrollpane id="7388e" binding="textAreaScroll">
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -273,7 +249,7 @@
                 </constraints>
                 <properties>
                   <foreground color="-16777216"/>
-                  <text value="WARRANTY: "/>
+                  <text value="PURCHASED DATE: "/>
                 </properties>
               </component>
               <component id="46e65" class="javax.swing.JLabel" binding="expireydate_label">
@@ -303,19 +279,6 @@
                   <text value="CANNED:                "/>
                 </properties>
               </component>
-              <component id="42da3" class="javax.swing.JComboBox" binding="perish_combobox">
-                <constraints>
-                  <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <background color="-2102785"/>
-                  <foreground color="-16777216"/>
-                  <model>
-                    <item value="YES"/>
-                    <item value="NO"/>
-                  </model>
-                </properties>
-              </component>
               <component id="659da" class="javax.swing.JComboBox" binding="location_combobox">
                 <constraints>
                   <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
@@ -332,6 +295,76 @@
                     <item value="BASEMENT"/>
                   </model>
                 </properties>
+              </component>
+              <grid id="20bf3" binding="radiopanel1" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-4660737"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="1a40f" class="javax.swing.JRadioButton" binding="YESRadioButton" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <background color="-4660737"/>
+                      <foreground color="-16777216"/>
+                      <text value="YES"/>
+                    </properties>
+                  </component>
+                  <component id="6bce5" class="javax.swing.JRadioButton" binding="NORadioButton" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <background color="-4660737"/>
+                      <foreground color="-16777216"/>
+                      <text value="NO"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="11966" binding="radiopanel2" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-4660737"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="8d042" class="javax.swing.JRadioButton" binding="YESRadioButton1" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <background color="-4660737"/>
+                      <foreground color="-16777216"/>
+                      <text value="YES"/>
+                    </properties>
+                  </component>
+                  <component id="8d1b5" class="javax.swing.JRadioButton" binding="NORadioButton1" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <background color="-4660737"/>
+                      <foreground color="-16777216"/>
+                      <text value="NO"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <component id="b2626" class="javax.swing.JSpinner" binding="spinner1" default-binding="true">
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
               </component>
             </children>
           </grid>
