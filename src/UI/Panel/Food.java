@@ -5,449 +5,717 @@ import javax.swing.table.DefaultTableModel;
 import java.util.Objects;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Food extends JPanel{
 
-        // ATTRIBUTES
-        private JPanel panelist,  rootPanel, food_panel, panel, table_panel, description_panel, buttonPanel;
-        private JTextField name_field, quantity_field, vendor_field,
-                price_field, expiredate_field;
-        private JRadioButton perish_radio, cannedgoods_radio;
-        private JTextArea textArea1;
-        private JLabel food_label, name_label, quantity_label,
-                location_label, vendor_label, price_label, expireydate_label,
-                perish_label, cannedgoods_label, description_label;
-        private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton;
-        private JComboBox<String> location_combobox;
-        private JTable table1;
-        private JScrollPane scrollPane;
+    // ATTRIBUTES
+    private JPanel panelist,  rootPanel, food_panel, panel, table_panel, description_panel;
+    private JTextField name_field, vendor_field, price_field;
+    private JFormattedTextField warranty_field, expiredate_field;
+    private JTextArea textArea1;
+    private JLabel food_label, name_label, quantity_label,
+            location_label, vendor_label, price_label, warranty_label, expireydate_label,
+            perish_label, cannedgoods_label, description_label;
+    private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton;
+    private JComboBox<String> location_combobox;
+    private JTable table1;
+    private JPanel panelButton;
+    private JRadioButton YESRadioButton;
+    private JRadioButton NORadioButton;
+    private JRadioButton YESRadioButton1;
+    private JRadioButton NORadioButton1;
+    private JPanel radiopanel1;
+    private JPanel radiopanel2;
+    private JScrollPane textAreaScroll;
+    private JSpinner spinner1;
+    private JScrollPane scrollPane;
 
-        public Food() {
-            initComponents();
-            setupLayout();
-            setupAppearance();
-            createTable();
-        }
+    // Button groups for radio buttons
+    private ButtonGroup perishGroup;
+    private ButtonGroup cannedGoodsGroup;
 
-    //SETTERS FOR NAME MUST IMPLEMENT
+    // Date formatter
+    private SimpleDateFormat dateFormat;
+
+    public Food() {
+        initComponents();
+        setupLayout();
+        setupAppearance();
+        createTable();
+    }
 
     private void initComponents() {
-            // Initialize panels
-            panelist = new JPanel();
-            rootPanel = new JPanel();
-            food_panel = new JPanel();
-            panel = new JPanel();
-            table_panel = new JPanel();
-            description_panel = new JPanel();
-            buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        // Initialize panels
+        panelist = new JPanel();
+        rootPanel = new JPanel();
+        food_panel = new JPanel();
+        panel = new JPanel();
+        table_panel = new JPanel();
+        description_panel = new JPanel();
+        panelButton = new JPanel();
 
-            // Initialize form fields
-            name_field = new JTextField(8); // Reduced from 10
-            quantity_field = new JTextField(6); // Reduced from 10
-            vendor_field = new JTextField(8); // Reduced from 10
-            price_field = new JTextField(8); // Reduced from 10
-            expiredate_field = new JTextField(8); // Reduced from 10
-            textArea1 = new JTextArea(3, 15); // Reduced from 20
+        // Initialize radio panels
+        radiopanel1 = new JPanel();
+        radiopanel2 = new JPanel();
 
-            // Initialize labels
-            food_label = new JLabel("FOOD");
-            name_label = new JLabel("NAME:");
-            quantity_label = new JLabel("QUANTITY:");
-            location_label = new JLabel("LOCATION:");
-            vendor_label = new JLabel("VENDOR:");
-            price_label = new JLabel("PRICE:");
-            expireydate_label = new JLabel("EXPIRY DATE:");
-            perish_label = new JLabel("PERISHABLE?");
-            cannedgoods_label = new JLabel("CANNED GOOD?");
-            description_label = new JLabel("DESCRIPTION/NOTE:");
+        // Initialize date format
+        dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 
-            // Initialize buttons
-            ADDButton = new JButton("ADD");
-            CLEARButton = new JButton("CLEAR");
-            UPDATEButton = new JButton("UPDATE");
-            REMOVEButton = new JButton("REMOVE");
+        // Initialize form fields
+        name_field = new JTextField(8);
+        vendor_field = new JTextField(8);
+        price_field = new JTextField(8);
 
-            // Initialize combo boxes
-            location_combobox = new JComboBox<>(new String[]{
-                    "LIVING ROOM", "KITCHEN", "BEDROOM",
-                    "BATHROOM", "GARAGE", "BASEMENT"
-            });
+        // Initialize date fields with formatted text fields
+        warranty_field = new JFormattedTextField(dateFormat);
+        warranty_field.setValue(new Date());
+        warranty_field.setColumns(8);
 
-            perish_radio = new JRadioButton();
-            cannedgoods_radio = new JRadioButton();
+        expiredate_field = new JFormattedTextField(dateFormat);
+        Date oneYearLater = new Date(System.currentTimeMillis() + 365L * 24 * 60 * 60 * 1000);
+        expiredate_field.setValue(oneYearLater);
+        expiredate_field.setColumns(8);
 
-            table1 = new JTable();
-            scrollPane = new JScrollPane(table1);
-//            textArea1.setLineWrap(true);
-//            textArea1.setWrapStyleWord(true);
+        textArea1 = new JTextArea(3, 15);
+        textArea1.setLineWrap(true);
+        textArea1.setWrapStyleWord(true);
+
+        // Initialize spinner for quantity
+        spinner1 = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
+
+        // Customize the spinner editor
+        JSpinner.NumberEditor editor = new JSpinner.NumberEditor(spinner1, "#");
+        spinner1.setEditor(editor);
+
+        // Initialize labels
+        food_label = new JLabel("FOOD");
+        name_label = new JLabel("NAME:");
+        quantity_label = new JLabel("QUANTITY:");
+        location_label = new JLabel("LOCATION:");
+        vendor_label = new JLabel("VENDOR:");
+        price_label = new JLabel("PRICE:");
+        warranty_label = new JLabel("PURCHASED DATE:");
+        expireydate_label = new JLabel("EXPIRY DATE:");
+        perish_label = new JLabel("PERISH:");
+        cannedgoods_label = new JLabel("CANNED GOOD:");
+        description_label = new JLabel("DESCRIPTION/NOTE:");
+
+        // Initialize buttons
+        ADDButton = new JButton("ADD");
+        CLEARButton = new JButton("CLEAR");
+        UPDATEButton = new JButton("UPDATE");
+        REMOVEButton = new JButton("REMOVE");
+
+        // Initialize combo boxes
+        location_combobox = new JComboBox<>(new String[]{
+                "LIVING ROOM", "KITCHEN", "BEDROOM",
+                "BATHROOM", "GARAGE", "BASEMENT"
+        });
+
+        // Initialize radio buttons
+        YESRadioButton = new JRadioButton("YES");
+        NORadioButton = new JRadioButton("NO");
+        YESRadioButton1 = new JRadioButton("YES");
+        NORadioButton1 = new JRadioButton("NO");
+
+        // Create button groups
+        perishGroup = new ButtonGroup();
+        perishGroup.add(YESRadioButton);
+        perishGroup.add(NORadioButton);
+
+        cannedGoodsGroup = new ButtonGroup();
+        cannedGoodsGroup.add(YESRadioButton1);
+        cannedGoodsGroup.add(NORadioButton1);
+
+        // Set default selections
+        NORadioButton.setSelected(true);  // Default: NO for perish
+        NORadioButton1.setSelected(true); // Default: NO for canned goods
+
+        table1 = new JTable();
+        scrollPane = new JScrollPane(table1);
+        textAreaScroll = new JScrollPane(textArea1);
+
+        YESRadioButton1.setFocusable(false);
+        YESRadioButton.setFocusable(false);
+        NORadioButton.setFocusable(false);
+        NORadioButton1.setFocusable(false);
+    }
+
+    private void setupLayout() {
+        // Main panel setup
+        setLayout(new BorderLayout());
+        panelist.setLayout(new BorderLayout());
+
+        // Root panel setup (2 rows, 2 columns layout)
+        rootPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+
+        // FOOD title panel (top-left, spans 2 columns)
+        food_panel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        food_panel.add(food_label);
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        rootPanel.add(food_panel, gbc);
+
+        // Form panel (left side - 10 rows, 2 columns)
+        panel.setLayout(new GridBagLayout());
+        GridBagConstraints formGbc = new GridBagConstraints();
+        formGbc.insets = new Insets(5, 5, 5, 5);
+        formGbc.anchor = GridBagConstraints.WEST;
+
+        int row = 0;
+
+        // Row 0: Name
+        formGbc.gridx = 0; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.NONE;
+        formGbc.weightx = 0;
+        panel.add(name_label, formGbc);
+
+        formGbc.gridx = 1; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.HORIZONTAL;
+        formGbc.weightx = 1.0;
+        name_field.setPreferredSize(new Dimension(80, 25));
+        panel.add(name_field, formGbc);
+
+        row++;
+
+        // Row 1: Quantity (Spinner)
+        formGbc.gridx = 0; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.NONE;
+        formGbc.weightx = 0;
+        panel.add(quantity_label, formGbc);
+
+        formGbc.gridx = 1; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.HORIZONTAL;
+        formGbc.weightx = 1.0;
+        spinner1.setPreferredSize(new Dimension(80, 25));
+        panel.add(spinner1, formGbc);
+
+        row++;
+
+        // Row 2: Location
+        formGbc.gridx = 0; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.NONE;
+        formGbc.weightx = 0;
+        panel.add(location_label, formGbc);
+
+        formGbc.gridx = 1; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.HORIZONTAL;
+        formGbc.weightx = 1.0;
+        location_combobox.setPreferredSize(new Dimension(80, 25));
+        panel.add(location_combobox, formGbc);
+
+        row++;
+
+        // Row 3: Vendor
+        formGbc.gridx = 0; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.NONE;
+        formGbc.weightx = 0;
+        panel.add(vendor_label, formGbc);
+
+        formGbc.gridx = 1; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.HORIZONTAL;
+        formGbc.weightx = 1.0;
+        vendor_field.setPreferredSize(new Dimension(80, 25));
+        panel.add(vendor_field, formGbc);
+
+        row++;
+
+        // Row 4: Price
+        formGbc.gridx = 0; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.NONE;
+        formGbc.weightx = 0;
+        panel.add(price_label, formGbc);
+
+        formGbc.gridx = 1; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.HORIZONTAL;
+        formGbc.weightx = 1.0;
+        price_field.setPreferredSize(new Dimension(80, 25));
+        panel.add(price_field, formGbc);
+
+        row++;
+
+        // Row 5: Purchased Date (Formatted Text Field)
+        formGbc.gridx = 0; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.NONE;
+        formGbc.weightx = 0;
+        panel.add(warranty_label, formGbc);
+
+        formGbc.gridx = 1; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.HORIZONTAL;
+        formGbc.weightx = 1.0;
+        warranty_field.setPreferredSize(new Dimension(80, 25));
+        panel.add(warranty_field, formGbc);
+
+        row++;
+
+        // Row 6: Expiry Date (Formatted Text Field)
+        formGbc.gridx = 0; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.NONE;
+        formGbc.weightx = 0;
+        panel.add(expireydate_label, formGbc);
+
+        formGbc.gridx = 1; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.HORIZONTAL;
+        formGbc.weightx = 1.0;
+        expiredate_field.setPreferredSize(new Dimension(80, 25));
+        panel.add(expiredate_field, formGbc);
+
+        row++;
+
+        // Row 7: Perish (with radio buttons)
+        formGbc.gridx = 0; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.NONE;
+        formGbc.weightx = 0;
+        formGbc.anchor = GridBagConstraints.WEST;
+        panel.add(perish_label, formGbc);
+
+        formGbc.gridx = 1; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.HORIZONTAL;
+        formGbc.weightx = 1.0;
+        formGbc.anchor = GridBagConstraints.WEST;
+
+        // Set GridLayout for perish radio buttons (1 row, 2 columns, 20px horizontal gap)
+        radiopanel1.setLayout(new GridLayout(1, 2, 20, 0));
+        radiopanel1.add(YESRadioButton);
+        radiopanel1.add(NORadioButton);
+        panel.add(radiopanel1, formGbc);
+
+        row++;
+
+        // Row 8: Canned Good (with radio buttons)
+        formGbc.gridx = 0; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.NONE;
+        formGbc.weightx = 0;
+        formGbc.anchor = GridBagConstraints.WEST;
+        panel.add(cannedgoods_label, formGbc);
+
+        formGbc.gridx = 1; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.HORIZONTAL;
+        formGbc.weightx = 1.0;
+        formGbc.anchor = GridBagConstraints.WEST;
+
+        // Set GridLayout for canned goods radio buttons (1 row, 2 columns, 20px horizontal gap)
+        radiopanel2.setLayout(new GridLayout(1, 2, 20, 0));
+        radiopanel2.add(YESRadioButton1);
+        radiopanel2.add(NORadioButton1);
+        panel.add(radiopanel2, formGbc);
+
+        row++;
+
+        // Row 9: Description/Note
+        description_panel.setLayout(new GridBagLayout());
+        GridBagConstraints descGbc = new GridBagConstraints();
+        descGbc.insets = new Insets(5, 5, 5, 5);
+
+        // Description label
+        descGbc.gridx = 0; descGbc.gridy = 0;
+        descGbc.gridwidth = 1;
+        descGbc.fill = GridBagConstraints.HORIZONTAL;
+        description_panel.add(description_label, descGbc);
+
+        // Text area
+        descGbc.gridx = 0; descGbc.gridy = 1;
+        descGbc.gridwidth = 1;
+        descGbc.fill = GridBagConstraints.BOTH;
+        descGbc.weighty = 1.0;
+        textAreaScroll.setPreferredSize(new Dimension(200, 80));
+        description_panel.add(textAreaScroll, descGbc);
+
+        // Buttons panel
+        descGbc.gridx = 0; descGbc.gridy = 2;
+        descGbc.gridwidth = 1;
+        descGbc.fill = GridBagConstraints.NONE;
+        descGbc.weighty = 0;
+        descGbc.anchor = GridBagConstraints.CENTER;
+
+        panelButton.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        panelButton.add(ADDButton);
+        panelButton.add(CLEARButton);
+        panelButton.add(UPDATEButton);
+        panelButton.add(REMOVEButton);
+        description_panel.add(panelButton, descGbc);
+
+        // Add description panel to main form panel
+        formGbc.gridx = 0; formGbc.gridy = row;
+        formGbc.gridwidth = 2;
+        formGbc.fill = GridBagConstraints.BOTH;
+        formGbc.weighty = 1.0;
+        panel.add(description_panel, formGbc);
+
+        // Add form panel to root panel (left side)
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.weightx = 0.4;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        rootPanel.add(panel, gbc);
+
+        // Table panel (right side)
+        table_panel.setLayout(new BorderLayout());
+        table_panel.add(scrollPane, BorderLayout.CENTER);
+
+        // Add table panel to root panel (right side)
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.weightx = 0.6;
+        gbc.fill = GridBagConstraints.BOTH;
+        rootPanel.add(table_panel, gbc);
+
+        // Add root panel to panelist
+        panelist.add(rootPanel, BorderLayout.CENTER);
+
+        // Add panelist to main panel
+        add(panelist, BorderLayout.CENTER);
+    }
+
+    private void setupAppearance() {
+        // Set background colors
+        Color header = new Color(0x4682B4);
+        Color black = new Color(-16777216);
+        Color bg = new Color(0xF5F5F5);
+
+        // Set panels opaque
+        panelist.setOpaque(true);
+        rootPanel.setOpaque(true);
+        food_panel.setOpaque(true);
+        panel.setOpaque(true);
+        table_panel.setOpaque(true);
+        description_panel.setOpaque(true);
+        panelButton.setOpaque(true);
+        radiopanel1.setOpaque(true);
+        radiopanel2.setOpaque(true);
+
+        // Set panel backgrounds
+        panelist.setBackground(bg);
+        rootPanel.setBackground(bg);
+        food_panel.setBackground(header);
+        panel.setBackground(bg);
+        panelButton.setBackground(bg);
+        table_panel.setBackground(bg);
+        description_panel.setBackground(bg);
+        radiopanel1.setBackground(bg);
+        radiopanel2.setBackground(bg);
+
+        // Set text field backgrounds
+        name_field.setBackground(bg);
+        vendor_field.setBackground(bg);
+        price_field.setBackground(bg);
+        warranty_field.setBackground(bg);
+        expiredate_field.setBackground(bg);
+        textArea1.setBackground(bg);
+        location_combobox.setBackground(bg);
+
+        // Set spinner background
+        spinner1.setBackground(bg);
+
+        // Customize spinner arrow buttons
+        Component spinnerEditor = spinner1.getEditor();
+        if (spinnerEditor instanceof JSpinner.DefaultEditor) {
+            JTextField textField = ((JSpinner.DefaultEditor) spinnerEditor).getTextField();
+            textField.setBackground(bg);
+            textField.setForeground(black);
         }
 
-        private void setupLayout() {
-            // Main panel setup
-            setLayout(new BorderLayout());
-            panelist.setLayout(new BorderLayout());
-            panelist.setPreferredSize(new Dimension(1000, 750));
+        // Set radio button backgrounds
+        YESRadioButton.setBackground(bg);
+        NORadioButton.setBackground(bg);
+        YESRadioButton1.setBackground(bg);
+        NORadioButton1.setBackground(bg);
 
-            // Root panel setup (2 rows, 2 columns layout)
-            rootPanel.setLayout(new GridBagLayout());
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.insets = new Insets(5, 5, 5, 5);
+        // Make radio buttons opaque
+        YESRadioButton.setOpaque(true);
+        NORadioButton.setOpaque(true);
+        YESRadioButton1.setOpaque(true);
+        NORadioButton1.setOpaque(true);
 
-            // FOOD title panel (top-left, spans 2 columns)
-            food_panel.setLayout(new FlowLayout(FlowLayout.LEFT));
-            food_panel.add(food_label);
+        // Set foreground colors
+        name_field.setForeground(black);
+        vendor_field.setForeground(black);
+        price_field.setForeground(black);
+        warranty_field.setForeground(black);
+        expiredate_field.setForeground(black);
+        textArea1.setForeground(black);
+        location_combobox.setForeground(black);
 
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.gridwidth = 2;
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            gbc.weightx = 1.0;
-            rootPanel.add(food_panel, gbc);
+        // Set radio button text colors
+        YESRadioButton.setForeground(black);
+        NORadioButton.setForeground(black);
+        YESRadioButton1.setForeground(black);
+        NORadioButton1.setForeground(black);
 
-            // Form panel (left side - 10 rows, 2 columns)
-            panel.setLayout(new GridBagLayout());
-            GridBagConstraints formGbc = new GridBagConstraints();
-            formGbc.insets = new Insets(5, 5, 5, 5);
-            formGbc.anchor = GridBagConstraints.WEST;
+        // Set label colors
+        food_label.setForeground(Color.WHITE);
+        name_label.setForeground(black);
+        quantity_label.setForeground(black);
+        location_label.setForeground(black);
+        vendor_label.setForeground(black);
+        price_label.setForeground(black);
+        warranty_label.setForeground(black);
+        expireydate_label.setForeground(black);
+        perish_label.setForeground(black);
+        cannedgoods_label.setForeground(black);
+        description_label.setForeground(black);
 
-            int row = 0;
+        // Set button colors
+        ADDButton.setBackground(new Color(70, 130, 180));
+        CLEARButton.setBackground(new Color(70, 130, 180));
+        UPDATEButton.setBackground(new Color(70, 130, 180));
+        REMOVEButton.setBackground(new Color(70, 130, 180));
+        ADDButton.setForeground(Color.white);
+        CLEARButton.setForeground(Color.white);
+        UPDATEButton.setForeground(Color.white);
+        REMOVEButton.setForeground(Color.white);
 
-            // Row 0: Name
-            formGbc.gridx = 0; formGbc.gridy = row;
-            formGbc.fill = GridBagConstraints.NONE;
-            panel.add(name_label, formGbc);
+        // Make buttons opaque
+        ADDButton.setOpaque(true);
+        CLEARButton.setOpaque(true);
+        UPDATEButton.setOpaque(true);
+        REMOVEButton.setOpaque(true);
 
-            formGbc.gridx = 1; formGbc.gridy = row;
-            formGbc.fill = GridBagConstraints.HORIZONTAL;
-            formGbc.weightx = 1.0;
-            name_field.setPreferredSize(new Dimension(80, 25));
-            panel.add(name_field, formGbc);
+        // Set fonts
+        Font labelFont = new Font("Segoe UI", Font.BOLD, 14);
+        Font fieldFont = new Font("Segoe UI", Font.PLAIN, 14);
+        Font titleFont = new Font("Segoe UI", Font.BOLD, 18);
+        Font radioFont = new Font("Segoe UI", Font.PLAIN, 14);
+        Font buttonFont = new Font("Segoe UI", Font.BOLD, 12);
 
-            row++;
+        food_label.setFont(titleFont);
+        name_label.setFont(labelFont);
+        quantity_label.setFont(labelFont);
+        location_label.setFont(labelFont);
+        vendor_label.setFont(labelFont);
+        price_label.setFont(labelFont);
+        warranty_label.setFont(labelFont);
+        expireydate_label.setFont(labelFont);
+        perish_label.setFont(labelFont);
+        cannedgoods_label.setFont(labelFont);
+        description_label.setFont(labelFont);
 
-            // Row 1: Quantity
-            formGbc.gridx = 0; formGbc.gridy = row;
-            formGbc.fill = GridBagConstraints.NONE;
-            formGbc.weightx = 0;
-            panel.add(quantity_label, formGbc);
+        name_field.setFont(fieldFont);
+        vendor_field.setFont(fieldFont);
+        price_field.setFont(fieldFont);
+        warranty_field.setFont(fieldFont);
+        expiredate_field.setFont(fieldFont);
+        textArea1.setFont(fieldFont);
+        location_combobox.setFont(fieldFont);
 
-            formGbc.gridx = 1; formGbc.gridy = row;
-            formGbc.fill = GridBagConstraints.HORIZONTAL;
-            formGbc.weightx = 1.0;
-            quantity_field.setPreferredSize(new Dimension(80, 25));
-            panel.add(quantity_field, formGbc);
+        // Set spinner font
+        spinner1.setFont(fieldFont);
 
-            row++;
+        // Set radio button fonts
+        YESRadioButton.setFont(radioFont);
+        NORadioButton.setFont(radioFont);
+        YESRadioButton1.setFont(radioFont);
+        NORadioButton1.setFont(radioFont);
 
-            // Row 2: Location
-            formGbc.gridx = 0; formGbc.gridy = row;
-            formGbc.fill = GridBagConstraints.NONE;
-            formGbc.weightx = 0;
-            panel.add(location_label, formGbc);
+        // Set button fonts
+        ADDButton.setFont(buttonFont);
+        CLEARButton.setFont(buttonFont);
+        UPDATEButton.setFont(buttonFont);
+        REMOVEButton.setFont(buttonFont);
+    }
 
-            formGbc.gridx = 1; formGbc.gridy = row;
-            formGbc.fill = GridBagConstraints.HORIZONTAL;
-            formGbc.weightx = 1.0;
-            location_combobox.setPreferredSize(new Dimension(80, 25));
-            panel.add(location_combobox, formGbc);
+    // METHODS AND ACTION LISTENERS
 
-            row++;
+    public void clearForm() {
+        name_field.setText("");
+        spinner1.setValue(1); // Reset spinner to default value
+        vendor_field.setText("");
+        price_field.setText("");
 
-            // Row 3: Vendor
-            formGbc.gridx = 0; formGbc.gridy = row;
-            formGbc.fill = GridBagConstraints.NONE;
-            formGbc.weightx = 0;
-            panel.add(vendor_label, formGbc);
+        // Reset date fields
+        warranty_field.setValue(new Date()); // Today's date
+        Date oneYearLater = new Date(System.currentTimeMillis() + 365L * 24 * 60 * 60 * 1000);
+        expiredate_field.setValue(oneYearLater);
 
-            formGbc.gridx = 1; formGbc.gridy = row;
-            formGbc.fill = GridBagConstraints.HORIZONTAL;
-            formGbc.weightx = 1.0;
-            vendor_field.setPreferredSize(new Dimension(80, 25));
-            panel.add(vendor_field, formGbc);
+        textArea1.setText("");
+        location_combobox.setSelectedIndex(0);
 
-            row++;
+        // Reset radio buttons to default (NO)
+        NORadioButton.setSelected(true);
+        NORadioButton1.setSelected(true);
+    }
 
-            // Row 4: Price
-            formGbc.gridx = 0; formGbc.gridy = row;
-            formGbc.fill = GridBagConstraints.NONE;
-            formGbc.weightx = 0;
-            panel.add(price_label, formGbc);
+    // Radio button getter methods
+    public boolean isPerish() {
+        return YESRadioButton.isSelected();
+    }
 
-            formGbc.gridx = 1; formGbc.gridy = row;
-            formGbc.fill = GridBagConstraints.HORIZONTAL;
-            formGbc.weightx = 1.0;
-            price_field.setPreferredSize(new Dimension(80, 25));
-            panel.add(price_field, formGbc);
+    public boolean isCannedGood() {
+        return YESRadioButton1.isSelected();
+    }
 
-            row++;
-
-            // Row 5: Expiry Date
-            formGbc.gridx = 0; formGbc.gridy = row;
-            formGbc.fill = GridBagConstraints.NONE;
-            formGbc.weightx = 0;
-            panel.add(expireydate_label, formGbc);
-
-            formGbc.gridx = 1; formGbc.gridy = row;
-            formGbc.fill = GridBagConstraints.HORIZONTAL;
-            formGbc.weightx = 1.0;
-            expiredate_field.setPreferredSize(new Dimension(80, 25));
-            panel.add(expiredate_field, formGbc);
-
-            row++;
-
-            // Row 6: Perish
-            formGbc.gridx = 0; formGbc.gridy = row;
-            formGbc.fill = GridBagConstraints.NONE;
-            formGbc.weightx = 0;
-            panel.add(perish_label, formGbc);
-
-            formGbc.gridx = 1; formGbc.gridy = row;
-            formGbc.fill = GridBagConstraints.HORIZONTAL;
-            formGbc.weightx = 1.0;
-            panel.add(perish_radio, formGbc);
-            perish_radio.setFocusable(false);
-
-            row++;
-
-            // Row 7: Canned Good
-            formGbc.gridx = 0; formGbc.gridy = row;
-            formGbc.fill = GridBagConstraints.NONE;
-            formGbc.weightx = 0;
-            panel.add(cannedgoods_label, formGbc);
-
-            formGbc.gridx = 1; formGbc.gridy = row;
-            formGbc.fill = GridBagConstraints.HORIZONTAL;
-            formGbc.weightx = 1.0;
-            panel.add(cannedgoods_radio, formGbc);
-            cannedgoods_radio.setFocusable(false);
-
-            row++;
-
-            // Row 8: Description/Note
-            description_panel.setLayout(new GridBagLayout());
-            GridBagConstraints descGbc = new GridBagConstraints();
-            descGbc.insets = new Insets(5, 5, 5, 5);
-
-            // Description label
-            descGbc.gridx = 0; descGbc.gridy = 0;
-            descGbc.gridwidth = 1;
-            descGbc.fill = GridBagConstraints.HORIZONTAL;
-            description_panel.add(description_label, descGbc);
-
-            // Text area
-            descGbc.gridx = 0; descGbc.gridy = 1;
-            descGbc.gridwidth = 1;
-            descGbc.fill = GridBagConstraints.BOTH;
-            descGbc.weighty = 1.0;
-            JScrollPane textAreaScroll = new JScrollPane(textArea1);
-            textAreaScroll.setPreferredSize(new Dimension(195, 80));
-            description_panel.add(textAreaScroll, descGbc);
-
-            // Buttons panel
-            descGbc.gridx = 0; descGbc.gridy = 2;
-            descGbc.gridwidth = 1;
-            descGbc.fill = GridBagConstraints.NONE;
-            descGbc.weighty = 0;
-            descGbc.anchor = GridBagConstraints.CENTER;
-
-            buttonPanel.add(ADDButton);
-            buttonPanel.add(CLEARButton);
-            buttonPanel.add(UPDATEButton);
-            buttonPanel.add(REMOVEButton);
-            description_panel.add(buttonPanel, descGbc);
-
-            // Add description panel to main form panel
-            formGbc.gridx = 0; formGbc.gridy = row;
-            formGbc.gridwidth = 2;
-            formGbc.fill = GridBagConstraints.BOTH;
-            formGbc.weighty = 1.0;
-            panel.add(description_panel, formGbc);
-
-            // Add form panel to root panel (left side)
-            gbc.gridx = 0;
-            gbc.gridy = 1;
-            gbc.gridwidth = 1;
-            gbc.weightx = 0.4;
-            gbc.weighty = 1.0;
-            gbc.fill = GridBagConstraints.BOTH;
-            rootPanel.add(panel, gbc);
-
-            // Table panel (right side)
-            table_panel.setLayout(new BorderLayout());
-            table_panel.add(scrollPane, BorderLayout.CENTER);
-
-            // Add table panel to root panel (right side)
-            gbc.gridx = 1;
-            gbc.gridy = 1;
-            gbc.weightx = 0.6;
-            rootPanel.add(table_panel, gbc);
-
-            // Add root panel to panel1
-            panelist.add(rootPanel, BorderLayout.CENTER);
-
-            // Add panel1 to main panel
-            add(panelist, BorderLayout.CENTER);
+    // Radio button setter methods (optional)
+    public void setPerish(boolean isPerish) {
+        if (isPerish) {
+            YESRadioButton.setSelected(true);
+        } else {
+            NORadioButton.setSelected(true);
         }
+    }
 
-        private void setupAppearance() {
-
-            Color header = new Color(0x4682B4);
-            Color black = new Color(-16777216);
-            Color bg = new Color(0xF5F5F5);
-
-            panelist.setBackground(bg);
-            rootPanel.setBackground(bg);
-            food_panel.setBackground(header);
-            panel.setBackground(bg);
-            table_panel.setBackground(bg);
-            description_panel.setBackground(bg);
-            buttonPanel.setBackground(bg);
-
-            // Set text field backgrounds
-            name_field.setBackground(bg);
-            quantity_field.setBackground(bg);
-            vendor_field.setBackground(bg);
-            price_field.setBackground(bg);
-            expiredate_field.setBackground(bg);
-            textArea1.setBackground(bg);
-            location_combobox.setBackground(bg);
-            perish_radio.setBackground(bg);
-            cannedgoods_radio.setBackground(bg);
-
-            // Set foreground colors
-            name_field.setForeground(black);
-            quantity_field.setForeground(black);
-            vendor_field.setForeground(black);
-            price_field.setForeground(black);
-            expiredate_field.setForeground(black);
-            textArea1.setForeground(black);
-            location_combobox.setForeground(bg);
-            perish_radio.setForeground(black);
-            cannedgoods_radio.setForeground(black);
-
-            // Set label colors
-            food_label.setForeground(bg);
-            name_label.setForeground(black);
-            quantity_label.setForeground(black);
-            location_label.setForeground(black);
-            vendor_label.setForeground(black);
-            price_label.setForeground(black);
-            expireydate_label.setForeground(black);
-            perish_label.setForeground(black);
-            cannedgoods_label.setForeground(black);
-            description_label.setForeground(black);
-
-            // Set button colors
-            ADDButton.setBackground(bg);
-            CLEARButton.setBackground(bg);
-            UPDATEButton.setBackground(bg);
-            REMOVEButton.setBackground(bg);
-            ADDButton.setForeground(black);
-            CLEARButton.setForeground(black);
-            UPDATEButton.setForeground(black);
-            REMOVEButton.setForeground(black);
-
-            // Set fonts
-            Font labelFont = new Font("Segoe UI", Font.BOLD, 14);
-            Font fieldFont = new Font("Segoe UI", Font.PLAIN, 14);
-            Font titleFont = new Font("Segoe UI", Font.BOLD, 18);
-
-            food_label.setFont(titleFont);
-            name_label.setFont(labelFont);
-            quantity_label.setFont(labelFont);
-            location_label.setFont(labelFont);
-            vendor_label.setFont(labelFont);
-            price_label.setFont(labelFont);
-            expireydate_label.setFont(labelFont);
-            perish_label.setFont(labelFont);
-            cannedgoods_label.setFont(labelFont);
-            description_label.setFont(labelFont);
-
-            name_field.setFont(fieldFont);
-            quantity_field.setFont(fieldFont);
-            vendor_field.setFont(fieldFont);
-            price_field.setFont(fieldFont);
-            expiredate_field.setFont(fieldFont);
-            textArea1.setFont(fieldFont);
-            location_combobox.setFont(fieldFont);
-            perish_radio.setFont(fieldFont);
-            cannedgoods_radio.setFont(fieldFont);
-
-            // Set button fonts
-            Font buttonFont = new Font("Segoe UI", Font.BOLD, 12);
-            ADDButton.setFont(buttonFont);
-            ADDButton.setFocusable(false);
-            CLEARButton.setFont(buttonFont);
-            CLEARButton.setFocusable(false);
-            UPDATEButton.setFont(buttonFont);
-            UPDATEButton.setFocusable(false);
-            REMOVEButton.setFont(buttonFont);
-            REMOVEButton.setFocusable(false);
+    public void setCannedGood(boolean isCannedGood) {
+        if (isCannedGood) {
+            YESRadioButton1.setSelected(true);
+        } else {
+            NORadioButton1.setSelected(true);
         }
+    }
 
-       // METHODS AND ACTION LISTENERSS
+    public void addAddButtonListener(ActionListener listener) {
+        ADDButton.addActionListener(listener);
+    }
 
-        public void clearForm() {
-            name_field.setText("");
-            quantity_field.setText("");
-            vendor_field.setText("");
-            price_field.setText("");
-            expiredate_field.setText("");
-            textArea1.setText("");
-            location_combobox.setSelectedIndex(0);
-            perish_radio.setSelected(false);
-            cannedgoods_radio.setSelected(false);
-        }
+    public void addClearButtonListener(ActionListener listener) {
+        CLEARButton.addActionListener(listener);
+    }
 
-        public void addAddButtonListener(ActionListener listener) {
-            ADDButton.addActionListener(listener);
-        }
-        public void addClearButtonListener(ActionListener listener) {
-            CLEARButton.addActionListener(listener);
-        }
-        public void addUpdateButtonListener(ActionListener listener) {
-            UPDATEButton.addActionListener(listener);
-        }
-        public void addRemoveButtonListener(ActionListener listener) {
-            REMOVEButton.addActionListener(listener);
-        }
+    public void addUpdateButtonListener(ActionListener listener) {
+        UPDATEButton.addActionListener(listener);
+    }
 
-        public int getSelectedTableRow() {
-            return table1.getSelectedRow();
-        }
-        public JButton getAddButton() {
-            return ADDButton;
-        }
-        public JButton getClearButton() {
-            return CLEARButton;
-        }
-        public JButton getUpdateButton() {
-            return UPDATEButton;
-        }
-        public JButton getRemoveButton() {
-            return REMOVEButton;
-        }
+    public void addRemoveButtonListener(ActionListener listener) {
+        REMOVEButton.addActionListener(listener);
+    }
 
-        // Check if form has required fields
-//        public boolean validateForm() {
-//            if (getNameInput().isEmpty()) {
-//                JOptionPane.showMessageDialog(this, "Name is required!", "Validation Error", JOptionPane.WARNING_MESSAGE);
-//                return false;
-//            }
-//            if (getQuantityInput() <= 0) {
-//                JOptionPane.showMessageDialog(this, "Quantity must be greater than 0!", "Validation Error", JOptionPane.WARNING_MESSAGE);
-//                return false;
-//            }
-//            if (getPriceInput() <= 0) {
-//                JOptionPane.showMessageDialog(this, "Price must be greater than 0!", "Validation Error", JOptionPane.WARNING_MESSAGE);
-//                return false;
-//            }
-//            if (getExpiryDateInput().isEmpty()) {
-//                JOptionPane.showMessageDialog(this, "Expiry Date is required!", "Validation Error", JOptionPane.WARNING_MESSAGE);
-//                return false;
-//            }
-//            return true;
-//        }
+    public int getSelectedTableRow() {
+        return table1.getSelectedRow();
+    }
+
+    public JButton getAddButton() {
+        return ADDButton;
+    }
+
+    public JButton getClearButton() {
+        return CLEARButton;
+    }
+
+    public JButton getUpdateButton() {
+        return UPDATEButton;
+    }
+
+    public JButton getRemoveButton() {
+        return REMOVEButton;
+    }
+
+    // Form field getter methods
+    public String getNameInput() {
+        return name_field.getText();
+    }
+
+    public int getQuantityInput() {
+        return (int) spinner1.getValue();
+    }
+
+    public String getVendorInput() {
+        return vendor_field.getText();
+    }
+
+    public String getPriceInput() {
+        return price_field.getText();
+    }
+
+    public String getWarrantyInput() {
+        Object value = warranty_field.getValue();
+        if (value instanceof Date) {
+            return dateFormat.format((Date) value);
+        } else if (value != null) {
+            return value.toString();
+        }
+        return "";
+    }
+
+    public String getExpiryDateInput() {
+        Object value = expiredate_field.getValue();
+        if (value instanceof Date) {
+            return dateFormat.format((Date) value);
+        } else if (value != null) {
+            return value.toString();
+        }
+        return "";
+    }
+
+    public String getDescriptionInput() {
+        return textArea1.getText();
+    }
+
+    public String getLocationInput() {
+        return (String) location_combobox.getSelectedItem();
+    }
+
+    // Setter methods for form fields
+    public void setNameInput(String name) {
+        name_field.setText(name);
+    }
+
+    public void setQuantityInput(int quantity) {
+        spinner1.setValue(quantity);
+    }
+
+    public void setVendorInput(String vendor) {
+        vendor_field.setText(vendor);
+    }
+
+    public void setPriceInput(String price) {
+        price_field.setText(price);
+    }
+
+    public void setWarrantyInput(String warranty) {
+        try {
+            Date date = dateFormat.parse(warranty);
+            warranty_field.setValue(date);
+        } catch (Exception e) {
+            // If parsing fails, set to today's date
+            warranty_field.setValue(new Date());
+        }
+    }
+
+    public void setExpiryDateInput(String expiryDate) {
+        try {
+            Date date = dateFormat.parse(expiryDate);
+            expiredate_field.setValue(date);
+        } catch (Exception e) {
+            // If parsing fails, set to 1 year from now
+            Date oneYearLater = new Date(System.currentTimeMillis() + 365L * 24 * 60 * 60 * 1000);
+            expiredate_field.setValue(oneYearLater);
+        }
+    }
+
+    public void setDescriptionInput(String description) {
+        textArea1.setText(description);
+    }
+
+    public void setLocationInput(String location) {
+        location_combobox.setSelectedItem(location);
+    }
+
+    // Get date objects directly (useful for calculations)
+    public Date getWarrantyDate() {
+        Object value = warranty_field.getValue();
+        if (value instanceof Date) {
+            return (Date) value;
+        }
+        return new Date(); // Return today if not a Date
+    }
+
+    public Date getExpiryDate() {
+        Object value = expiredate_field.getValue();
+        if (value instanceof Date) {
+            return (Date) value;
+        }
+        // Return 1 year from now if not a Date
+        return new Date(System.currentTimeMillis() + 365L * 24 * 60 * 60 * 1000);
+    }
+
     private void createTable(){
         Object[][] data = {
                 {"The Dark Knight", 2008, 9.0, 123445},
@@ -467,5 +735,15 @@ public class Food extends JPanel{
                 data,
                 new String[]{"Name", "Year", "Rating", "Number", "Mali"}
         ));
+
+        table1.setRowHeight(25);
+        table1.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
+        table1.getTableHeader().setBackground(new Color(70, 130, 180));
+        table1.getTableHeader().setForeground(Color.WHITE);
+        table1.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        table1.setSelectionBackground(new Color(100, 149, 237));
+        table1.setSelectionForeground(Color.WHITE);
+        table1.setGridColor(Color.LIGHT_GRAY);
+        table1.setShowGrid(true);
     }
 }
