@@ -9,15 +9,16 @@ import java.awt.event.ActionListener;
 public class Food extends JPanel{
 
         // ATTRIBUTES
-        private JPanel panelist,  rootPanel, food_panel, panel, table_panel, description_panel;
+        private JPanel panelist,  rootPanel, food_panel, panel, table_panel, description_panel, buttonPanel;
         private JTextField name_field, quantity_field, vendor_field,
-                price_field, warranty_field, expiredate_field;
+                price_field, expiredate_field;
+        private JRadioButton perish_radio, cannedgoods_radio;
         private JTextArea textArea1;
         private JLabel food_label, name_label, quantity_label,
-                location_label, vendor_label, price_label, warranty_label, expireydate_label,
+                location_label, vendor_label, price_label, expireydate_label,
                 perish_label, cannedgoods_label, description_label;
         private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton;
-        private JComboBox<String> location_combobox, perish_combobox, cannedgoods_combobox;
+        private JComboBox<String> location_combobox;
         private JTable table1;
         private JScrollPane scrollPane;
 
@@ -28,7 +29,7 @@ public class Food extends JPanel{
             createTable();
         }
 
-    //SETTERS FOR NAME MUST IMPLMENET
+    //SETTERS FOR NAME MUST IMPLEMENT
 
     private void initComponents() {
             // Initialize panels
@@ -38,15 +39,15 @@ public class Food extends JPanel{
             panel = new JPanel();
             table_panel = new JPanel();
             description_panel = new JPanel();
+            buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
             // Initialize form fields
-            name_field = new JTextField(20);
-            quantity_field = new JTextField(10);
-            vendor_field = new JTextField(20);
-            price_field = new JTextField(10);
-            warranty_field = new JTextField(15);
-            expiredate_field = new JTextField(15);
-            textArea1 = new JTextArea(3, 30);
+            name_field = new JTextField(8); // Reduced from 10
+            quantity_field = new JTextField(6); // Reduced from 10
+            vendor_field = new JTextField(8); // Reduced from 10
+            price_field = new JTextField(8); // Reduced from 10
+            expiredate_field = new JTextField(8); // Reduced from 10
+            textArea1 = new JTextArea(3, 15); // Reduced from 20
 
             // Initialize labels
             food_label = new JLabel("FOOD");
@@ -55,10 +56,9 @@ public class Food extends JPanel{
             location_label = new JLabel("LOCATION:");
             vendor_label = new JLabel("VENDOR:");
             price_label = new JLabel("PRICE:");
-            warranty_label = new JLabel("WARRANTY:");
             expireydate_label = new JLabel("EXPIRY DATE:");
-            perish_label = new JLabel("PERISH:");
-            cannedgoods_label = new JLabel("CANNED GOOD:");
+            perish_label = new JLabel("PERISHABLE?");
+            cannedgoods_label = new JLabel("CANNED GOOD?");
             description_label = new JLabel("DESCRIPTION/NOTE:");
 
             // Initialize buttons
@@ -73,8 +73,9 @@ public class Food extends JPanel{
                     "BATHROOM", "GARAGE", "BASEMENT"
             });
 
-            perish_combobox = new JComboBox<>(new String[]{"YES", "NO"});
-            cannedgoods_combobox = new JComboBox<>(new String[]{"YES", "NO"});
+            perish_radio = new JRadioButton();
+            cannedgoods_radio = new JRadioButton();
+
             table1 = new JTable();
             scrollPane = new JScrollPane(table1);
 //            textArea1.setLineWrap(true);
@@ -85,7 +86,7 @@ public class Food extends JPanel{
             // Main panel setup
             setLayout(new BorderLayout());
             panelist.setLayout(new BorderLayout());
-            panelist.setPreferredSize(new Dimension(1000, 860));
+            panelist.setPreferredSize(new Dimension(1000, 750));
 
             // Root panel setup (2 rows, 2 columns layout)
             rootPanel.setLayout(new GridBagLayout());
@@ -119,7 +120,7 @@ public class Food extends JPanel{
             formGbc.gridx = 1; formGbc.gridy = row;
             formGbc.fill = GridBagConstraints.HORIZONTAL;
             formGbc.weightx = 1.0;
-            name_field.setPreferredSize(new Dimension(150, 25));
+            name_field.setPreferredSize(new Dimension(80, 25));
             panel.add(name_field, formGbc);
 
             row++;
@@ -133,7 +134,7 @@ public class Food extends JPanel{
             formGbc.gridx = 1; formGbc.gridy = row;
             formGbc.fill = GridBagConstraints.HORIZONTAL;
             formGbc.weightx = 1.0;
-            quantity_field.setPreferredSize(new Dimension(150, 25));
+            quantity_field.setPreferredSize(new Dimension(80, 25));
             panel.add(quantity_field, formGbc);
 
             row++;
@@ -147,7 +148,7 @@ public class Food extends JPanel{
             formGbc.gridx = 1; formGbc.gridy = row;
             formGbc.fill = GridBagConstraints.HORIZONTAL;
             formGbc.weightx = 1.0;
-            location_combobox.setPreferredSize(new Dimension(150, 25));
+            location_combobox.setPreferredSize(new Dimension(80, 25));
             panel.add(location_combobox, formGbc);
 
             row++;
@@ -161,7 +162,7 @@ public class Food extends JPanel{
             formGbc.gridx = 1; formGbc.gridy = row;
             formGbc.fill = GridBagConstraints.HORIZONTAL;
             formGbc.weightx = 1.0;
-            vendor_field.setPreferredSize(new Dimension(150, 25));
+            vendor_field.setPreferredSize(new Dimension(80, 25));
             panel.add(vendor_field, formGbc);
 
             row++;
@@ -175,26 +176,12 @@ public class Food extends JPanel{
             formGbc.gridx = 1; formGbc.gridy = row;
             formGbc.fill = GridBagConstraints.HORIZONTAL;
             formGbc.weightx = 1.0;
-            price_field.setPreferredSize(new Dimension(150, 25));
+            price_field.setPreferredSize(new Dimension(80, 25));
             panel.add(price_field, formGbc);
 
             row++;
 
-            // Row 5: Warranty
-            formGbc.gridx = 0; formGbc.gridy = row;
-            formGbc.fill = GridBagConstraints.NONE;
-            formGbc.weightx = 0;
-            panel.add(warranty_label, formGbc);
-
-            formGbc.gridx = 1; formGbc.gridy = row;
-            formGbc.fill = GridBagConstraints.HORIZONTAL;
-            formGbc.weightx = 1.0;
-            warranty_field.setPreferredSize(new Dimension(150, 25));
-            panel.add(warranty_field, formGbc);
-
-            row++;
-
-            // Row 6: Expiry Date
+            // Row 5: Expiry Date
             formGbc.gridx = 0; formGbc.gridy = row;
             formGbc.fill = GridBagConstraints.NONE;
             formGbc.weightx = 0;
@@ -203,12 +190,12 @@ public class Food extends JPanel{
             formGbc.gridx = 1; formGbc.gridy = row;
             formGbc.fill = GridBagConstraints.HORIZONTAL;
             formGbc.weightx = 1.0;
-            expiredate_field.setPreferredSize(new Dimension(150, 25));
+            expiredate_field.setPreferredSize(new Dimension(80, 25));
             panel.add(expiredate_field, formGbc);
 
             row++;
 
-            // Row 7: Perish
+            // Row 6: Perish
             formGbc.gridx = 0; formGbc.gridy = row;
             formGbc.fill = GridBagConstraints.NONE;
             formGbc.weightx = 0;
@@ -217,12 +204,12 @@ public class Food extends JPanel{
             formGbc.gridx = 1; formGbc.gridy = row;
             formGbc.fill = GridBagConstraints.HORIZONTAL;
             formGbc.weightx = 1.0;
-            perish_combobox.setPreferredSize(new Dimension(150, 25));
-            panel.add(perish_combobox, formGbc);
+            panel.add(perish_radio, formGbc);
+            perish_radio.setFocusable(false);
 
             row++;
 
-            // Row 8: Canned Good
+            // Row 7: Canned Good
             formGbc.gridx = 0; formGbc.gridy = row;
             formGbc.fill = GridBagConstraints.NONE;
             formGbc.weightx = 0;
@@ -231,12 +218,12 @@ public class Food extends JPanel{
             formGbc.gridx = 1; formGbc.gridy = row;
             formGbc.fill = GridBagConstraints.HORIZONTAL;
             formGbc.weightx = 1.0;
-            cannedgoods_combobox.setPreferredSize(new Dimension(150, 25));
-            panel.add(cannedgoods_combobox, formGbc);
+            panel.add(cannedgoods_radio, formGbc);
+            cannedgoods_radio.setFocusable(false);
 
             row++;
 
-            // Row 9: Description/Note
+            // Row 8: Description/Note
             description_panel.setLayout(new GridBagLayout());
             GridBagConstraints descGbc = new GridBagConstraints();
             descGbc.insets = new Insets(5, 5, 5, 5);
@@ -253,7 +240,7 @@ public class Food extends JPanel{
             descGbc.fill = GridBagConstraints.BOTH;
             descGbc.weighty = 1.0;
             JScrollPane textAreaScroll = new JScrollPane(textArea1);
-            textAreaScroll.setPreferredSize(new Dimension(510, 80));
+            textAreaScroll.setPreferredSize(new Dimension(195, 80));
             description_panel.add(textAreaScroll, descGbc);
 
             // Buttons panel
@@ -263,7 +250,6 @@ public class Food extends JPanel{
             descGbc.weighty = 0;
             descGbc.anchor = GridBagConstraints.CENTER;
 
-            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
             buttonPanel.add(ADDButton);
             buttonPanel.add(CLEARButton);
             buttonPanel.add(UPDATEButton);
@@ -304,68 +290,58 @@ public class Food extends JPanel{
         }
 
         private void setupAppearance() {
-            // Set background colors (RGB values from .form)
-            // -7618067 = Light blue-gray
-            // -4660737 = Darker blue
-            // -2102785 = Light blue
-            // -16777216 = Black
-            // -16448251 = White
 
-            Color lightBlueGray = new Color(-7618067);
-            Color darkBlue = new Color(-4660737);
-            Color lightBlue = new Color(-2102785);
+            Color header = new Color(0x4682B4);
             Color black = new Color(-16777216);
-            Color white = new Color(-16448251);
+            Color bg = new Color(0xF5F5F5);
 
-            panelist.setBackground(lightBlueGray);
-            rootPanel.setBackground(lightBlueGray);
-            food_panel.setBackground(darkBlue);
-            panel.setBackground(darkBlue);
-            table_panel.setBackground(lightBlueGray);
-            description_panel.setBackground(darkBlue);
+            panelist.setBackground(bg);
+            rootPanel.setBackground(bg);
+            food_panel.setBackground(header);
+            panel.setBackground(bg);
+            table_panel.setBackground(bg);
+            description_panel.setBackground(bg);
+            buttonPanel.setBackground(bg);
 
             // Set text field backgrounds
-            name_field.setBackground(lightBlue);
-            quantity_field.setBackground(lightBlue);
-            vendor_field.setBackground(lightBlue);
-            price_field.setBackground(lightBlue);
-            warranty_field.setBackground(lightBlue);
-            expiredate_field.setBackground(lightBlue);
-            textArea1.setBackground(lightBlue);
-            location_combobox.setBackground(lightBlue);
-            perish_combobox.setBackground(lightBlue);
-            cannedgoods_combobox.setBackground(lightBlue);
+            name_field.setBackground(bg);
+            quantity_field.setBackground(bg);
+            vendor_field.setBackground(bg);
+            price_field.setBackground(bg);
+            expiredate_field.setBackground(bg);
+            textArea1.setBackground(bg);
+            location_combobox.setBackground(bg);
+            perish_radio.setBackground(bg);
+            cannedgoods_radio.setBackground(bg);
 
             // Set foreground colors
             name_field.setForeground(black);
             quantity_field.setForeground(black);
             vendor_field.setForeground(black);
             price_field.setForeground(black);
-            warranty_field.setForeground(black);
             expiredate_field.setForeground(black);
             textArea1.setForeground(black);
-            location_combobox.setForeground(white);
-            perish_combobox.setForeground(black);
-            cannedgoods_combobox.setForeground(black);
+            location_combobox.setForeground(bg);
+            perish_radio.setForeground(black);
+            cannedgoods_radio.setForeground(black);
 
             // Set label colors
-            food_label.setForeground(black);
+            food_label.setForeground(bg);
             name_label.setForeground(black);
             quantity_label.setForeground(black);
             location_label.setForeground(black);
             vendor_label.setForeground(black);
             price_label.setForeground(black);
-            warranty_label.setForeground(black);
             expireydate_label.setForeground(black);
             perish_label.setForeground(black);
             cannedgoods_label.setForeground(black);
             description_label.setForeground(black);
 
             // Set button colors
-            ADDButton.setBackground(lightBlueGray);
-            CLEARButton.setBackground(lightBlueGray);
-            UPDATEButton.setBackground(lightBlueGray);
-            REMOVEButton.setBackground(lightBlueGray);
+            ADDButton.setBackground(bg);
+            CLEARButton.setBackground(bg);
+            UPDATEButton.setBackground(bg);
+            REMOVEButton.setBackground(bg);
             ADDButton.setForeground(black);
             CLEARButton.setForeground(black);
             UPDATEButton.setForeground(black);
@@ -382,7 +358,6 @@ public class Food extends JPanel{
             location_label.setFont(labelFont);
             vendor_label.setFont(labelFont);
             price_label.setFont(labelFont);
-            warranty_label.setFont(labelFont);
             expireydate_label.setFont(labelFont);
             perish_label.setFont(labelFont);
             cannedgoods_label.setFont(labelFont);
@@ -392,19 +367,22 @@ public class Food extends JPanel{
             quantity_field.setFont(fieldFont);
             vendor_field.setFont(fieldFont);
             price_field.setFont(fieldFont);
-            warranty_field.setFont(fieldFont);
             expiredate_field.setFont(fieldFont);
             textArea1.setFont(fieldFont);
             location_combobox.setFont(fieldFont);
-            perish_combobox.setFont(fieldFont);
-            cannedgoods_combobox.setFont(fieldFont);
+            perish_radio.setFont(fieldFont);
+            cannedgoods_radio.setFont(fieldFont);
 
             // Set button fonts
             Font buttonFont = new Font("Segoe UI", Font.BOLD, 12);
             ADDButton.setFont(buttonFont);
+            ADDButton.setFocusable(false);
             CLEARButton.setFont(buttonFont);
+            CLEARButton.setFocusable(false);
             UPDATEButton.setFont(buttonFont);
+            UPDATEButton.setFocusable(false);
             REMOVEButton.setFont(buttonFont);
+            REMOVEButton.setFocusable(false);
         }
 
        // METHODS AND ACTION LISTENERSS
@@ -414,12 +392,11 @@ public class Food extends JPanel{
             quantity_field.setText("");
             vendor_field.setText("");
             price_field.setText("");
-            warranty_field.setText("");
             expiredate_field.setText("");
             textArea1.setText("");
             location_combobox.setSelectedIndex(0);
-            perish_combobox.setSelectedIndex(0);
-            cannedgoods_combobox.setSelectedIndex(0);
+            perish_radio.setSelected(false);
+            cannedgoods_radio.setSelected(false);
         }
 
         public void addAddButtonListener(ActionListener listener) {
