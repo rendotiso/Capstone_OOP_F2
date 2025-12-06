@@ -12,7 +12,7 @@ public class Electronic extends Item implements Maintainable {
     private String model;
 
     //maintenance attributes
-    private final boolean maintenanceNeeded;
+    private boolean maintenanceNeeded;
     private LocalDate lastMaintenanceDate;
 
     public Electronic(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, String location, String warrantyPeriod, String brand, String model, boolean maintenanceNeeded) {
