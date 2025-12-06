@@ -1,3 +1,5 @@
+package Model.Data;
+
 import Model.Entities.*;
 import Model.Data.FileHandler;
 import Model.Enums.Category;
@@ -48,6 +50,14 @@ public class InventoryManager {
     }
     public List<Item> getbyLocation(Location location) {
         return items.stream().filter(item -> item.getLocation() == location).collect(Collectors.toList());
+    }
+    public Item getItem(String name){
+        for (Item item : items) {
+            if (item.getName().equals(name)) {
+                return item;
+            }
+        }
+        return null;
     }
 
 
