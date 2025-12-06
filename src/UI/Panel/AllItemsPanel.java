@@ -171,7 +171,7 @@ public class AllItemsPanel extends JPanel {
         table1.getColumnModel().getColumn(3).setPreferredWidth(80);
         table1.getColumnModel().getColumn(4).setPreferredWidth(130);
         table1.getColumnModel().getColumn(5).setPreferredWidth(80);
-        table1.getColumnModel().getColumn(6).setPreferredWidth(468);
+        table1.getColumnModel().getColumn(6).setPreferredWidth(467);
     }
 
     public JTable getTable() {
