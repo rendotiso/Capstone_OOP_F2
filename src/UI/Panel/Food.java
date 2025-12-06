@@ -57,7 +57,7 @@ public class Food extends JPanel{
             location_label = new JLabel("LOCATION:");
             vendor_label = new JLabel("VENDOR:");
             price_label = new JLabel("PRICE:");
-            warranty_label = new JLabel("WARRANTY:");
+            warranty_label = new JLabel("PURCHASED DATE:");
             expireydate_label = new JLabel("EXPIRY DATE:");
             perish_label = new JLabel("PERISH:");
             cannedgoods_label = new JLabel("CANNED GOOD:");
