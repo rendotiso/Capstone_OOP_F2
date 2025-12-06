@@ -5,15 +5,14 @@ import javax.swing.table.DefaultTableModel;
 import java.util.Objects;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 public class Food extends JPanel{
 
     // ATTRIBUTES
     private JPanel panelist,  rootPanel, food_panel, panel, table_panel, description_panel;
-    private JTextField name_field, vendor_field, price_field;
-    private JFormattedTextField warranty_field, expiredate_field;
+    private JTextField name_field, vendor_field, price_field, warranty_field, expiredate_field;
     private JTextArea textArea1;
     private JLabel food_label, name_label, quantity_label,
             location_label, vendor_label, price_label, warranty_label, expireydate_label,
@@ -36,13 +35,15 @@ public class Food extends JPanel{
     private ButtonGroup perishGroup;
     private ButtonGroup cannedGoodsGroup;
 
-    // Date formatter
-    private SimpleDateFormat dateFormat;
+    // Placeholder texts
+    private static final String PURCHASE_DATE_PLACEHOLDER = "MM/DD/YYYY";
+    private static final String EXPIRY_DATE_PLACEHOLDER = "MM/DD/YYYY";
 
     public Food() {
         initComponents();
         setupLayout();
         setupAppearance();
+        setupPlaceholders();
         createTable();
     }
 
@@ -60,34 +61,33 @@ public class Food extends JPanel{
         radiopanel1 = new JPanel();
         radiopanel2 = new JPanel();
 
-        // Initialize date format
-        dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-
         // Initialize form fields
         name_field = new JTextField(8);
         vendor_field = new JTextField(8);
         price_field = new JTextField(8);
-
-        // Initialize date fields with formatted text fields
-        warranty_field = new JFormattedTextField(dateFormat);
-        warranty_field.setValue(new Date());
-        warranty_field.setColumns(8);
-
-        expiredate_field = new JFormattedTextField(dateFormat);
-        Date oneYearLater = new Date(System.currentTimeMillis() + 365L * 24 * 60 * 60 * 1000);
-        expiredate_field.setValue(oneYearLater);
-        expiredate_field.setColumns(8);
-
+        warranty_field = new JTextField(8);
+        expiredate_field = new JTextField(8);
         textArea1 = new JTextArea(3, 15);
         textArea1.setLineWrap(true);
         textArea1.setWrapStyleWord(true);
 
-        // Initialize spinner for quantity
+        // Initialize spinner for quantity with left-aligned text
         spinner1 = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
 
-        // Customize the spinner editor
-        JSpinner.NumberEditor editor = new JSpinner.NumberEditor(spinner1, "#");
+        // Customize the spinner editor for left alignment
+        JSpinner.NumberEditor editor = new JSpinner.NumberEditor(spinner1, "#") {
+            public void setHorizontalAlignment(int alignment) {
+                super.setAlignmentX(SwingConstants.LEFT);
+            }
+        };
         spinner1.setEditor(editor);
+
+        // Force left alignment of the text field inside the spinner
+        JComponent editorComp = spinner1.getEditor();
+        if (editorComp instanceof JSpinner.DefaultEditor) {
+            JTextField textField = ((JSpinner.DefaultEditor) editorComp).getTextField();
+            textField.setHorizontalAlignment(SwingConstants.LEFT);
+        }
 
         // Initialize labels
         food_label = new JLabel("FOOD");
@@ -242,7 +242,7 @@ public class Food extends JPanel{
 
         row++;
 
-        // Row 5: Purchased Date (Formatted Text Field)
+        // Row 5: Purchased Date
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
@@ -256,7 +256,7 @@ public class Food extends JPanel{
 
         row++;
 
-        // Row 6: Expiry Date (Formatted Text Field)
+        // Row 6: Expiry Date
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
@@ -382,6 +382,7 @@ public class Food extends JPanel{
         Color header = new Color(0x4682B4);
         Color black = new Color(-16777216);
         Color bg = new Color(0xF5F5F5);
+        Color placeholderColor = new Color(100, 100, 100, 180); // Semi-transparent gray for placeholders
 
         // Set panels opaque
         panelist.setOpaque(true);
@@ -414,15 +415,16 @@ public class Food extends JPanel{
         textArea1.setBackground(bg);
         location_combobox.setBackground(bg);
 
-        // Set spinner background
+        // Set spinner background and left alignment
         spinner1.setBackground(bg);
 
-        // Customize spinner arrow buttons
+        // Customize spinner arrow buttons and force left alignment
         Component spinnerEditor = spinner1.getEditor();
         if (spinnerEditor instanceof JSpinner.DefaultEditor) {
             JTextField textField = ((JSpinner.DefaultEditor) spinnerEditor).getTextField();
             textField.setBackground(bg);
             textField.setForeground(black);
+            textField.setHorizontalAlignment(SwingConstants.LEFT); // Force left alignment
         }
 
         // Set radio button backgrounds
@@ -441,8 +443,8 @@ public class Food extends JPanel{
         name_field.setForeground(black);
         vendor_field.setForeground(black);
         price_field.setForeground(black);
-        warranty_field.setForeground(black);
-        expiredate_field.setForeground(black);
+        warranty_field.setForeground(placeholderColor); // Start with placeholder color
+        expiredate_field.setForeground(placeholderColor); // Start with placeholder color
         textArea1.setForeground(black);
         location_combobox.setForeground(black);
 
@@ -487,6 +489,7 @@ public class Food extends JPanel{
         Font titleFont = new Font("Segoe UI", Font.BOLD, 18);
         Font radioFont = new Font("Segoe UI", Font.PLAIN, 14);
         Font buttonFont = new Font("Segoe UI", Font.BOLD, 12);
+        Font placeholderFont = new Font("Segoe UI", Font.ITALIC, 13); // Slightly faded font for placeholders
 
         food_label.setFont(titleFont);
         name_label.setFont(labelFont);
@@ -503,12 +506,12 @@ public class Food extends JPanel{
         name_field.setFont(fieldFont);
         vendor_field.setFont(fieldFont);
         price_field.setFont(fieldFont);
-        warranty_field.setFont(fieldFont);
-        expiredate_field.setFont(fieldFont);
+        warranty_field.setFont(placeholderFont); // Use placeholder font initially
+        expiredate_field.setFont(placeholderFont); // Use placeholder font initially
         textArea1.setFont(fieldFont);
         location_combobox.setFont(fieldFont);
 
-        // Set spinner font
+        // Set spinner font (left aligned)
         spinner1.setFont(fieldFont);
 
         // Set radio button fonts
@@ -524,6 +527,53 @@ public class Food extends JPanel{
         REMOVEButton.setFont(buttonFont);
     }
 
+    private void setupPlaceholders() {
+        // Set placeholder text for date fields
+        warranty_field.setText(PURCHASE_DATE_PLACEHOLDER);
+        expiredate_field.setText(EXPIRY_DATE_PLACEHOLDER);
+
+        // Add focus listeners to handle placeholder behavior
+        warranty_field.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (warranty_field.getText().equals(PURCHASE_DATE_PLACEHOLDER)) {
+                    warranty_field.setText("");
+                    warranty_field.setForeground(Color.BLACK);
+                    warranty_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (warranty_field.getText().isEmpty()) {
+                    warranty_field.setText(PURCHASE_DATE_PLACEHOLDER);
+                    warranty_field.setForeground(new Color(100, 100, 100, 180));
+                    warranty_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+                }
+            }
+        });
+
+        expiredate_field.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (expiredate_field.getText().equals(EXPIRY_DATE_PLACEHOLDER)) {
+                    expiredate_field.setText("");
+                    expiredate_field.setForeground(Color.BLACK);
+                    expiredate_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (expiredate_field.getText().isEmpty()) {
+                    expiredate_field.setText(EXPIRY_DATE_PLACEHOLDER);
+                    expiredate_field.setForeground(new Color(100, 100, 100, 180));
+                    expiredate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+                }
+            }
+        });
+    }
+
     // METHODS AND ACTION LISTENERS
 
     public void clearForm() {
@@ -532,10 +582,14 @@ public class Food extends JPanel{
         vendor_field.setText("");
         price_field.setText("");
 
-        // Reset date fields
-        warranty_field.setValue(new Date()); // Today's date
-        Date oneYearLater = new Date(System.currentTimeMillis() + 365L * 24 * 60 * 60 * 1000);
-        expiredate_field.setValue(oneYearLater);
+        // Reset date fields to placeholders
+        warranty_field.setText(PURCHASE_DATE_PLACEHOLDER);
+        warranty_field.setForeground(new Color(100, 100, 100, 180));
+        warranty_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+
+        expiredate_field.setText(EXPIRY_DATE_PLACEHOLDER);
+        expiredate_field.setForeground(new Color(100, 100, 100, 180));
+        expiredate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
 
         textArea1.setText("");
         location_combobox.setSelectedIndex(0);
@@ -625,23 +679,21 @@ public class Food extends JPanel{
     }
 
     public String getWarrantyInput() {
-        Object value = warranty_field.getValue();
-        if (value instanceof Date) {
-            return dateFormat.format((Date) value);
-        } else if (value != null) {
-            return value.toString();
+        String text = warranty_field.getText();
+        // Return empty string if it's the placeholder
+        if (text.equals(PURCHASE_DATE_PLACEHOLDER)) {
+            return "";
         }
-        return "";
+        return text;
     }
 
     public String getExpiryDateInput() {
-        Object value = expiredate_field.getValue();
-        if (value instanceof Date) {
-            return dateFormat.format((Date) value);
-        } else if (value != null) {
-            return value.toString();
+        String text = expiredate_field.getText();
+        // Return empty string if it's the placeholder
+        if (text.equals(EXPIRY_DATE_PLACEHOLDER)) {
+            return "";
         }
-        return "";
+        return text;
     }
 
     public String getDescriptionInput() {
@@ -670,23 +722,26 @@ public class Food extends JPanel{
     }
 
     public void setWarrantyInput(String warranty) {
-        try {
-            Date date = dateFormat.parse(warranty);
-            warranty_field.setValue(date);
-        } catch (Exception e) {
-            // If parsing fails, set to today's date
-            warranty_field.setValue(new Date());
+        if (warranty == null || warranty.trim().isEmpty()) {
+            warranty_field.setText(PURCHASE_DATE_PLACEHOLDER);
+            warranty_field.setForeground(new Color(100, 100, 100, 180));
+            warranty_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+        } else {
+            warranty_field.setText(warranty);
+            warranty_field.setForeground(Color.BLACK);
+            warranty_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         }
     }
 
     public void setExpiryDateInput(String expiryDate) {
-        try {
-            Date date = dateFormat.parse(expiryDate);
-            expiredate_field.setValue(date);
-        } catch (Exception e) {
-            // If parsing fails, set to 1 year from now
-            Date oneYearLater = new Date(System.currentTimeMillis() + 365L * 24 * 60 * 60 * 1000);
-            expiredate_field.setValue(oneYearLater);
+        if (expiryDate == null || expiryDate.trim().isEmpty()) {
+            expiredate_field.setText(EXPIRY_DATE_PLACEHOLDER);
+            expiredate_field.setForeground(new Color(100, 100, 100, 180));
+            expiredate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+        } else {
+            expiredate_field.setText(expiryDate);
+            expiredate_field.setForeground(Color.BLACK);
+            expiredate_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         }
     }
 
@@ -696,24 +751,6 @@ public class Food extends JPanel{
 
     public void setLocationInput(String location) {
         location_combobox.setSelectedItem(location);
-    }
-
-    // Get date objects directly (useful for calculations)
-    public Date getWarrantyDate() {
-        Object value = warranty_field.getValue();
-        if (value instanceof Date) {
-            return (Date) value;
-        }
-        return new Date(); // Return today if not a Date
-    }
-
-    public Date getExpiryDate() {
-        Object value = expiredate_field.getValue();
-        if (value instanceof Date) {
-            return (Date) value;
-        }
-        // Return 1 year from now if not a Date
-        return new Date(System.currentTimeMillis() + 365L * 24 * 60 * 60 * 1000);
     }
 
     private void createTable(){
