@@ -197,7 +197,7 @@ public class Clothing extends JPanel {
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
-        panel.add(condition_field, formGbc);
+        panel.add(condition_label, formGbc);
 
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;
@@ -225,7 +225,7 @@ public class Clothing extends JPanel {
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
-        panel.add(size_field, formGbc);
+        panel.add(size_label, formGbc);
 
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;

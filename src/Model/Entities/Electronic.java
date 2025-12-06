@@ -1,7 +1,6 @@
 package Model.Entities;
 
 import Model.Enums.Category;
-import Model.Enums.Location;
 import Model.Interface.Maintainable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -13,7 +12,7 @@ public class Electronic extends Item implements Maintainable {
     private String model;
 
     //maintenance attributes
-    private boolean maintenanceNeeded;
+    private final boolean maintenanceNeeded;
     private LocalDate lastMaintenanceDate;
 
     public Electronic(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, String location, String warrantyPeriod, String brand, String model, boolean maintenanceNeeded) {
@@ -83,6 +82,7 @@ public class Electronic extends Item implements Maintainable {
     }
     @Override
     public String descriptionDetails() {  return super.descriptionDetails() + String.format(" | Brand: %s, Model: %s", brand, model); }
+
     @Override
     public double calculateValue() {
         return getPurchasePrice() * getQuantity();
