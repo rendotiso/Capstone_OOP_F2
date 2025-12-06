@@ -19,6 +19,7 @@ public class Food extends JPanel{
         private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton;
         private JComboBox<String> location_combobox, perish_combobox, cannedgoods_combobox;
         private JTable table1;
+        private JPanel panelButton;
         private JScrollPane scrollPane;
 
         public Food() {
@@ -38,6 +39,7 @@ public class Food extends JPanel{
             panel = new JPanel();
             table_panel = new JPanel();
             description_panel = new JPanel();
+            panelButton = new JPanel();
 
             // Initialize form fields
             name_field = new JTextField(20);
@@ -263,12 +265,12 @@ public class Food extends JPanel{
             descGbc.weighty = 0;
             descGbc.anchor = GridBagConstraints.CENTER;
 
-            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-            buttonPanel.add(ADDButton);
-            buttonPanel.add(CLEARButton);
-            buttonPanel.add(UPDATEButton);
-            buttonPanel.add(REMOVEButton);
-            description_panel.add(buttonPanel, descGbc);
+            panelButton = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+            panelButton.add(ADDButton);
+            panelButton.add(CLEARButton);
+            panelButton.add(UPDATEButton);
+            panelButton.add(REMOVEButton);
+            description_panel.add(panelButton, descGbc);
 
             // Add description panel to main form panel
             formGbc.gridx = 0; formGbc.gridy = row;
@@ -321,6 +323,8 @@ public class Food extends JPanel{
             rootPanel.setBackground(lightBlueGray);
             food_panel.setBackground(darkBlue);
             panel.setBackground(darkBlue);
+            panelButton.setOpaque(true);
+            panelButton.setBackground(darkBlue);
             table_panel.setBackground(lightBlueGray);
             description_panel.setBackground(darkBlue);
 
