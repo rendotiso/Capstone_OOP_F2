@@ -33,6 +33,8 @@ public class Dashboard extends JFrame {
         cardlayout.setLayout(cardLayoutManager);
     }
 
+    //SETTERS FOR NAME MUST IMPLEMENT
+
     private void addPanels() {
         AllItemsPanel viewAllPanel = new AllItemsPanel();
         Clothing clothingPanel = new Clothing();
