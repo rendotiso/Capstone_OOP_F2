@@ -16,7 +16,7 @@ public class Electronic extends Item implements Maintainable {
     private boolean maintenanceNeeded;
     private LocalDate lastMaintenanceDate;
 
-    public Electronic(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String warrantyPeriod, String brand, String model, boolean maintenanceNeeded) {
+    public Electronic(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, String location, String warrantyPeriod, String brand, String model, boolean maintenanceNeeded) {
         super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("Electronics"), location);
         setWarrantyPeriod(warrantyPeriod);
         setBrand(brand);
@@ -68,15 +68,13 @@ public class Electronic extends Item implements Maintainable {
         if (lastMaintenanceDate == null) {
             return 0;
         }
-
-        // Electronics need maintenance every 1 year (365 days)
         LocalDate nextMaintenanceDate = lastMaintenanceDate.plusDays(365);
         LocalDate today = LocalDate.now();
 
         if (today.isBefore(nextMaintenanceDate)) {
             return (int) ChronoUnit.DAYS.between(today, nextMaintenanceDate);
         } else {
-            return 0; // Maintenance na overdue
+            return 0;
         }
     }
     @Override
