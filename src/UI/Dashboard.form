@@ -12,10 +12,10 @@
     <children>
       <grid id="a9d67" binding="cardlayout" layout-manager="CardLayout" hgap="0" vgap="0">
         <constraints>
-          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="1" fill="1" indent="0" use-parent-layout="false">
-            <minimum-size width="1100" height="719"/>
-            <preferred-size width="1100" height="719"/>
-            <maximum-size width="1100" height="719"/>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <minimum-size width="1100" height="750"/>
+            <preferred-size width="1100" height="750"/>
+            <maximum-size width="1100" height="750"/>
           </grid>
         </constraints>
         <properties>
@@ -95,7 +95,7 @@
                   <text value="Electronics"/>
                 </properties>
               </component>
-              <component id="5cd74" class="javax.swing.JButton" binding="foodButton">
+              <component id="5cd74" class="javax.swing.JButton" binding="clothingButton">
                 <constraints>
                   <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                     <minimum-size width="150" height="-1"/>
@@ -109,7 +109,7 @@
                   <text value="Clothing"/>
                 </properties>
               </component>
-              <component id="44fb" class="javax.swing.JButton" binding="clothingButton">
+              <component id="44fb" class="javax.swing.JButton" binding="foodButton">
                 <constraints>
                   <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                     <minimum-size width="150" height="-1"/>
