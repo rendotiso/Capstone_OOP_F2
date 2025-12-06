@@ -1,7 +1,6 @@
 package Model.Entities;
 
 import Model.Enums.Category;
-import Model.Enums.Location;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.time.format.DateTimeFormatter;
@@ -15,7 +14,7 @@ public class Food extends Item{
     private boolean isCanned;
     private boolean isPerishable;
 
-    public Food(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String expiryDate, boolean isCanned, boolean isPerishable){
+    public Food(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, String location, String expiryDate, boolean isCanned, boolean isPerishable){
         super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("FOOD"), location);
         this.expiryDate = expiryDate;
         this.isCanned = isCanned;

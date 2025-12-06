@@ -2,7 +2,6 @@ package Model.Entities;
 
 import Model.Interface.Maintainable;
 import Model.Enums.Category;
-import Model.Enums.Location;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -18,7 +17,7 @@ public class Tool extends Item implements Maintainable {
     private LocalDate lastMaintenanceDate;
     private int maintenanceIntervalDays;
 
-    public Tool(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String toolType, String size, String material, boolean maintenanceNeeded) {
+    public Tool(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, String location, String toolType, String size, String material, boolean maintenanceNeeded) {
         super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("TOOLS"), location);
         this.toolType = toolType;
         this.material = material;
