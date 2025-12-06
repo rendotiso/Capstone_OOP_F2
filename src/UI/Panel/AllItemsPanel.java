@@ -40,8 +40,14 @@ public class AllItemsPanel extends JPanel {
     }
 
     private JPanel createSearchPanel() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // Main panel with BorderLayout to position left and right components
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBackground(new Color(70, 130, 180));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // Left panel for search controls
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        leftPanel.setOpaque(false); // Transparent to show parent background
 
         JLabel searchLabel = new JLabel("Search:");
         searchLabel.setForeground(Color.WHITE);
@@ -58,12 +64,47 @@ public class AllItemsPanel extends JPanel {
         searchButton.setFocusPainted(false);
         clearButton.setFocusPainted(false);
 
-        panel.add(searchLabel);
-        panel.add(searchField);
-        panel.add(searchButton);
-        panel.add(clearButton);
+        leftPanel.add(searchLabel);
+        leftPanel.add(searchField);
+        leftPanel.add(searchButton);
+        leftPanel.add(clearButton);
 
-        return panel;
+        // Right panel for Refresh and Delete buttons
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
+        rightPanel.setOpaque(false); // Transparent to show parent background
+
+        refreshButton = new JButton("Refresh");
+        deleteButton = new JButton("Delete");
+
+        // Set button fonts
+        refreshButton.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        deleteButton.setFont(new Font("Segoe UI", Font.BOLD, 12));
+
+        // Remove focus painting
+        refreshButton.setFocusPainted(false);
+        deleteButton.setFocusPainted(false);
+
+        // Set custom colors
+        Color refreshColor = new Color(0x74c69d); // #74c69d
+        Color deleteColor = new Color(0xc10a0a);  // #c10a0a
+
+        refreshButton.setBackground(refreshColor);
+        deleteButton.setBackground(deleteColor);
+        refreshButton.setForeground(Color.WHITE);
+        deleteButton.setForeground(Color.WHITE);
+
+        // Make buttons opaque
+        refreshButton.setOpaque(true);
+        deleteButton.setOpaque(true);
+
+        rightPanel.add(refreshButton);
+        rightPanel.add(deleteButton);
+
+        // Add both panels to main panel
+        mainPanel.add(leftPanel, BorderLayout.WEST);
+        mainPanel.add(rightPanel, BorderLayout.EAST);
+
+        return mainPanel;
     }
 
     private void setupListeners() {
@@ -71,17 +112,33 @@ public class AllItemsPanel extends JPanel {
         searchButton.addActionListener(e -> searchFunction());
         clearButton.setFocusable(false);
         searchButton.setFocusable(false);
+        refreshButton.setFocusable(false);
+        deleteButton.setFocusable(false);
+
+        // Add placeholder listeners for new buttons
+        refreshButton.addActionListener(e -> refreshFunction());
+        deleteButton.addActionListener(e -> deleteFunction());
     }
 
     private void searchFunction() {
         System.out.println("Searching for: " + searchField.getText());
     }
 
+    private void refreshFunction() {
+        System.out.println("Refresh button clicked");
+        // You can add refresh logic here
+    }
+
+    private void deleteFunction() {
+        System.out.println("Delete button clicked");
+        // You can add delete logic here
+    }
+
     private void createTable() {
         Object[][] data = {
                 {"The Dark Knight", 2008, 9.0, 123445, "Action"},
                 {"Inception", 2010, 8.8, 234567, "Sci-Fi"},
-                {"Interstellar", 2014, 8.6, 345678, "Adventure"},
+                {"Interstellar", "BEDROOOOOOM", 8.6, 345678, "Adventure"},
                 {"The Matrix", 1999, 8.7, 456789, "Action"},
                 {"Pulp Fiction", 1994, 8.9, 567890, "Crime"},
                 {"Fight Club", 1999, 8.8, 678901, "Drama"},
@@ -93,7 +150,7 @@ public class AllItemsPanel extends JPanel {
 
         table1.setModel(new DefaultTableModel(
                 data,
-                new String[]{"Name", "Year", "Rating", "Number", "Category", "Boggsh", "At Vhaket hende"}
+                new String[]{"No.", "Category", "Name", "Quantity", "Location", "Price", "Details"}
         ));
 
         table1.setRowHeight(25);
@@ -105,6 +162,16 @@ public class AllItemsPanel extends JPanel {
         table1.setSelectionForeground(Color.WHITE);
         table1.setGridColor(Color.LIGHT_GRAY);
         table1.setShowGrid(true);
+
+        table1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+        table1.getColumnModel().getColumn(0).setPreferredWidth(50);
+        table1.getColumnModel().getColumn(1).setPreferredWidth(120);
+        table1.getColumnModel().getColumn(2).setPreferredWidth(150);
+        table1.getColumnModel().getColumn(3).setPreferredWidth(80);
+        table1.getColumnModel().getColumn(4).setPreferredWidth(130);
+        table1.getColumnModel().getColumn(5).setPreferredWidth(80);
+        table1.getColumnModel().getColumn(6).setPreferredWidth(468);
     }
 
     public JTable getTable() {
@@ -121,5 +188,23 @@ public class AllItemsPanel extends JPanel {
 
     public JButton getClearButton() {
         return clearButton;
+    }
+
+    // New getter methods for the new buttons
+    public JButton getRefreshButton() {
+        return refreshButton;
+    }
+
+    public JButton getDeleteButton() {
+        return deleteButton;
+    }
+
+    // New action listener methods
+    public void addRefreshButtonListener(java.awt.event.ActionListener listener) {
+        refreshButton.addActionListener(listener);
+    }
+
+    public void addDeleteButtonListener(java.awt.event.ActionListener listener) {
+        deleteButton.addActionListener(listener);
     }
 }

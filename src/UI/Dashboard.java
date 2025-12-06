@@ -3,13 +3,11 @@ package UI;
 import UI.Panel.*;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Dashboard extends JFrame {
     // attributes
     private JButton homeButton, toolsButton, electronicsButton,
-            miscellaneousButton, clothingButton, foodButton,
+            miscellaneousButton, foodButton, clothingButton,
             helpButton, exitButton;
     private JPanel Panel, cardlayout;
     private CardLayout cardLayoutManager;
@@ -18,8 +16,8 @@ public class Dashboard extends JFrame {
         setContentPane(Panel);
         setTitle("Home Inventory Management System");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(1300, 800);
-        setResizable(false);
+        setSize(1315, 800);
+        //setResizable(false);
         setLocationRelativeTo(null);
 
         setupCardLayout();
@@ -54,12 +52,12 @@ public class Dashboard extends JFrame {
     private void setupListeners() {
         homeButton.addActionListener(e -> cardLayoutManager.show(cardlayout, "VIEW_ALL"));
         homeButton.setFocusable(false);
-        clothingButton.addActionListener(e -> cardLayoutManager.show(cardlayout, "CLOTHING"));
-        clothingButton.setFocusable(false);
-        electronicsButton.addActionListener(e -> cardLayoutManager.show(cardlayout, "ELECTRONICS"));
-        electronicsButton.setFocusable(false);
         foodButton.addActionListener(e -> cardLayoutManager.show(cardlayout, "FOOD"));
         foodButton.setFocusable(false);
+        electronicsButton.addActionListener(e -> cardLayoutManager.show(cardlayout, "ELECTRONICS"));
+        electronicsButton.setFocusable(false);
+        clothingButton.addActionListener(e -> cardLayoutManager.show(cardlayout, "CLOTHING"));
+        clothingButton.setFocusable(false);
         toolsButton.addActionListener(e -> cardLayoutManager.show(cardlayout, "TOOLS"));
         toolsButton.setFocusable(false);
         miscellaneousButton.addActionListener(e -> cardLayoutManager.show(cardlayout, "MISCELLANEOUS"));
@@ -93,5 +91,9 @@ public class Dashboard extends JFrame {
                         "</body></html>",
                 "Help Guide",
                 JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
     }
 }
