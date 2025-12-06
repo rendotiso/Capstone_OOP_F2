@@ -1,7 +1,6 @@
     package Model.Entities;
 
     import Model.Enums.Category;
-    import Model.Enums.Location;
 
     public class Miscellaneous extends Item {
 
@@ -9,7 +8,7 @@
         private String usage;
         private boolean isCondition;
 
-        public Miscellaneous(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String itemType, String usage, boolean isCondition) {
+        public Miscellaneous(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, String location, String itemType, String usage, boolean isCondition) {
             super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("MISCELLANEOUS"), location);
             this.itemType = itemType;
             this.usage = usage;

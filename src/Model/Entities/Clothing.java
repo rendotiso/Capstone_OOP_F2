@@ -1,7 +1,6 @@
 package Model.Entities;
 
 import Model.Enums.Category;
-import Model.Enums.Location;
 
 public class Clothing extends Item {
   
@@ -9,7 +8,7 @@ public class Clothing extends Item {
     private String fabricType;
     private String size;
 
-    public Clothing(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Location location, String condition, String fabricType, String size){
+    public Clothing(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, String location, String condition, String fabricType, String size){
         super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("Clothing"), location);
           setCondition(condition);
           setFabricType(fabricType);

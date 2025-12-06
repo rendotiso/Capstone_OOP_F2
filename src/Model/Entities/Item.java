@@ -1,7 +1,6 @@
 package Model.Entities;
 
 import Model.Enums.Category;
-import Model.Enums.Location;
 
 public abstract class Item {
     private String name;
@@ -11,9 +10,9 @@ public abstract class Item {
     private String purchaseDate;
     private String vendor;
     private Category category;
-    private Location location;
+    private String location;
 
-    public Item(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Category category, Location location) {
+    public Item(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Category category, String location) {
         this.name = name;
         this.description = description;
         this.quantity = quantity;
@@ -39,7 +38,7 @@ public abstract class Item {
         return vendor;
     }
     public Category getCategory() { return category; }
-    public Location getLocation() { return location; }
+    public String getLocation() { return location; }
 
     //SETTERS
     public void setName(String name) {
@@ -61,7 +60,7 @@ public abstract class Item {
         this.vendor = vendor;
     }
     public void setCategory(Category category) { this.category = category; }
-    public void setLocation(Location location) { this.location = location; }
+    public void setLocation(String location) { this.location = location; }
 
     //ABSTRACT METHODS
     public String descriptionDetails() {
