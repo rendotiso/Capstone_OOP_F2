@@ -5,19 +5,25 @@ import javax.swing.table.DefaultTableModel;
 import java.util.Objects;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 public class Clothing extends JPanel {
 
     // ATTRIBUTES
-    private JPanel panelist, rootPanel, panel, Clothes_panel, table_panel, description_panel;
-    private JTextField name_field, quantity_field, price_field,
-            vendor_field, condition_field, fabrictype_field, size_field, location_field;
-    private JLabel Clothes_label, name_label, quantity_label, price_label,
-            location_label, vendor_label, condition_label, fabrictype_label, size_label;
-    private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton;
-    private JTable table1;
-    private JLabel description_label;
+    private JPanel panelist, rootPanel, Clothes_panel, panel, table_panel, description_panel;
+    private JTextField name_field, size_field, vendor_field, price_field, condition_field, fabrictype_field;
     private JTextArea textArea1;
+    private JLabel Clothes_label, name_label, quantity_label, location_label, vendor_label, price_label,
+            condition_label, fabrictype_label, size_label, description_label;
+    private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton;
+    private JComboBox<String> location_combobox;
+    private JTable table1;
+    private JPanel panelButton;
+    private JScrollPane textAreaScroll;
+    private JSpinner spinner1;
+    private JPanel Electronics_panel;
+    private JLabel Electronics_label;
     private JScrollPane scrollPane;
 
     public Clothing() {
@@ -27,85 +33,82 @@ public class Clothing extends JPanel {
         createTable();
     }
 
-    // SETTERS FOR NAME MUST IMPLEMENT
-
-    public void setNameField(String name) {
-        name_field.setText(name);
-    }
-
-    public void setQuantityField(String qty) {
-        quantity_field.setText(qty);
-    }
-
-    public void setLocationField(String location) {
-        location_field.setText(location);
-    }
-
-    public void setPriceField(String price) {
-        price_field.setText(price);
-    }
-
-    public void setVendorField(String vendor) {
-        vendor_field.setText(vendor);
-    }
-
-    public void setConditionField(String condition) {
-        condition_field.setText(condition);
-    }
-
-    public void setFabricTypeField(String fabric) {
-        fabrictype_field.setText(fabric);
-    }
-
-    public void setSizeField(String size) {
-        size_field.setText(size);
-    }
-
     private void initComponents() {
         // Initialize panels
         panelist = new JPanel();
         rootPanel = new JPanel();
-        panel = new JPanel();
         Clothes_panel = new JPanel();
+        panel = new JPanel();
         table_panel = new JPanel();
         description_panel = new JPanel();
+        panelButton = new JPanel();
 
-        // Initializes form fields
-        name_field = new JTextField();
-        quantity_field = new JTextField();
-        price_field = new JTextField();
-        vendor_field = new JTextField();
-        condition_field = new JTextField();
-        fabrictype_field = new JTextField();
-        size_field = new JTextField();
-        location_field = new JTextField();
+        // Initialize form fields
+        name_field = new JTextField(8);
+        vendor_field = new JTextField(8);
+        price_field = new JTextField(8);
+        condition_field = new JTextField(8);
+        fabrictype_field = new JTextField(8);
+        size_field = new JTextField(8);
+
+        textArea1 = new JTextArea(3, 15);
+        textArea1.setLineWrap(true);
+        textArea1.setWrapStyleWord(true);
+
+        // Initialize spinner for quantity with left-aligned text
+        spinner1 = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
+
+        // Customize the spinner editor for left alignment
+        JSpinner.NumberEditor editor = new JSpinner.NumberEditor(spinner1, "#");
+        spinner1.setEditor(editor);
+
+        // Force left alignment of the text field inside the spinner
+        JComponent editorComp = spinner1.getEditor();
+        if (editorComp instanceof JSpinner.DefaultEditor) {
+            JTextField textField = ((JSpinner.DefaultEditor) editorComp).getTextField();
+            textField.setHorizontalAlignment(SwingConstants.LEFT);
+        }
 
         // Initialize labels
-        Clothes_label = new JLabel("CLOTHES");
+        Clothes_label = new JLabel("CLOTHING");
         name_label = new JLabel("NAME:");
         quantity_label = new JLabel("QUANTITY:");
         location_label = new JLabel("LOCATION:");
         vendor_label = new JLabel("VENDOR:");
+        price_label = new JLabel("PRICE:");
         condition_label = new JLabel("CONDITION:");
         fabrictype_label = new JLabel("FABRIC TYPE:");
         size_label = new JLabel("SIZE:");
+        description_label = new JLabel("DESCRIPTION/NOTE:");
+
+        // Initialize buttons
+        ADDButton = new JButton("ADD");
+        CLEARButton = new JButton("CLEAR");
+        UPDATEButton = new JButton("UPDATE");
+        REMOVEButton = new JButton("REMOVE");
+
+        // Initialize combo boxes
+        location_combobox = new JComboBox<>(new String[]{
+                "GARAGE", "WORKSHOP", "BASEMENT", "SHED",
+                "KITCHEN", "LIVING ROOM", "BEDROOM", "STORAGE", "TOOLBOX"
+        });
 
         table1 = new JTable();
         scrollPane = new JScrollPane(table1);
+        textAreaScroll = new JScrollPane(textArea1);
     }
 
     private void setupLayout() {
-        // Main panel setup
+        // Main panel setup - similar to Food class
         setLayout(new BorderLayout());
         panelist.setLayout(new BorderLayout());
-        panelist.setPreferredSize(new Dimension(1000, 860));
 
-        // Root panel setup (2 rows, 2 columns, layout)
+        // Root panel setup (2 rows, 2 columns layout) - similar to Food class
         rootPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
 
-        // Clothes title panel (top-left, spans 2 columns)
+        // TOOLS title panel (top-left, spans 2 columns) - similar to Food class
         Clothes_panel.setLayout(new FlowLayout(FlowLayout.LEFT));
         Clothes_panel.add(Clothes_label);
 
@@ -116,7 +119,7 @@ public class Clothing extends JPanel {
         gbc.weightx = 1.0;
         rootPanel.add(Clothes_panel, gbc);
 
-        // Form panel (left side - 10 rows, 2 columns)
+        // Form panel (left side) - similar height to Food class
         panel.setLayout(new GridBagLayout());
         GridBagConstraints formGbc = new GridBagConstraints();
         formGbc.insets = new Insets(5, 5, 5, 5);
@@ -124,20 +127,21 @@ public class Clothing extends JPanel {
 
         int row = 0;
 
-        // Row 0: Name
+        // Row 0: Name - similar field sizes
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
+        formGbc.weightx = 0;
         panel.add(name_label, formGbc);
 
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;
         formGbc.weightx = 1.0;
-        name_field.setPreferredSize(new Dimension(150, 25));
+        name_field.setPreferredSize(new Dimension(80, 25));
         panel.add(name_field, formGbc);
 
         row++;
 
-        // Row 1: Quantity
+        // Row 1: Quantity (Spinner) - same as Food class
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
@@ -146,12 +150,12 @@ public class Clothing extends JPanel {
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;
         formGbc.weightx = 1.0;
-        quantity_field.setPreferredSize(new Dimension(150, 25));
-        panel.add(quantity_field, formGbc);
+        spinner1.setPreferredSize(new Dimension(80, 25));
+        panel.add(spinner1, formGbc);
 
         row++;
 
-        // Row 2: Location
+        // Row 2: Location - same as Food class
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
@@ -160,12 +164,12 @@ public class Clothing extends JPanel {
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;
         formGbc.weightx = 1.0;
-        location_field.setPreferredSize(new Dimension(150, 25));
-        panel.add(location_field, formGbc);
+        location_combobox.setPreferredSize(new Dimension(80, 25));
+        panel.add(location_combobox, formGbc);
 
         row++;
 
-        // Row 3: Vendor
+        // Row 3: Vendor - same as Food class
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
@@ -174,12 +178,12 @@ public class Clothing extends JPanel {
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;
         formGbc.weightx = 1.0;
-        vendor_field.setPreferredSize(new Dimension(150, 25));
+        vendor_field.setPreferredSize(new Dimension(80, 25));
         panel.add(vendor_field, formGbc);
 
         row++;
 
-        // Row 4: Price
+        // Row 4: Price - same as Food class
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
@@ -188,12 +192,12 @@ public class Clothing extends JPanel {
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;
         formGbc.weightx = 1.0;
-        price_field.setPreferredSize(new Dimension(150, 25));
+        price_field.setPreferredSize(new Dimension(80, 25));
         panel.add(price_field, formGbc);
 
         row++;
 
-        // Row 5: Condition
+        // Row 5: Warranty - same as Food class
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
@@ -202,7 +206,7 @@ public class Clothing extends JPanel {
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;
         formGbc.weightx = 1.0;
-        condition_field.setPreferredSize(new Dimension(150, 25));
+        condition_field.setPreferredSize(new Dimension(80, 25));
         panel.add(condition_field, formGbc);
 
         row++;
@@ -216,12 +220,12 @@ public class Clothing extends JPanel {
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;
         formGbc.weightx = 1.0;
-        fabrictype_label.setPreferredSize(new Dimension(150, 25));
+        fabrictype_field.setPreferredSize(new Dimension(80, 25));
         panel.add(fabrictype_field, formGbc);
 
         row++;
 
-        // Row 7: Size
+        // Row 8: Size - MOVED HERE (below material)
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
@@ -230,12 +234,12 @@ public class Clothing extends JPanel {
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;
         formGbc.weightx = 1.0;
-        size_field.setPreferredSize(new Dimension(150, 25));
+        size_field.setPreferredSize(new Dimension(80, 25));
         panel.add(size_field, formGbc);
 
         row++;
 
-        // Row 8: Description/Note
+        // Row 9: Description/Note - similar layout to Food class
         description_panel.setLayout(new GridBagLayout());
         GridBagConstraints descGbc = new GridBagConstraints();
         descGbc.insets = new Insets(5, 5, 5, 5);
@@ -246,38 +250,36 @@ public class Clothing extends JPanel {
         descGbc.fill = GridBagConstraints.HORIZONTAL;
         description_panel.add(description_label, descGbc);
 
-
-        // Text area
+        // Text area - similar size to Food class
         descGbc.gridx = 0; descGbc.gridy = 1;
         descGbc.gridwidth = 1;
         descGbc.fill = GridBagConstraints.BOTH;
         descGbc.weighty = 1.0;
-        JScrollPane textAreaScroll = new JScrollPane(textArea1);
-        textAreaScroll.setPreferredSize(new Dimension(510, 80));
+        textAreaScroll.setPreferredSize(new Dimension(200, 80));
         description_panel.add(textAreaScroll, descGbc);
 
-        // Buttons panel
+        // Buttons panel - same as Food class
         descGbc.gridx = 0; descGbc.gridy = 2;
         descGbc.gridwidth = 1;
         descGbc.fill = GridBagConstraints.NONE;
         descGbc.weighty = 0;
         descGbc.anchor = GridBagConstraints.CENTER;
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        buttonPanel.add(ADDButton);
-        buttonPanel.add(CLEARButton);
-        buttonPanel.add(UPDATEButton);
-        buttonPanel.add(REMOVEButton);
-        description_panel.add(buttonPanel, descGbc);
+        panelButton.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        panelButton.add(ADDButton);
+        panelButton.add(CLEARButton);
+        panelButton.add(UPDATEButton);
+        panelButton.add(REMOVEButton);
+        description_panel.add(panelButton, descGbc);
 
-        // Add description panel to main form panel
+        // Add description panel to main form panel - same as Food class
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.gridwidth = 2;
         formGbc.fill = GridBagConstraints.BOTH;
         formGbc.weighty = 1.0;
         panel.add(description_panel, formGbc);
 
-        // Add form panel to root panel (left side)
+        // Add form panel to root panel (left side) - same proportions as Food class
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
@@ -286,86 +288,115 @@ public class Clothing extends JPanel {
         gbc.fill = GridBagConstraints.BOTH;
         rootPanel.add(panel, gbc);
 
-        // Table panel (right side)
+        // Table panel (right side) - same as Food class
         table_panel.setLayout(new BorderLayout());
         table_panel.add(scrollPane, BorderLayout.CENTER);
 
-        // Add table panel to root panel (right side)
+        // Add table panel to root panel (right side) - same proportions as Food class
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.weightx = 0.6;
+        gbc.fill = GridBagConstraints.BOTH;
         rootPanel.add(table_panel, gbc);
 
-        // Add root panel to panel1
+        // Add root panel to panelist - same as Food class
         panelist.add(rootPanel, BorderLayout.CENTER);
 
-        // Add panel1 to main panel
+        // Add panelist to main panel - same as Food class
         add(panelist, BorderLayout.CENTER);
     }
 
-    private void setupAppearance(){
-        Color lightBlueGray = new Color(-7618067);
-        Color darkBlue = new Color(-4660737);
-        Color lightBlue = new Color(-2102785);
+    private void setupAppearance() {
+        // Set background colors - same as Food class
+        Color header = new Color(0x4682B4);
         Color black = new Color(-16777216);
-        Color white = new Color(-16448251);
+        Color bg = new Color(0xF5F5F5);
+        Color placeholderColor = new Color(100, 100, 100, 180);
 
-        panelist.setBackground(lightBlueGray);
-        rootPanel.setBackground(lightBlueGray);
-        Clothes_panel.setBackground(darkBlue);
-        panel.setBackground(darkBlue);
-        table_panel.setBackground(lightBlueGray);
-        description_panel.setBackground(darkBlue);
+        // Set panels opaque - same as Food class
+        panelist.setOpaque(true);
+        rootPanel.setOpaque(true);
+        Clothes_panel.setOpaque(true);
+        panel.setOpaque(true);
+        table_panel.setOpaque(true);
+        description_panel.setOpaque(true);
+        panelButton.setOpaque(true);
 
-        // Set text field backgrounds
-        name_field.setBackground(lightBlue);
-        quantity_field.setBackground(lightBlue);
-        vendor_field.setBackground(lightBlue);
-        price_field.setBackground(lightBlue);
-        location_field.setBackground(lightBlue);
-        size_field.setBackground(lightBlueGray);
-        condition_field.setBackground(lightBlueGray);
-        fabrictype_field.setBackground(lightBlueGray);
-        textArea1.setBackground(lightBlue);
+        // Set panel backgrounds - same as Food class
+        panelist.setBackground(bg);
+        rootPanel.setBackground(bg);
+        Clothes_panel.setBackground(header);
+        panel.setBackground(bg);
+        panelButton.setBackground(bg);
+        table_panel.setBackground(bg);
+        description_panel.setBackground(bg);
 
-        // Set foreground colors
+        // Set text field backgrounds - same as Food class
+        name_field.setBackground(bg);
+        vendor_field.setBackground(bg);
+        price_field.setBackground(bg);
+        condition_field.setBackground(bg);
+        fabrictype_field.setBackground(bg);
+        size_field.setBackground(bg);
+        textArea1.setBackground(bg);
+        location_combobox.setBackground(bg);
+
+        // Set spinner background - same as Food class
+        spinner1.setBackground(bg);
+
+        // Customize spinner text field - same as Food class
+        JComponent editorComp = spinner1.getEditor();
+        if (editorComp instanceof JSpinner.DefaultEditor) {
+            JTextField textField = ((JSpinner.DefaultEditor) editorComp).getTextField();
+            textField.setBackground(bg);
+            textField.setForeground(black);
+            textField.setHorizontalAlignment(SwingConstants.LEFT);
+        }
+
+        // Set foreground colors - same as Food class
         name_field.setForeground(black);
-        quantity_field.setForeground(black);
         vendor_field.setForeground(black);
         price_field.setForeground(black);
-        textArea1.setForeground(black);
-        location_field.setForeground(black);
-        condition_field.setForeground(black);
+        condition_field.setForeground(placeholderColor);
         fabrictype_field.setForeground(black);
         size_field.setForeground(black);
+        textArea1.setForeground(black);
+        location_combobox.setForeground(black);
 
-        // Set label colors
-        Clothes_label.setForeground(black);
+        // Set label colors - same as Food class
+        Clothes_label.setForeground(Color.WHITE);
         name_label.setForeground(black);
         quantity_label.setForeground(black);
         location_label.setForeground(black);
         vendor_label.setForeground(black);
         price_label.setForeground(black);
-        location_label.setForeground(black);
         condition_label.setForeground(black);
         fabrictype_label.setForeground(black);
         size_label.setForeground(black);
         description_label.setForeground(black);
 
-        // Set button colors
-        ADDButton.setBackground(lightBlueGray);
-        CLEARButton.setBackground(lightBlueGray);
-        UPDATEButton.setBackground(lightBlueGray);
-        REMOVEButton.setBackground(lightBlueGray);
-        ADDButton.setForeground(black);
-        CLEARButton.setForeground(black);
-        UPDATEButton.setForeground(black);
-        REMOVEButton.setForeground(black);
+        // Set button colors - same as Food class
+        ADDButton.setBackground(new Color(70, 130, 180));
+        CLEARButton.setBackground(new Color(70, 130, 180));
+        UPDATEButton.setBackground(new Color(70, 130, 180));
+        REMOVEButton.setBackground(new Color(70, 130, 180));
+        ADDButton.setForeground(Color.white);
+        CLEARButton.setForeground(Color.white);
+        UPDATEButton.setForeground(Color.white);
+        REMOVEButton.setForeground(Color.white);
 
-        // Set fonts
+        // Make buttons opaque - same as Food class
+        ADDButton.setOpaque(true);
+        CLEARButton.setOpaque(true);
+        UPDATEButton.setOpaque(true);
+        REMOVEButton.setOpaque(true);
+
+        // Set fonts - same as Food class
         Font labelFont = new Font("Segoe UI", Font.BOLD, 14);
         Font fieldFont = new Font("Segoe UI", Font.PLAIN, 14);
         Font titleFont = new Font("Segoe UI", Font.BOLD, 18);
+        Font buttonFont = new Font("Segoe UI", Font.BOLD, 12);
+        Font placeholderFont = new Font("Segoe UI", Font.ITALIC, 13);
 
         Clothes_label.setFont(titleFont);
         name_label.setFont(labelFont);
@@ -373,53 +404,60 @@ public class Clothing extends JPanel {
         location_label.setFont(labelFont);
         vendor_label.setFont(labelFont);
         price_label.setFont(labelFont);
-        location_label.setFont(labelFont);
         condition_label.setFont(labelFont);
         fabrictype_label.setFont(labelFont);
         size_label.setFont(labelFont);
         description_label.setFont(labelFont);
 
         name_field.setFont(fieldFont);
-        quantity_field.setFont(fieldFont);
         vendor_field.setFont(fieldFont);
         price_field.setFont(fieldFont);
-        location_field.setFont(fieldFont);
-        condition_field.setFont(fieldFont);
+        condition_field.setFont(placeholderFont);
         fabrictype_field.setFont(fieldFont);
         size_field.setFont(fieldFont);
         textArea1.setFont(fieldFont);
+        location_combobox.setFont(fieldFont);
 
-        // Set button fonts
-        Font buttonFont = new Font("Segoe UI", Font.BOLD, 12);
+        // Set spinner font - same as Food class
+        spinner1.setFont(fieldFont);
+
+        // Set button fonts - same as Food class
         ADDButton.setFont(buttonFont);
         CLEARButton.setFont(buttonFont);
         UPDATEButton.setFont(buttonFont);
         REMOVEButton.setFont(buttonFont);
     }
 
-    // METHODS AND ACTION LISTENERSS
+
+    // PUBLIC METHODS - same pattern as Food class
 
     public void clearForm() {
         name_field.setText("");
-        quantity_field.setText("");
+        spinner1.setValue(1);
+        size_field.setText("");
         vendor_field.setText("");
         price_field.setText("");
-        location_field.setText("");
-        condition_field.setText("");
+
+
         fabrictype_field.setText("");
-        size_field.setText("");
         textArea1.setText("");
+        location_combobox.setSelectedIndex(0);
+
     }
 
+    // Action listener methods - same as Food class
     public void addAddButtonListener(ActionListener listener) {
         ADDButton.addActionListener(listener);
     }
+
     public void addClearButtonListener(ActionListener listener) {
         CLEARButton.addActionListener(listener);
     }
+
     public void addUpdateButtonListener(ActionListener listener) {
         UPDATEButton.addActionListener(listener);
     }
+
     public void addRemoveButtonListener(ActionListener listener) {
         REMOVEButton.addActionListener(listener);
     }
@@ -427,46 +465,131 @@ public class Clothing extends JPanel {
     public int getSelectedTableRow() {
         return table1.getSelectedRow();
     }
+
     public JButton getAddButton() {
         return ADDButton;
     }
+
     public JButton getClearButton() {
         return CLEARButton;
     }
+
     public JButton getUpdateButton() {
         return UPDATEButton;
     }
+
     public JButton getRemoveButton() {
         return REMOVEButton;
     }
 
-//
-////    public Clothing(){
-////        createTable();
-////    }
-////
-////    public JPanel getRootPanelClothing(){
-////        return panel1;
-////    }
+    // Form field getter methods - same pattern as Food class
+    public String getNameInput() {
+        return name_field.getText();
+    }
 
-    private void createTable(){
+    public int getQuantityInput() {
+        return (int) spinner1.getValue();
+    }
+
+    public String getSizeInput() {
+        return size_field.getText();
+    }
+
+    public String getVendorInput() {
+        return vendor_field.getText();
+    }
+
+    public String getPriceInput() {
+        return price_field.getText();
+    }
+
+    public String getConditionInput() {
+        return condition_field.getText();
+    }
+
+    public String getFabricTypeInput() {
+        return fabrictype_field.getText();
+    }
+
+    public String getDescriptionInput() {
+        return textArea1.getText();
+    }
+
+    public String getLocationInput() {
+        return (String) location_combobox.getSelectedItem();
+    }
+
+    // Setter methods for form fields - same pattern as Food class
+    public void setNameInput(String name) {
+        name_field.setText(name);
+    }
+
+    public void setQuantityInput(int quantity) {
+        spinner1.setValue(quantity);
+    }
+
+    public void setLMDInput(String size) {
+        size_field.setText(size);
+    }
+
+    public void setVendorInput(String vendor) {
+        vendor_field.setText(vendor);
+    }
+
+    public void setPriceInput(String price) {
+        price_field.setText(price);
+    }
+
+    public void setConditionInput(String condition) {
+        condition_field.setText(condition);
+    }
+
+    public void setFabrictypeInput(String toolType) {
+        fabrictype_field.setText(toolType);
+    }
+
+    public void setDescriptionInput(String description) {
+        textArea1.setText(description);
+    }
+
+    public void setLocationInput(String location) {
+        location_combobox.setSelectedItem(location);
+    }
+
+    private void createTable() {
         Object[][] data = {
-                {"The Dark Knight", 2008, 9.0, 123445},
-                {"INPUT", 2008, 9.0, 123445},
-                {"The Dark Knight", 2008, 9.0, 123445},
-                {"The Dark Knight", 2008, 9.0, 123445},
-                {"The Dark Knight", 2008, 9.0, 123445},
-                {"The Dark Knight", 2008, 9.0, 123445},
-                {"The Dark Knight", 2008, 9.0, 123445},
-                {"The Dark Knight", 2008, 9.0, 123445},
-                {"The Dark Knight", 2008, 9.0, 123445},
-                {"The Dark Knight", 2008, 9.0, 123445},
-                {"The Dark Knight", 2008, 9.0, 123445},
-                {"The Dark Knight", 2008, 9.0, 123445}
+                {"T-Shirt", 5, "Medium", "BEDROOM", "Uniqlo", "$9.99", "01/15/2024", "Top", "Cotton", "NO", "Basic round-neck shirt"},
+                {"Jeans", 2, "32", "BEDROOM", "Levi's", "$49.99", "03/22/2024", "Bottom", "Denim", "YES", "Slim-fit blue jeans"},
+                {"Jacket", 1, "Large", "BEDROOM", "H&M", "$39.99", "", "Outerwear", "Polyester", "NO", "Lightweight casual jacket"},
         };
+
         Objects.requireNonNull(table1).setModel(new DefaultTableModel(
                 data,
-                new String[]{"Name", "Year", "Rating", "Number", "Mali"}
+                new String[]{"Name", "Qty", "Size", "Location", "Vendor", "Price", "Condition", "Fabric Type", "Size", "Maint", "Description"}
         ));
+
+        // Table styling - same as Food class
+        table1.setRowHeight(25);
+        table1.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
+        table1.getTableHeader().setBackground(new Color(70, 130, 180));
+        table1.getTableHeader().setForeground(Color.WHITE);
+        table1.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        table1.setSelectionBackground(new Color(100, 149, 237));
+        table1.setSelectionForeground(Color.WHITE);
+        table1.setGridColor(Color.LIGHT_GRAY);
+        table1.setShowGrid(true);
+
+        // Set column widths
+        table1.getColumnModel().getColumn(0).setPreferredWidth(80);
+        table1.getColumnModel().getColumn(1).setPreferredWidth(40);
+        table1.getColumnModel().getColumn(2).setPreferredWidth(50);
+        table1.getColumnModel().getColumn(3).setPreferredWidth(70);
+        table1.getColumnModel().getColumn(4).setPreferredWidth(80);
+        table1.getColumnModel().getColumn(5).setPreferredWidth(60);
+        table1.getColumnModel().getColumn(6).setPreferredWidth(80);
+        table1.getColumnModel().getColumn(7).setPreferredWidth(70);
+        table1.getColumnModel().getColumn(8).setPreferredWidth(70);
+        table1.getColumnModel().getColumn(9).setPreferredWidth(50);
+        table1.getColumnModel().getColumn(10).setPreferredWidth(120);
     }
 }
