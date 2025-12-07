@@ -499,7 +499,7 @@ public class ClothingPanel extends JPanel {
 
             @Override
             public void focusLost(FocusEvent e) {
-                if (purchaseDate_field.getText().isEmpty()) { /
+                if (purchaseDate_field.getText().isEmpty()) {
                     purchaseDate_field.setText(DATE_PLACEHOLDER);
                     purchaseDate_field.setForeground(new Color(100, 100, 100, 180));
                     purchaseDate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
