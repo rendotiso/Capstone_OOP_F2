@@ -483,6 +483,10 @@ public class ClothingPanel extends JPanel {
 
     }
     private void setupPlaceholders() {
+        purchaseDate_field.setText(DATE_PLACEHOLDER);
+        purchaseDate_field.setForeground(new Color(100, 100, 100, 180));
+        purchaseDate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+
         purchaseDate_field.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -495,7 +499,7 @@ public class ClothingPanel extends JPanel {
 
             @Override
             public void focusLost(FocusEvent e) {
-                if (purchaseDate_field.getText().isEmpty()) { // Fixed: use purchaseDate_field
+                if (purchaseDate_field.getText().isEmpty()) { /
                     purchaseDate_field.setText(DATE_PLACEHOLDER);
                     purchaseDate_field.setForeground(new Color(100, 100, 100, 180));
                     purchaseDate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
@@ -678,18 +682,6 @@ public class ClothingPanel extends JPanel {
         return true;
     }
 
-
-    private boolean isFutureDate(String dateStr) {
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-            LocalDate inputDate = LocalDate.parse(dateStr, formatter);
-            LocalDate today = LocalDate.now();
-            return inputDate.isAfter(today);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     private boolean validateDateField(String dateText, String fieldName) {
         if (!dateText.isEmpty() && !dateText.matches("\\d{2}/\\d{2}/\\d{4}")) {
             showError(fieldName + " must be in MM/DD/YYYY format");
@@ -771,7 +763,9 @@ public class ClothingPanel extends JPanel {
 
                     if (selectedIndex < clothingItems.size()) {
                         Item itemToRemove = clothingItems.get(selectedIndex);
-                        inventoryManager.removeItem(itemToRemove);
+                        inventoryManager.removeItem(itemToRemove);        purchaseDate_field.setText(DATE_PLACEHOLDER);
+        purchaseDate_field.setForeground(new Color(100, 100, 100, 180));
+        purchaseDate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
                         loadItems();
                         clearForm();
                         selectedIndex = -1;

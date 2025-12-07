@@ -46,7 +46,7 @@
             if(isCondition) condition = "Intact";
             else condition = "Damage";
             return super.descriptionDetails() +
-                    String.format("\nType: %s \n Usage: %s\nCondition: %s", itemType, usage,condition);
+                    String.format("Type: %s\n Usage: %s\nCondition: %s", itemType, usage,condition);
         }
 
         @Override
