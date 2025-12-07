@@ -1,34 +1,31 @@
 package Model.Data;
 
 import Model.Entities.*;
-import Model.Data.FileHandler;
-import Model.Enums.Category;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 // This Class handles the CRUD operations ; ensure usage of Exception Handling
 public class InventoryManager {
     private List<Item> items;
     private final FileHandler fileHandler;
 
-    private InventoryManager() {
+    public InventoryManager() {
         items = new ArrayList<>();
-        fileHandler = new FileHandler();
+        this.fileHandler = new FileHandler("inventory.txt");
         loadFromFile();
     }
 
     // ADDITEM
     public void addItem(Item item) throws IOException {
+        if(item == null) throw new IllegalArgumentException("Item cannot be null");
         items.add(item);
         savetoFile();
     }
 
     //DELETEITEM
-    public void removeItem(Item item) throws IOException {
+    public boolean removeItem(Item item) throws IOException {
         if (item == null) {
             throw new IllegalArgumentException("Item cannot be null");
         }
@@ -39,6 +36,7 @@ public class InventoryManager {
         }
 
         savetoFile();
+        return removed;
     }
 
     //UPDATEITEM
@@ -56,21 +54,20 @@ public class InventoryManager {
         return items;
     }
 
-    private boolean matchesCondition(Item item, String searchTerm) {
+    public boolean searchItem(Item item, String searchTerm) {
         if (searchTerm == null || searchTerm.trim().isEmpty()) {
             return true;
         }
         String term = searchTerm.toLowerCase().trim();
         return item.getName().toLowerCase().contains(term) ||
-                  item.getDescription().toLowerCase().contains(term) ||
-                  item.getLocation().toLowerCase().contains(term) ||
-                  item.getVendor().toLowerCase().contains(term) ||
-                  String.valueOf(item.getQuantity()).contains(term) ||
-                  String.valueOf(item.getPurchasePrice()).contains(term) ||
-                  item.getPurchaseDate().toLowerCase().contains(term) ||
-                  item.getCategory().toString().toLowerCase().contains(term);
+                item.getDescription().toLowerCase().contains(term) ||
+                item.getLocation().toLowerCase().contains(term) ||
+                item.getVendor().toLowerCase().contains(term) ||
+                String.valueOf(item.getQuantity()).contains(term) ||
+                String.valueOf(item.getPurchasePrice()).contains(term) ||
+                item.getPurchaseDate().toLowerCase().contains(term) ||
+                item.getCategory().toString().toLowerCase().contains(term);
     }
-
     //HELPER
     private void savetoFile() {
         try {
@@ -86,5 +83,21 @@ public class InventoryManager {
             System.err.println("Error loading from file: " + e.getMessage());
             items = new ArrayList<>();
         }
+    }
+    public List<Item> searchItems(String searchTerm) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return new ArrayList<>(items); // Return all items if search is empty
+        }
+
+        String term = searchTerm.toLowerCase().trim();
+        List<Item> filteredItems = new ArrayList<>();
+
+        for (Item item : items) {
+            if (searchItem(item, term)) {
+                filteredItems.add(item);
+            }
+        }
+
+        return filteredItems;
     }
 }
