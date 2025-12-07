@@ -67,11 +67,17 @@ public abstract class Item {
     public void setCategory(Category category) { this.category = category; }
     public void setLocation(String location) { this.location = location; }
 
-    //ABSTRACT METHODS
+    //Global Method
     public String descriptionDetails() {
-        if(Objects.equals(description, " ")) description = "No Description";
-        return String.format("%s \nDate bought - %s\n", description, purchaseDate);
+        if (description == null || description.trim().isEmpty()) {
+            description = "No Description";
+        }
+        if(purchaseDate == null || purchaseDate.trim().isEmpty()){
+            purchaseDate = "Unknown";
+        }
+        return String.format("%s\nPurchase Date: %s\n", description, purchaseDate);
     }
+    //ABSTRACT METHODS
     public abstract double calculateValue();
 
 }
