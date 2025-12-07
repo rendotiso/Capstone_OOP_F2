@@ -4,6 +4,8 @@ import Model.Interface.Maintainable;
 import Model.Enums.Category;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 
 public class Tool extends Item implements Maintainable {
@@ -14,15 +16,18 @@ public class Tool extends Item implements Maintainable {
 
     //maintenance attributes
     private boolean maintenanceNeeded;
-    private LocalDate lastMaintenanceDate;
+    private String lastMaintenanceDate;
     private int maintenanceIntervalDays;
 
-    public Tool(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, String location, String toolType, String size, String material, boolean maintenanceNeeded) {
-        super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("TOOLS"), location);
+    public Tool(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, String location, String toolType,
+                String steelGrade, String material, boolean maintenanceNeeded, String lastMaintenanceDate, int maintenanceIntervalDays) {
+        super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.TOOLS, location);
         this.toolType = toolType;
+        this.steelGrade = steelGrade;
         this.material = material;
-        this.steelGrade = size;
         this.maintenanceNeeded = true;
+        this.lastMaintenanceDate = lastMaintenanceDate;
+        this.maintenanceIntervalDays = maintenanceIntervalDays;
     }
 
     //GETTERS
@@ -32,11 +37,11 @@ public class Tool extends Item implements Maintainable {
     public String getMaterial() {
         return material;
     }
-    public String getSize(){ return steelGrade;}
+    public String getSteelGrade(){ return steelGrade;}
     public boolean getMaintenanceNeeded() {
         return maintenanceNeeded;
     }
-    public LocalDate getLastMaintenanceDate() {
+    public String getLastMaintenanceDate() {
         return lastMaintenanceDate;
     }
     public int getMaintenanceIntervalDays() {
@@ -47,14 +52,14 @@ public class Tool extends Item implements Maintainable {
     public void setToolType(String toolType) {
         this.toolType = toolType;
     }
-    public void setSize(String size) {this.steelGrade = size;}
+    public void setSteelGrade(String size) {this.steelGrade = steelGrade;}
     public void setMaterial(String material) {
         this.material = material;
     }
     public void setMaintenanceNeeded(boolean maintenanceNeeded) {
         this.maintenanceNeeded = maintenanceNeeded;
     }
-    public void setLastMaintenanceDate(LocalDate lastMaintenanceDate) {
+    public void setLastMaintenanceDate(String lastMaintenanceDate) {
         this.lastMaintenanceDate = lastMaintenanceDate;
     }
     public void setMaintenanceIntervalDays(int days) {
@@ -68,15 +73,20 @@ public class Tool extends Item implements Maintainable {
     }
     @Override
     public int getDaysUntilMaintenanceDue() {
-        if (lastMaintenanceDate == null) {
+        if (lastMaintenanceDate == null || lastMaintenanceDate.isEmpty()) {
             return 0;
         }
-        LocalDate nextMaintenanceDate = lastMaintenanceDate.plusDays(maintenanceIntervalDays);
-        LocalDate today = LocalDate.now();
-
-        if (today.isBefore(nextMaintenanceDate)) {
-            return (int) ChronoUnit.DAYS.between(today, nextMaintenanceDate);
-        } else {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+            LocalDate lastMaintenance = LocalDate.parse(lastMaintenanceDate, formatter);
+            LocalDate nextMaintenanceDate = lastMaintenance.plusDays(365);
+            LocalDate today = LocalDate.now();
+            if (today.isBefore(nextMaintenanceDate)) {
+                return (int) ChronoUnit.DAYS.between(today, nextMaintenanceDate);
+            } else {
+                return 0;
+            }
+        } catch (DateTimeParseException e) {
             return 0;
         }
     }
@@ -91,4 +101,5 @@ public class Tool extends Item implements Maintainable {
     public double calculateValue() {
         return getPurchasePrice() * getQuantity();
     }
+
 }
