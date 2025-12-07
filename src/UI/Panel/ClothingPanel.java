@@ -397,8 +397,8 @@ public class ClothingPanel extends JPanel {
         name_field.setForeground(black);
         vendor_field.setForeground(black);
         price_field.setForeground(black);
-        purchaseDate_field.setForeground(black);
-        condition_field.setForeground(placeholderColor);
+        purchaseDate_field.setForeground(placeholderColor);
+        condition_field.setForeground(black);
         fabrictype_field.setForeground(black);
         size_combobox.setForeground(black);
         textArea1.setForeground(black);
@@ -464,8 +464,8 @@ public class ClothingPanel extends JPanel {
         name_field.setFont(fieldFont);
         vendor_field.setFont(fieldFont);
         price_field.setFont(fieldFont);
-        purchaseDate_field.setFont(fieldFont);
-        condition_field.setFont(placeholderFont);
+        purchaseDate_field.setFont(placeholderFont);
+        condition_field.setFont(fieldFont);
         fabrictype_field.setFont(fieldFont);
         size_combobox.setFont(fieldFont);
         textArea1.setFont(fieldFont);
