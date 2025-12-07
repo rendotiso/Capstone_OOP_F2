@@ -14,7 +14,8 @@ public abstract class Item {
     private Category category;
     private String location;
 
-    public Item(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, Category category, String location) {
+    public Item(String name, String description, int quantity, double purchasePrice, String
+            purchaseDate, String vendor, Category category, String location) {
         this.name = name;
         this.description = description;
         this.quantity = quantity;
