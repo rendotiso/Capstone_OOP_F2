@@ -1,17 +1,23 @@
 package UI.Panel;
 
+import UI.Utilities.ItemTable;
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.util.Objects;
 
 public class AllItemsPanel extends JPanel {
     private JTextField searchField;
     private JButton searchButton, clearButton, refreshButton, deleteButton;
     private JTable table1;
     private JScrollPane scrollPane;
+    private ItemTable sharedData;
 
     public AllItemsPanel() {
+        sharedData = ItemTable.getInstance();
+
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -47,7 +53,7 @@ public class AllItemsPanel extends JPanel {
 
         // Left panel for search controls
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        leftPanel.setOpaque(false); // Transparent to show parent background
+        leftPanel.setOpaque(false);
 
         JLabel searchLabel = new JLabel("Search:");
         searchLabel.setForeground(Color.WHITE);
@@ -71,36 +77,31 @@ public class AllItemsPanel extends JPanel {
 
         // Right panel for Refresh and Delete buttons
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
-        rightPanel.setOpaque(false); // Transparent to show parent background
+        rightPanel.setOpaque(false);
 
         refreshButton = new JButton("Refresh");
         deleteButton = new JButton("Delete");
 
-        // Set button fonts
         refreshButton.setFont(new Font("Segoe UI", Font.BOLD, 12));
         deleteButton.setFont(new Font("Segoe UI", Font.BOLD, 12));
 
-        // Remove focus painting
         refreshButton.setFocusPainted(false);
         deleteButton.setFocusPainted(false);
 
-        // Set custom colors
-        Color refreshColor = new Color(0x74c69d); // #74c69d
-        Color deleteColor = new Color(0xc10a0a);  // #c10a0a
+        Color refreshColor = new Color(0x74c69d);
+        Color deleteColor = new Color(0xc10a0a);
 
         refreshButton.setBackground(refreshColor);
         deleteButton.setBackground(deleteColor);
         refreshButton.setForeground(Color.WHITE);
         deleteButton.setForeground(Color.WHITE);
 
-        // Make buttons opaque
         refreshButton.setOpaque(true);
         deleteButton.setOpaque(true);
 
         rightPanel.add(refreshButton);
         rightPanel.add(deleteButton);
 
-        // Add both panels to main panel
         mainPanel.add(leftPanel, BorderLayout.WEST);
         mainPanel.add(rightPanel, BorderLayout.EAST);
 
@@ -115,45 +116,147 @@ public class AllItemsPanel extends JPanel {
         refreshButton.setFocusable(false);
         deleteButton.setFocusable(false);
 
-        // Add placeholder listeners for new buttons
+        // Add functional listeners
         refreshButton.addActionListener(e -> refreshFunction());
         deleteButton.addActionListener(e -> deleteFunction());
+
+        // Add Enter key listener to search field
+        searchField.addActionListener(e -> searchFunction());
     }
 
     private void searchFunction() {
-        System.out.println("Searching for: " + searchField.getText());
+        String searchText = searchField.getText();
+        sharedData.searchItems(searchText);
     }
 
     private void refreshFunction() {
-        System.out.println("Refresh button clicked");
-        // You can add refresh logic here
+        // Clear search field
+        searchField.setText("");
+
+        // Refresh from shared data model
+        DefaultTableModel model = sharedData.getAllItemsTableModel();
+        table1.setModel(model);
+        setupTableAppearance();
+
+        JOptionPane.showMessageDialog(this, "Data refreshed successfully!", "Refresh",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void deleteFunction() {
-        System.out.println("Delete button clicked");
-        // You can add delete logic here
+        int selectedRow = table1.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a row to delete!", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Get the actual item index from the "No." column
+        Object noValue = table1.getValueAt(selectedRow, 0);
+        if (noValue == null) {
+            JOptionPane.showMessageDialog(this, "Invalid row selected!", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        int itemNo;
+        if (noValue instanceof Integer) {
+            itemNo = (Integer) noValue;
+        } else {
+            try {
+                itemNo = Integer.parseInt(noValue.toString());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Invalid row number!", "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+
+        int actualIndex = itemNo - 1; // Convert to 0-based index
+
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "Are you sure you want to delete this item?",
+                "Confirm Delete",
+                JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            sharedData.removeItem(actualIndex);
+            JOptionPane.showMessageDialog(this, "Item deleted successfully!", "Success",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     private void createTable() {
-        Object[][] data = {
-                {"The Dark Knight", 2008, 9.0, 123445, "Action"},
-                {"Inception", 2010, 8.8, 234567, "Sci-Fi"},
-                {"Interstellar", "BEDROOOOOOM", 8.6, 345678, "Adventure"},
-                {"The Matrix", 1999, 8.7, 456789, "Action"},
-                {"Pulp Fiction", 1994, 8.9, 567890, "Crime"},
-                {"Fight Club", 1999, 8.8, 678901, "Drama"},
-                {"Forrest Gump", 1994, 8.8, 789012, "Drama"},
-                {"The Shawshank Redemption", 1994, 9.3, 890123, "Drama"},
-                {"The Godfather", 1972, 9.2, 901234, "Crime"},
-                {"The Dark Knight Rises", 2012, 8.4, 123456, "Action"}
-        };
+        // Use the shared table model
+        table1.setModel(sharedData.getAllItemsTableModel());
+        setupTableAppearance();
+    }
 
-        table1.setModel(new DefaultTableModel(
-                data,
-                new String[]{"No.", "Category", "Name", "Quantity", "Location", "Price", "Details"}
-        ));
+    private void setupTableAppearance() {
+        // Create a custom cell renderer that handles both alignment and wrapping
+        table1.setDefaultRenderer(Object.class, new TableCellRenderer() {
+            private final DefaultTableCellRenderer defaultRenderer = new DefaultTableCellRenderer();
+            private final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 
+            {
+                centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+            }
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                                                           boolean isSelected, boolean hasFocus,
+                                                           int row, int column) {
+
+                // Columns to center align: No.(0), Quantity(3), Price(5)
+                if (column == 0 || column == 3 || column == 5) {
+                    Component comp = centerRenderer.getTableCellRendererComponent(
+                            table, value, isSelected, hasFocus, row, column);
+
+                    // Format price column with currency symbol
+                    if (column == 5 && value instanceof Double) {
+                        centerRenderer.setText(String.format("$%.2f", (Double) value));
+                    }
+
+                    return comp;
+                }
+                // Columns to wrap text: Name(2), Category(1), Location(4), Details(6)
+                else if (column == 1 || column == 2 || column == 4 || column == 6) {
+                    JTextArea textArea = new JTextArea();
+                    textArea.setText(value != null ? value.toString() : "");
+                    textArea.setLineWrap(true);
+                    textArea.setWrapStyleWord(true);
+                    textArea.setFont(table.getFont());
+                    textArea.setOpaque(true);
+
+                    if (isSelected) {
+                        textArea.setBackground(table.getSelectionBackground());
+                        textArea.setForeground(table.getSelectionForeground());
+                    } else {
+                        textArea.setBackground(table.getBackground());
+                        textArea.setForeground(table.getForeground());
+                    }
+
+                    textArea.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+                    return textArea;
+                } else {
+                    // Default renderer for other columns
+                    Component comp = defaultRenderer.getTableCellRendererComponent(
+                            table, value, isSelected, hasFocus, row, column);
+                    ((JLabel) comp).setHorizontalAlignment(SwingConstants.LEFT);
+                    return comp;
+                }
+            }
+        });
+
+        // Set dynamic row height
         table1.setRowHeight(25);
+        table1.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                adjustRowHeights();
+            }
+        });
+
+        // Table styling
         table1.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         table1.getTableHeader().setBackground(new Color(70, 130, 180));
         table1.getTableHeader().setForeground(Color.WHITE);
@@ -163,15 +266,45 @@ public class AllItemsPanel extends JPanel {
         table1.setGridColor(Color.LIGHT_GRAY);
         table1.setShowGrid(true);
 
+        // Set auto resize mode
         table1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-        table1.getColumnModel().getColumn(0).setPreferredWidth(50);
-        table1.getColumnModel().getColumn(1).setPreferredWidth(120);
-        table1.getColumnModel().getColumn(2).setPreferredWidth(150);
-        table1.getColumnModel().getColumn(3).setPreferredWidth(80);
-        table1.getColumnModel().getColumn(4).setPreferredWidth(130);
-        table1.getColumnModel().getColumn(5).setPreferredWidth(80);
-        table1.getColumnModel().getColumn(6).setPreferredWidth(467);
+        // Set column widths
+        TableColumnModel columnModel = table1.getColumnModel();
+        columnModel.getColumn(0).setPreferredWidth(50);    // No.
+        columnModel.getColumn(1).setPreferredWidth(120);   // Category
+        columnModel.getColumn(2).setPreferredWidth(150);   // Name
+        columnModel.getColumn(3).setPreferredWidth(80);    // Quantity
+        columnModel.getColumn(4).setPreferredWidth(130);   // Location
+        columnModel.getColumn(5).setPreferredWidth(80);   // Price
+        columnModel.getColumn(6).setPreferredWidth(467);   // Details
+    }
+
+    private void adjustRowHeights() {
+        for (int row = 0; row < table1.getRowCount(); row++) {
+            int maxHeight = 25; // Minimum height
+
+            // Check all wrap-able columns
+            int[] wrapColumns = {1, 2, 4, 6}; // Category, Name, Location, Details
+            for (int col : wrapColumns) {
+                Object cellValue = table1.getValueAt(row, col);
+                if (cellValue != null) {
+                    String cellText = cellValue.toString();
+                    if (!cellText.isEmpty()) {
+                        JTextArea tempTextArea = new JTextArea(cellText);
+                        tempTextArea.setLineWrap(true);
+                        tempTextArea.setWrapStyleWord(true);
+                        tempTextArea.setFont(table1.getFont());
+                        tempTextArea.setSize(table1.getColumnModel().getColumn(col).getWidth(), Integer.MAX_VALUE);
+
+                        int textHeight = tempTextArea.getPreferredSize().height + 4;
+                        maxHeight = Math.max(maxHeight, textHeight);
+                    }
+                }
+            }
+
+            table1.setRowHeight(row, Math.min(maxHeight, 200));
+        }
     }
 
     public JTable getTable() {
@@ -190,7 +323,6 @@ public class AllItemsPanel extends JPanel {
         return clearButton;
     }
 
-    // New getter methods for the new buttons
     public JButton getRefreshButton() {
         return refreshButton;
     }
@@ -199,7 +331,6 @@ public class AllItemsPanel extends JPanel {
         return deleteButton;
     }
 
-    // New action listener methods
     public void addRefreshButtonListener(java.awt.event.ActionListener listener) {
         refreshButton.addActionListener(listener);
     }

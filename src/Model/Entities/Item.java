@@ -31,6 +31,7 @@ public abstract class Item {
     public int getQuantity() {
         return quantity;
     }
+    public String getPurchaseDate() { return purchaseDate;}
     public double getPurchasePrice() {
         return purchasePrice;
     }
