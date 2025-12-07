@@ -82,7 +82,12 @@ public class Electronic extends Item implements Maintainable {
         return getDaysUntilMaintenanceDue() <= 0;
     }
     @Override
-    public String descriptionDetails() {  return super.descriptionDetails() + String.format("Brand: %s\nModel: %s", brand, model); }
+    public String descriptionDetails() {
+        String maintain;
+        if(needsMaintenance()) maintain = "Yes!";
+        else maintain = "No";
+        return super.descriptionDetails() + String.format("Brand: %s\nModel: %s\n" +
+            "Maintenance Needed: %s \nDays Until Maintenance: %d", brand, model, maintain, getDaysUntilMaintenanceDue()); }
 
     @Override
     public double calculateValue() {

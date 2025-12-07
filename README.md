@@ -3,11 +3,12 @@ Can't remember or locate your household item? Organizer is here to help. Our sle
 
 # Features and Designs
 - User-friendly, clean and simple GUI
+- Various built-in categories for easy navigation
 - Track Expiration Date of foods
 - Track Maintenance Date of Tools and Electronics
-- Various built-in categories for easy navigation
-- Search functionality
+- Search and Filter functionality
 - Add, Edit, Update and Remove items quickly
+- shared InventoryManager Instance through use of Singleton Design Pattern
 
 # Installation Guide
 // basic instructions
