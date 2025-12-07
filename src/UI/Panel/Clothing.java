@@ -5,8 +5,6 @@ import javax.swing.table.DefaultTableModel;
 import java.util.Objects;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 
 public class Clothing extends JPanel {
 
@@ -22,15 +20,12 @@ public class Clothing extends JPanel {
     private JPanel panelButton;
     private JScrollPane textAreaScroll;
     private JSpinner spinner1;
-    private JPanel Electronics_panel;
-    private JLabel Electronics_label;
     private JScrollPane scrollPane;
 
     public Clothing() {
         initComponents();
         setupLayout();
         setupAppearance();
-        createTable();
     }
 
     private void initComponents() {
@@ -53,6 +48,7 @@ public class Clothing extends JPanel {
         textArea1 = new JTextArea(3, 15);
         textArea1.setLineWrap(true);
         textArea1.setWrapStyleWord(true);
+        textAreaScroll = new JScrollPane(textArea1);
 
         // Initialize spinner for quantity with left-aligned text
         spinner1 = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
@@ -96,9 +92,7 @@ public class Clothing extends JPanel {
                 "XS", "S", "M", "L", "XL", "XXL"
         });
 
-        table1 = new JTable();
-        scrollPane = new JScrollPane(table1);
-        textAreaScroll = new JScrollPane(textArea1);
+        scrollPane = new JScrollPane();
     }
 
     private void setupLayout() {
@@ -394,6 +388,11 @@ public class Clothing extends JPanel {
         UPDATEButton.setOpaque(true);
         REMOVEButton.setOpaque(true);
 
+        ADDButton.setFocusable(false);
+        UPDATEButton.setFocusable(false);
+        REMOVEButton.setFocusable(false);
+        CLEARButton.setFocusable(false);
+
         // Set fonts - same as Food class
         Font labelFont = new Font("Segoe UI", Font.BOLD, 14);
         Font fieldFont = new Font("Segoe UI", Font.PLAIN, 14);
@@ -489,35 +488,27 @@ public class Clothing extends JPanel {
     public String getNameInput() {
         return name_field.getText();
     }
-
     public int getQuantityInput() {
         return (int) spinner1.getValue();
     }
-
     public String getSizeInput() {
         return (String) size_combobox.getSelectedItem();
     }
-
     public String getVendorInput() {
         return vendor_field.getText();
     }
-
     public String getPriceInput() {
         return price_field.getText();
     }
-
     public String getConditionInput() {
         return condition_field.getText();
     }
-
     public String getFabricTypeInput() {
         return fabrictype_field.getText();
     }
-
     public String getDescriptionInput() {
         return textArea1.getText();
     }
-
     public String getLocationInput() {
         return (String) location_combobox.getSelectedItem();
     }
@@ -526,68 +517,29 @@ public class Clothing extends JPanel {
     public void setNameInput(String name) {
         name_field.setText(name);
     }
-
     public void setQuantityInput(int quantity) {
         spinner1.setValue(quantity);
     }
-
     public void setSizeInput(String size) {
         size_combobox.setSelectedItem(size);
     }
-
     public void setVendorInput(String vendor) {
         vendor_field.setText(vendor);
     }
-
     public void setPriceInput(String price) {
         price_field.setText(price);
     }
-
     public void setConditionInput(String condition) {
         condition_field.setText(condition);
     }
-
     public void setFabrictypeInput(String toolType) {
         fabrictype_field.setText(toolType);
     }
-
     public void setDescriptionInput(String description) {
         textArea1.setText(description);
     }
-
     public void setLocationInput(String location) {
         location_combobox.setSelectedItem(location);
     }
 
-    private void createTable() {
-        Object[][] data = {
-                {"T-Shirt", 5, "Medium", "BEDROOM", "Uniqlo", "$9.99"},
-                {"Jeans", 2, "32", "BEDROOM", "Levi's", "$49.99"},
-                {"Jacket", 1, "Large", "BEDROOM", "H&M", "$39.99"}
-        };
-
-        Objects.requireNonNull(table1).setModel(new DefaultTableModel(
-                data,
-                new String[]{"Name", "Qty", "Location", "Vendor", "Price", "Details"}
-        ));
-
-        // Table styling - same as Food class
-        table1.setRowHeight(25);
-        table1.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
-        table1.getTableHeader().setBackground(new Color(70, 130, 180));
-        table1.getTableHeader().setForeground(Color.WHITE);
-        table1.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        table1.setSelectionBackground(new Color(100, 149, 237));
-        table1.setSelectionForeground(Color.WHITE);
-        table1.setGridColor(Color.LIGHT_GRAY);
-        table1.setShowGrid(true);
-
-        // Set column widths
-        table1.getColumnModel().getColumn(0).setPreferredWidth(50);
-        table1.getColumnModel().getColumn(1).setPreferredWidth(10);
-        table1.getColumnModel().getColumn(2).setPreferredWidth(50);
-        table1.getColumnModel().getColumn(3).setPreferredWidth(50);
-        table1.getColumnModel().getColumn(4).setPreferredWidth(10);
-        table1.getColumnModel().getColumn(5).setPreferredWidth(150);
-    }
 }
