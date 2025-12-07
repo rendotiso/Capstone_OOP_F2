@@ -13,7 +13,7 @@ public class InventoryManager {
 
     public InventoryManager() {
         items = new ArrayList<>();
-        this.fileHandler = new FileHandler("inventory.txt");
+        fileHandler = new FileHandler();
         loadFromFile();
     }
 
