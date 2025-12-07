@@ -20,17 +20,15 @@ public class Tools extends JPanel {
     private JTextField name_field, steelgrade_field, vendor_field, price_field, purchased_field, tooltype_field, material_field, LastMaintenanceDate_field;
     private JTextArea textArea1;
     private JLabel tools_label, name_label, quantity_label, location_label, vendor_label, price_label,
-            purchase_label, tooltype_label, material_label, requiresmaintenance_label, steelgrade_label, description_label,
+            purchase_label, tooltype_label, material_label, steelgrade_label, description_label,
             maintenanceIntervalDateDays_label, LastMaintenanceDate_label, maintenanceNeeded_label;
     private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton, REFRESHButton;
     private JComboBox<String> location_combobox;
-    private JTable table1;
     private JPanel panelButton;
-    private JCheckBox requiresMaintenanceCheckBox, maintenanceNeededCheckBox;
+    private JCheckBox maintenanceNeededCheckBox;
     private JPanel radiopanel1, maintenancePanel;
     private JScrollPane textAreaScroll;
     private JSpinner spinner1, maintenanceIntervalDateDays;
-    private JScrollPane scrollPane;
     private ItemTable itemTable;
     private final InventoryManager inventoryManager;
     private int selectedIndex = -1;
@@ -107,9 +105,8 @@ public class Tools extends JPanel {
         tooltype_label = new JLabel("TOOL TYPE:");
         material_label = new JLabel("MATERIAL:");
         steelgrade_label = new JLabel("STEEL GRADE:");
-        requiresmaintenance_label = new JLabel("REQUIRES MAINTENANCE:");
+        maintenanceNeeded_label = new JLabel("MAINTENANCE NEEDED?");
         maintenanceIntervalDateDays_label = new JLabel("MAINTENANCE INTERVAL (DAYS):");
-        maintenanceNeeded_label = new JLabel("MAINTENANCE NEEDED:");
         LastMaintenanceDate_label = new JLabel("LAST MAINTENANCE DATE:");
         description_label = new JLabel("DESCRIPTION/NOTE:");
 
@@ -129,10 +126,7 @@ public class Tools extends JPanel {
         String[] columnNames = {"Name", "Quantity", "Location", "Vendor", "Price", "Details"};
         itemTable = new ItemTable(columnNames);
         textAreaScroll = new JScrollPane(textArea1);
-        scrollPane = new JScrollPane(table1);
 
-        // Initialize checkbox instead of radio butt    ons
-        requiresMaintenanceCheckBox = new JCheckBox("Requires Maintenance");
         maintenanceNeededCheckBox = new JCheckBox();
 
         // Initialize maintenance interval spinner
@@ -147,7 +141,7 @@ public class Tools extends JPanel {
             textField.setHorizontalAlignment(SwingConstants.LEFT);
         }
 
-        requiresMaintenanceCheckBox.setFocusable(false);
+        maintenanceNeededCheckBox.setFocusable(false);
     }
 
     private void setupLayout() {
@@ -310,7 +304,7 @@ public class Tools extends JPanel {
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
         formGbc.anchor = GridBagConstraints.WEST;
-        panel.add(requiresmaintenance_label, formGbc);
+        panel.add(maintenanceNeeded_label, formGbc);
 
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;
@@ -319,7 +313,7 @@ public class Tools extends JPanel {
 
         // Add checkbox instead of radio buttons
         radiopanel1.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        radiopanel1.add(requiresMaintenanceCheckBox);
+        radiopanel1.add(maintenanceNeededCheckBox);
         panel.add(radiopanel1, formGbc);
 
         row++;
@@ -470,8 +464,8 @@ public class Tools extends JPanel {
         }
 
         // Set checkbox background
-        requiresMaintenanceCheckBox.setBackground(bg);
-        requiresMaintenanceCheckBox.setOpaque(true);
+        maintenanceNeededCheckBox.setBackground(bg);
+        maintenanceNeededCheckBox.setOpaque(true);
 
         // Set foreground colors
         name_field.setForeground(black);
@@ -485,7 +479,7 @@ public class Tools extends JPanel {
         location_combobox.setForeground(black);
 
         // Set checkbox text color
-        requiresMaintenanceCheckBox.setForeground(black);
+        maintenanceNeededCheckBox.setForeground(black);
 
         // Set label colors
         tools_label.setForeground(Color.WHITE);
@@ -498,7 +492,7 @@ public class Tools extends JPanel {
         tooltype_label.setForeground(black);
         material_label.setForeground(black);
         steelgrade_label.setForeground(black);
-        requiresmaintenance_label.setForeground(black);
+        maintenanceNeeded_label.setForeground(black);
         maintenanceIntervalDateDays_label.setForeground(black);
         description_label.setForeground(black);
 
@@ -544,7 +538,7 @@ public class Tools extends JPanel {
         tooltype_label.setFont(labelFont);
         material_label.setFont(labelFont);
         steelgrade_label.setFont(labelFont);
-        requiresmaintenance_label.setFont(labelFont);
+        maintenanceNeeded_label.setFont(labelFont);
         maintenanceIntervalDateDays_label.setFont(labelFont);
         description_label.setFont(labelFont);
 
@@ -563,7 +557,7 @@ public class Tools extends JPanel {
         maintenanceIntervalDateDays.setFont(fieldFont);
 
         // Set checkbox font
-        requiresMaintenanceCheckBox.setFont(checkboxFont);
+        maintenanceNeededCheckBox.setFont(checkboxFont);
 
         // Set button fonts
         ADDButton.setFont(buttonFont);
@@ -654,10 +648,6 @@ public class Tools extends JPanel {
         return (String) location_combobox.getSelectedItem();
     }
 
-    public boolean getRequiresMaintenance() {
-        return requiresMaintenanceCheckBox.isSelected();
-    }
-
     public boolean getMaintenanceNeeded() {
         return maintenanceNeededCheckBox.isSelected();
     }
@@ -733,7 +723,7 @@ public class Tools extends JPanel {
         }
     }
     
-    public void setmaintenanceIntervalDateDaysDays(JSpinner maintenanceIntervalDateDays){
+    public void setmaintenanceIntervalDateDays(JSpinner maintenanceIntervalDateDays){
         this.maintenanceIntervalDateDays = maintenanceIntervalDateDays;
     }
 
