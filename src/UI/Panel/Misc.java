@@ -1,6 +1,12 @@
 package UI.Panel;
 
 import Model.Data.InventoryManager;
+import Model.Entities.Electronic;
+import Model.Entities.miscellaneous;
+import UI.Utilities.ItemTable;
+import Model.Entities.Miscellaneous;
+import Model.Entities.Item;
+import Model.Enums.Category;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -14,28 +20,28 @@ public class Misc extends JPanel {
 
     // ATTRIBUTES
     private JPanel panelist, rootPanel, miscellaneous_panel, panel, table_panel, description_panel;
-    private JTextField name_field, vendor_field, price_field, warranty_field, itemtype_field, usage_field;
+    private JTextField name_field, vendor_field, price_field, purchaseDate_field, itemtype_field, usage_field;
     private JTextArea textArea1;
     private JLabel miscellaneous_label, name_label, quantity_label, location_label, vendor_label,
-            price_label, warranty_label, itemtype_label, usage_label, condition_label, description_label;
+            price_label, purchaseDate_label, itemtype_label, usage_label, condition_label, description_label;
     private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton, REFRESHButton;
     private JComboBox<String> location_combobox;
-    private JTable table1;
+    private ItemTable itemTable;
     private JPanel panelButton;
     private JRadioButton INTACTRadioButton;
     private JRadioButton DAMAGEDRadioButton;
     private JPanel radiopanel1;
     private JScrollPane textAreaScroll;
     private JSpinner spinner1;
-    private JScrollPane scrollPane;
     private final InventoryManager inventoryManager;
+    private int selectedIndex = -1;
 
     // Button groups for radio buttons
     private ButtonGroup conditionGroup;
 
     // Placeholder texts
-    private static final String WARRANTY_PLACEHOLDER = "MM/DD/YYYY";
-
+    private static final String purchaseDate_PLACEHOLDER = "MM/DD/YYYY";
+    
     public Misc() {
         inventoryManager = InventoryManager.getInstance();
         initComponents();
@@ -43,6 +49,8 @@ public class Misc extends JPanel {
         setupAppearance();
         setupPlaceholders();
         setupButtonListeners();
+        setupTableSelectionListener();
+        loadItems();
     }
 
     private void initComponents() {
@@ -62,9 +70,10 @@ public class Misc extends JPanel {
         name_field = new JTextField(8);
         vendor_field = new JTextField(8);
         price_field = new JTextField(8);
-        warranty_field = new JTextField(8);
+        purchaseDate_field = new JTextField(8);
         itemtype_field = new JTextField(8);
         usage_field = new JTextField(8);
+        
         textArea1 = new JTextArea(3, 15);
         textArea1.setLineWrap(true);
         textArea1.setWrapStyleWord(true);
@@ -90,7 +99,7 @@ public class Misc extends JPanel {
         location_label = new JLabel("LOCATION:");
         vendor_label = new JLabel("VENDOR:");  // Fixed from "venodor_label"
         price_label = new JLabel("PRICE:");
-        warranty_label = new JLabel("PURCHASED DATE:");
+        purchaseDate_label = new JLabel("PURCHASED DATE:");
         itemtype_label = new JLabel("ITEM TYPE:");  // Fixed from "itemtyep_label"
         usage_label = new JLabel("USAGE:");
         condition_label = new JLabel("CONDITION:");
@@ -121,9 +130,9 @@ public class Misc extends JPanel {
         // Set default selection
         INTACTRadioButton.setSelected(true);  // Default: INTACT
 
-        table1 = new JTable();
-        scrollPane = new JScrollPane(table1);
         textAreaScroll = new JScrollPane(textArea1);
+        String[] columnNames = {"Name", "Quantity", "Location", "Vendor", "Price", "Details"};
+        itemTable = new ItemTable(columnNames);
 
         INTACTRadioButton.setFocusable(false);
         DAMAGEDRadioButton.setFocusable(false);
@@ -228,17 +237,17 @@ public class Misc extends JPanel {
 
         row++;
 
-        // Row 5: Warranty Date
+        // Row 5: purchaseDate Date
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
-        panel.add(warranty_label, formGbc);
+        panel.add(purchaseDate_label, formGbc);
 
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;
         formGbc.weightx = 1.0;
-        warranty_field.setPreferredSize(new Dimension(80, 25));
-        panel.add(warranty_field, formGbc);
+        purchaseDate_field.setPreferredSize(new Dimension(80, 25));
+        panel.add(purchaseDate_field, formGbc);
 
         row++;
 
@@ -342,7 +351,7 @@ public class Misc extends JPanel {
 
         // Table panel (right side)
         table_panel.setLayout(new BorderLayout());
-        table_panel.add(scrollPane, BorderLayout.CENTER);
+        table_panel.add(itemTable, BorderLayout.CENTER);
 
         // Add table panel to root panel (right side)
         gbc.gridx = 1;
@@ -390,7 +399,7 @@ public class Misc extends JPanel {
         name_field.setBackground(bg);
         vendor_field.setBackground(bg);
         price_field.setBackground(bg);
-        warranty_field.setBackground(bg);
+        purchaseDate_field.setBackground(bg);
         itemtype_field.setBackground(bg);
         usage_field.setBackground(bg);
         textArea1.setBackground(bg);
@@ -420,7 +429,7 @@ public class Misc extends JPanel {
         name_field.setForeground(black);
         vendor_field.setForeground(black);
         price_field.setForeground(black);
-        warranty_field.setForeground(placeholderColor);
+        purchaseDate_field.setForeground(placeholderColor);
         itemtype_field.setForeground(black);
         usage_field.setForeground(black);
         textArea1.setForeground(black);
@@ -437,7 +446,7 @@ public class Misc extends JPanel {
         location_label.setForeground(black);
         vendor_label.setForeground(black);
         price_label.setForeground(black);
-        warranty_label.setForeground(black);
+        purchaseDate_label.setForeground(black);
         itemtype_label.setForeground(black);
         usage_label.setForeground(black);
         condition_label.setForeground(black);
@@ -482,7 +491,7 @@ public class Misc extends JPanel {
         location_label.setFont(labelFont);
         vendor_label.setFont(labelFont);
         price_label.setFont(labelFont);
-        warranty_label.setFont(labelFont);
+        purchaseDate_label.setFont(labelFont);
         itemtype_label.setFont(labelFont);
         usage_label.setFont(labelFont);
         condition_label.setFont(labelFont);
@@ -491,7 +500,7 @@ public class Misc extends JPanel {
         name_field.setFont(fieldFont);
         vendor_field.setFont(fieldFont);
         price_field.setFont(fieldFont);
-        warranty_field.setFont(placeholderFont);
+        purchaseDate_field.setFont(placeholderFont);
         itemtype_field.setFont(fieldFont);
         usage_field.setFont(fieldFont);
         textArea1.setFont(fieldFont);
@@ -513,26 +522,26 @@ public class Misc extends JPanel {
     }
 
     private void setupPlaceholders() {
-        // Set placeholder text for warranty field
-        warranty_field.setText(WARRANTY_PLACEHOLDER);
+        // Set placeholder text for purchaseDate field
+        purchaseDate_field.setText(purchaseDate_PLACEHOLDER);
 
         // Add focus listener to handle placeholder behavior
-        warranty_field.addFocusListener(new FocusAdapter() {
+        purchaseDate_field.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (warranty_field.getText().equals(WARRANTY_PLACEHOLDER)) {
-                    warranty_field.setText("");
-                    warranty_field.setForeground(Color.BLACK);
-                    warranty_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+                if (purchaseDate_field.getText().equals(purchaseDate_PLACEHOLDER)) {
+                    purchaseDate_field.setText("");
+                    purchaseDate_field.setForeground(Color.BLACK);
+                    purchaseDate_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
                 }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                if (warranty_field.getText().isEmpty()) {
-                    warranty_field.setText(WARRANTY_PLACEHOLDER);
-                    warranty_field.setForeground(new Color(100, 100, 100, 180));
-                    warranty_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+                if (purchaseDate_field.getText().isEmpty()) {
+                    purchaseDate_field.setText(purchaseDate_PLACEHOLDER);
+                    purchaseDate_field.setForeground(new Color(100, 100, 100, 180));
+                    purchaseDate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
                 }
             }
         });
@@ -562,9 +571,9 @@ public class Misc extends JPanel {
     public String getPriceInput() {
         return price_field.getText();
     }
-    public String getWarrantyInput() {
-        String text = warranty_field.getText();
-        if (text.equals(WARRANTY_PLACEHOLDER)) {
+    public String getPurchaseDateInput() {
+        String text = purchaseDate_field.getText();
+        if (text.equals(purchaseDate_PLACEHOLDER)) {
             return "";
         }
         return text;
@@ -611,15 +620,15 @@ public class Misc extends JPanel {
     public void setPriceInput(String price) {
         price_field.setText(price);
     }
-    public void setWarrantyInput(String warranty) {
-        if (warranty == null || warranty.trim().isEmpty()) {
-            warranty_field.setText(WARRANTY_PLACEHOLDER);
-            warranty_field.setForeground(new Color(100, 100, 100, 180));
-            warranty_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+    public void setpurchaseDateInput(String purchaseDate) {
+        if (purchaseDate == null || purchaseDate.trim().isEmpty()) {
+            purchaseDate_field.setText(purchaseDate_PLACEHOLDER);
+            purchaseDate_field.setForeground(new Color(100, 100, 100, 180));
+            purchaseDate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
         } else {
-            warranty_field.setText(warranty);
-            warranty_field.setForeground(Color.BLACK);
-            warranty_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            purchaseDate_field.setText(purchaseDate);
+            purchaseDate_field.setForeground(Color.BLACK);
+            purchaseDate_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         }
     }
     public void setItemTypeInput(String itemType) {
@@ -651,12 +660,59 @@ public class Misc extends JPanel {
     }
 
     // DATA LOADING AND ACTION LISENERS
+
+    private void loadItems() {
+        itemTable.clearTable();
+
+        // Force reload from file to get latest data
+        inventoryManager.loadFromFile();
+
+        inventoryManager.getItemsByCategory(Category.MISCELLANEOUS).stream()
+                .filter(Miscellaneous.class::isInstance)
+                .map(Miscellaneous.class::cast)
+                .forEach(miscellaneous -> {
+                    itemTable.addRow(new Object[]{
+                            miscellaneous.getName(),
+                            miscellaneous.getQuantity(),
+                            miscellaneous.getLocation(),
+                            miscellaneous.getVendor(),
+                            miscellaneous.getPurchasePrice(),
+                            miscellaneous.descriptionDetails()
+                    });
+                });
+
+        itemTable.adjustRowHeights();
+    }
+
+    private double parsePrice(String priceStr) {
+        if (priceStr == null || priceStr.trim().isEmpty()) {
+            return 0.0;
+        }
+        String cleaned = priceStr.replace("$", "").replace(",", "").trim();
+        return Double.parseDouble(cleaned);
+    }
+
+    private Miscellaneous createMiscellaneousFromForm() {
+        return new Miscellaneous(
+                getNameInput(),
+                getDescriptionInput(),
+                getQuantityInput(),
+                parsePrice(getPriceInput()),
+                getPurchaseDateInput(),
+                getVendorInput(),
+                getLocationInput(),
+                getCondition(),
+                getItemTypeInput(),
+                getUsageInput()
+        );
+    }
+    
     private void setupButtonListeners() {
-//        ADDButton.addActionListener(e -> addItem());
-//        UPDATEButton.addActionListener(e -> updateItem());
-//        REMOVEButton.addActionListener(e -> removeItem());
-//        CLEARButton.addActionListener(e -> clearForm());
-//        REFRESHButton.addActionListener(e -> refreshForm());
+        ADDButton.addActionListener(e -> addItem());
+        UPDATEButton.addActionListener(e -> updateItem());
+        REMOVEButton.addActionListener(e -> removeItem());
+        CLEARButton.addActionListener(e -> clearForm());
+        REFRESHButton.addActionListener(e -> refreshForm());
     }
 
 
@@ -666,10 +722,10 @@ public class Misc extends JPanel {
         vendor_field.setText("");
         price_field.setText("");
 
-        // Reset warranty field to placeholder
-        warranty_field.setText(WARRANTY_PLACEHOLDER);
-        warranty_field.setForeground(new Color(100, 100, 100, 180));
-        warranty_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+        // Reset purchaseDate field to placeholder
+        purchaseDate_field.setText(purchaseDate_PLACEHOLDER);
+        purchaseDate_field.setForeground(new Color(100, 100, 100, 180));
+        purchaseDate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
 
         itemtype_field.setText("");
         usage_field.setText("");
