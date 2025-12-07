@@ -389,12 +389,12 @@ public class AllItemsPanel extends JPanel {
         // Column indices: 0:No., 1:Category, 2:Name, 3:Quantity, 4:Location, 5:Price, 6:Details
         TableColumnModel columnModel = table.getColumnModel();
         columnModel.getColumn(0).setPreferredWidth(50);   // No. - smaller for just numbers
-        columnModel.getColumn(1).setPreferredWidth(100);  // Category
+        columnModel.getColumn(1).setPreferredWidth(120);  // Category
         columnModel.getColumn(2).setPreferredWidth(150);  // Name
-        columnModel.getColumn(3).setPreferredWidth(60);   // Quantity - narrower for numbers
-        columnModel.getColumn(4).setPreferredWidth(100);  // Location
+        columnModel.getColumn(3).setPreferredWidth(80);   // Quantity - narrower for numbers
+        columnModel.getColumn(4).setPreferredWidth(130);  // Location
         columnModel.getColumn(5).setPreferredWidth(80);   // Price
-        columnModel.getColumn(6).setPreferredWidth(250);  // Details
+        columnModel.getColumn(6).setPreferredWidth(467);  // Details
 
         // Add alternating row colors
         table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
