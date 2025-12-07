@@ -672,7 +672,7 @@ public class Tools extends JPanel {
     public void setQuantityInput(int quantity) {
         spinner1.setValue(quantity);
     }
-    public void setLastMaintenanceDateInput(String date) {
+    public void setLMDInput(String date) {
         if (date == null || date.trim().isEmpty()) {
             LMD_field.setText(LMD_PLACEHOLDER);
             LMD_field.setForeground(new Color(100, 100, 100, 180));
@@ -741,8 +741,8 @@ public class Tools extends JPanel {
         inventoryManager.loadFromFile();
 
         inventoryManager.getItemsByCategory(Category.TOOLS).stream()
-                .filter(Tools.class::isInstance)
-                .map(Tools.class::cast)
+                .filter(Tool.class::isInstance)
+                .map(Tool.class::cast)
                 .forEach(tools -> {
                     itemTable.addRow(new Object[]{
                             tools.getName(),
@@ -750,7 +750,7 @@ public class Tools extends JPanel {
                             tools.getLocation(),
                             tools.getVendor(),
                             tools.getPurchasePrice(),
-                            tools.getDescription();
+                            tools.getDescription()
                     });
                 });
 
@@ -778,7 +778,8 @@ public class Tools extends JPanel {
                 getSizeInput(),
                 getMaterialInput(),
                 getMaintenanceNeeded(),
-                getLMDInput()
+                getLMDInput(),
+                setMaintenanceIntervalDays(), // THE FIX FOR THIS: MAKE INTERNVAL DAYS GETTER AND SETTER METHODS HERE
         );
     }
 
@@ -993,11 +994,11 @@ public class Tools extends JPanel {
         setPriceInput(String.valueOf(tool.getPurchasePrice()));
         setPurchaseDateInput(tool.getPurchaseDate());
         setToolTypeInput(tool.getToolType());
-        setSizeInput(tool.getSize());
+        setSizeInput(tool.getSteelGrade());  // DONT FORGET TO CHANGE THE SIZEINPUT TO BE STEELGRADEINPUT
         setDescriptionInput(tool.getDescription());
         setLocationInput(tool.getLocation());
         setMaintenanceNeeded(tool.getMaintenanceNeeded());
-        setLMDInput(tool.getLMD());
+        setLMDInput(tool.getLastMaintenanceDate());
     }
 
     //(copy paste here the needed stuff, already implemented the maitenance listener since its
@@ -1034,7 +1035,7 @@ public class Tools extends JPanel {
 
             if (!requiresMaintenance) {
                 maintenanceIntervalSpinner.setValue(30);
-                setLastMaintenanceDateInput("");
+                setLMDInput("");
                 maintenanceNeededCheckBox.setSelected(false);
             }
         });
