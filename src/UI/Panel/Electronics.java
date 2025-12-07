@@ -5,6 +5,9 @@ import UI.Utilities.ItemTable;
 import Model.Entities.Electronic;
 import Model.Entities.Item;
 import Model.Enums.Category;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.swing.*;
 import java.awt.*;
@@ -111,7 +114,7 @@ public class Electronics extends JPanel {
         brand_label = new JLabel("BRAND:");
         LMD_label = new JLabel("LAST MAINTENANCE DATE:");
         description_label = new JLabel("DESCRIPTION/NOTE:");
-        maintenance_label = new JLabel("MAINTENANCE NEEDED:");
+        maintenance_label = new JLabel("YEARLY MAINTENANCE NEEDED? ");
         purchaseDate_label = new JLabel("PURCHASE DATE: ");
 
         // Initialize buttons
@@ -808,7 +811,23 @@ public class Electronics extends JPanel {
         if (!validateDateField(getPurchaseDateInput(), "Purchase Date")) return false;
         if (!validateDateField(getLMDInput(), "Last Maintenance Date")) return false;
 
+        if (isFutureDate(getLMDInput())) {
+            showError("Last Maintenance Date cannot be a future date");
+            return false;
+        }
+
         return true;
+    }
+
+    private boolean isFutureDate(String dateStr) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+            LocalDate inputDate = LocalDate.parse(dateStr, formatter);
+            LocalDate today = LocalDate.now();
+            return inputDate.isAfter(today);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private boolean validateDateField(String dateText, String fieldName) {
