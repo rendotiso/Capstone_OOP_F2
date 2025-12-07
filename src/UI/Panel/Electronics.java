@@ -620,8 +620,7 @@ public class Electronics extends JPanel {
         itemTable.clearTable();
 
         for (Item item : electronicsItems) {
-            if (item instanceof Electronic) {
-                Electronic electronicItem = (Electronic) item;
+            if (item instanceof Electronic electronicItem) {
                 Object[] rowData = new Object[]{
                         electronicItem.getName(),
                         electronicItem.getQuantity(),
@@ -781,6 +780,11 @@ public class Electronics extends JPanel {
 
     private void addItem(){
         try {
+
+            if(validationErrors() == true) {
+                return;
+            }
+
             Electronic item = new Electronic(getNameInput(), getDescriptionInput(), getQuantityInput(),
                     parsePrice(getPriceInput()),getPurchaseDateInput(),getVendorInput(), getLocationInput(),
                     getWarrantyInput(), getBrandInput(), getModelInput(), getMaintenanceNeeded(), getLMDInput()
@@ -804,6 +808,40 @@ public class Electronics extends JPanel {
         }
     }
 
+    private boolean validationErrors(){
+        if (getNameInput().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Name cannot be empty!",
+                    "Input Error", JOptionPane.ERROR_MESSAGE);
+            return true;
+        }
+        if (getPriceInput().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Price cannot be empty!",
+                    "Input Error", JOptionPane.ERROR_MESSAGE);
+            return true;
+        }
+        if (getQuantityInput() <= 0) {
+            JOptionPane.showMessageDialog(this, "Quantity cannot be empty!",
+                    "Input Error", JOptionPane.ERROR_MESSAGE);
+            return true;
+        }
+        if (getLocationInput().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Location cannot be empty!",
+                    "Input Error", JOptionPane.ERROR_MESSAGE);
+            return true;
+        }
+
+        if(getBrandInput().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Brand cannot be empty!",
+                    "Input Error", JOptionPane.ERROR_MESSAGE);
+            return true;
+        }
+        if(getModelInput().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Model cannot be empty!",
+                    "Input Error", JOptionPane.ERROR_MESSAGE);
+            return true;
+        }
+        return  false;
+    }
     private void updateItem(){
 
 
