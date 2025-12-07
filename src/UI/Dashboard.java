@@ -37,11 +37,11 @@ public class Dashboard extends JFrame {
 
     private void addPanels() {
         AllItemsPanel viewAllPanel = new AllItemsPanel();
-        Clothing clothingPanel = new Clothing();
-        Electronics electronicsPanel = new Electronics();
-        Food foodPanel = new Food();
-        Tools toolsPanel = new Tools();
-        Misc miscPanel = new Misc();
+        ClothingPanel clothingPanel = new ClothingPanel();
+        ElectronicsPanel electronicsPanel = new ElectronicsPanel();
+        FoodPanel foodPanel = new FoodPanel();
+        ToolsPanel toolsPanel = new ToolsPanel();
+        MiscPanel miscPanel = new MiscPanel();
 
         cardlayout.add(viewAllPanel, "VIEW_ALL");
         cardlayout.add(clothingPanel, "CLOTHING");
