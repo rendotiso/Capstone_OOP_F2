@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class Tools extends JPanel {
+public class ToolsPanel extends JPanel {
     // ATTRIBUTES
     private JPanel panelist, rootPanel, tools_panel, panel, table_panel, description_panel;
     private JTextField name_field, steelgrade_field, vendor_field, price_field, purchased_field, tooltype_field, material_field, LastMaintenanceDate_field;
@@ -38,7 +38,7 @@ public class Tools extends JPanel {
     private static final String PURCHASED_PLACEHOLDER = "MM/DD/YYYY";
     private static final String LastMaintenanceDate_PLACEHOLDER = "MM/DD/YYYY";
 
-    public Tools() {
+    public ToolsPanel() {
         inventoryManager = InventoryManager.getInstance();
         initComponents();
         setupLayout();

@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
-public class Misc extends JPanel {
+public class MiscPanel extends JPanel {
 
     // ATTRIBUTES
     private JPanel panelist, rootPanel, miscellaneous_panel, panel, table_panel, description_panel;
@@ -36,7 +36,7 @@ public class Misc extends JPanel {
     // Placeholder texts
     private static final String WARRANTY_PLACEHOLDER = "MM/DD/YYYY";
 
-    public Misc() {
+    public MiscPanel() {
         inventoryManager = InventoryManager.getInstance();
         initComponents();
         setupLayout();

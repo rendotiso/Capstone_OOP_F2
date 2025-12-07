@@ -18,7 +18,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class Clothing extends JPanel {
+public class ClothingPanel extends JPanel {
 
     // ATTRIBUTES
     private JPanel panelist, rootPanel, Clothes_panel, panel, table_panel, description_panel;
@@ -38,7 +38,7 @@ public class Clothing extends JPanel {
     // Placeholder texts
     private static final String DATE_PLACEHOLDER  = "MM/DD/YYYY";
 
-    public Clothing() {
+    public ClothingPanel() {
         inventoryManager = InventoryManager.getInstance();
         initComponents();
         setupLayout();
