@@ -1,11 +1,4 @@
-import Model.Entities.Electronic;
 import UI.Dashboard;
-import UI.Panel.Clothing;
-import UI.Panel.Electronics;
-import UI.Panel.Food;
-import UI.Panel.Misc;
-import UI.Panel.Tools;
-
 import javax.swing.*;
 
 public class Main {
