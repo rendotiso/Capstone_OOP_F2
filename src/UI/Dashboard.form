@@ -78,7 +78,7 @@
                   <foreground color="-16777216"/>
                   <hideActionText value="false"/>
                   <horizontalTextPosition value="0"/>
-                  <text value="View All"/>
+                  <text value="View List"/>
                 </properties>
               </component>
               <component id="77eb5" class="javax.swing.JButton" binding="electronicsButton" default-binding="true">
