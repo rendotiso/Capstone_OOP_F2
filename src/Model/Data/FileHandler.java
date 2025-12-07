@@ -8,17 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileHandler {
-    private static String filePath = ".inventory.csv";
+    private static String filePath = ".inventory.txt";
 
-    public FileHandler(String filePath){
-        FileHandler.filePath = filePath;
-    }
     // save data
     public void saveData(List<Item> items) throws IOException {
         if (items == null) throw new IllegalArgumentException("Item List is empty.");
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
-            bw.write("CATEGORY,NAME,DESCRIPTION,QUANTITY,PURCHASE_PRICE,PURCHASE_DATE,VENDOR,LOCATION,ATTRIBUTE1,ATTRIBUTE2,ATTRIBUTE3,ATTRIBUTE4,ATTRIBUTE5,ATTRIBUTE6,ATTRIBUTE7");
+            bw.write("CATEGORY,NAME,DESCRIPTION,QUANTITY,PURCHASE_PRICE,PURCHASE_DATE," +
+                    "VENDOR,LOCATION,ATTRIBUTE1,ATTRIBUTE2,ATTRIBUTE3,ATTRIBUTE4," +
+                    "ATTRIBUTE5");
             bw.newLine();
             for (Item item : items) {
                 String line = convertToLine(item);
@@ -33,6 +32,7 @@ public class FileHandler {
 
     //load data
     public List<Item> loadData() throws IOException {
+
         List<Item> items = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             // Skip the header row
@@ -79,7 +79,9 @@ public class FileHandler {
                     food.getIsCanned() + "," + food.getIsPerishable();
             case Tool tool -> base + "," + tool.getToolType() + "," +
                     tool.getSteelGrade() + "," + tool.getMaterial() + "," +
-                    tool.getMaintenanceNeeded();
+                    tool.getMaintenanceNeeded() + "," +
+                    tool.getLastMaintenanceDate() + "," +
+                    tool.getMaintenanceIntervalDays();
             case Miscellaneous miscellaneous -> base + "," + miscellaneous.getItemType() + "," +
                     miscellaneous.getUsage() + "," +
                     miscellaneous.getIsCondition();
@@ -89,7 +91,7 @@ public class FileHandler {
 
     // HELPER METHOD FOR LOAD DATA
     private Item convertToItem(String curr) {
-        String[] items = curr.split(",");
+        String[] items = curr.split(",", -1);
         try {
             Category category = Category.valueOf(items[0]);
             String name = items[1];
