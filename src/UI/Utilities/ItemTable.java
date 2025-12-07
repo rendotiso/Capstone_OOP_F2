@@ -1,220 +1,188 @@
 package UI.Utilities;
 
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.util.ArrayList;
-import java.util.List;
+import javax.swing.table.TableColumnModel;
+import java.awt.*;
 
-public class ItemTable {
-    private static ItemTable instance;
-    private final DefaultTableModel allItemsTableModel;
-    private final List<ItemData> allItems;
-    private final List<ItemData> temporaryItems; // For Tools panel local storage
+public class ItemTable extends JScrollPane {
+    private final JTable table;
+    private final DefaultTableModel tableModel;
+    private static final String[] DEFAULT_COLUMN_NAMES = {"Name", "Qty", "Location", "Vendor", "Price", "Details"};
 
-    public static class ItemData {
-        private final String category;
-        private final String name;
-        private final int quantity;
-        private final String location;
-        private final String vendor;
-        private final double price;
-        private final String details;
-
-        public ItemData(String category, String name, int quantity, String location,
-                        String vendor, double price, String details) {
-            this.category = category;
-            this.name = name;
-            this.quantity = quantity;
-            this.location = location;
-            this.vendor = vendor;
-            this.price = price;
-            this.details = details;
-        }
-
-        // Getters
-        public String getCategory() { return category; }
-        public String getName() { return name; }
-        public int getQuantity() { return quantity; }
-        public String getLocation() { return location; }
-        public String getVendor() { return vendor; }
-        public double getPrice() { return price; }
-        public String getDetails() { return details; }
-        public String getFormattedPrice() { return String.format("$%.2f", price); }
-
-        @Override
-        public String toString() {
-            return String.format("%s,%s,%d,%s,%s,%.2f,%s",
-                    category, name, quantity, location, vendor, price, details);
-        }
+    public ItemTable() {
+        this(DEFAULT_COLUMN_NAMES);
     }
 
-    private ItemTable() {
-        String[] columnNames = {"No.", "Category", "Name", "Quantity", "Location", "Price", "Details"};
-        allItemsTableModel = new DefaultTableModel(columnNames, 0) {
+    public ItemTable(String[] columnNames) {
+        table = new JTable();
+        tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
-                switch (columnIndex) {
-                    case 0: // No.
-                    case 3: // Quantity
-                        return Integer.class;
-                    case 5: // Price
-                        return Double.class;
-                    default:
-                        return String.class;
+                // Return proper class for each column
+                if (columnNames[columnIndex].equalsIgnoreCase("Qty")) {
+                    return Integer.class;
+                } else if (columnNames[columnIndex].equalsIgnoreCase("Price")) {
+                    return Double.class;
                 }
+                return String.class;
             }
-
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        allItems = new ArrayList<>();
-        temporaryItems = new ArrayList<>();
+        table.setModel(tableModel);
+        setupTableAppearance();
+        setupTableRenderers();
+
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.getTableHeader().setReorderingAllowed(false);
+        table.setFillsViewportHeight(true);
+        
+        setViewportView(table);
+        setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     }
 
-    public static ItemTable getInstance() {
-        if (instance == null) {
-            instance = new ItemTable();
-        }
-        return instance;
+    private void setupTableAppearance() {
+
+        table.setRowHeight(30); // Initial row height
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
+        table.getTableHeader().setBackground(new Color(70, 130, 180));
+        table.getTableHeader().setForeground(Color.WHITE);
+        table.getTableHeader().setReorderingAllowed(false);
+
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        table.setSelectionBackground(new Color(100, 149, 237));
+        table.setSelectionForeground(Color.WHITE);
+        table.setGridColor(Color.LIGHT_GRAY);
+        table.setShowGrid(true);
+        table.setIntercellSpacing(new Dimension(1, 1));
+
+        // Set column widths
+        TableColumnModel columnModel = table.getColumnModel();
+        columnModel.getColumn(0).setPreferredWidth(120); // Name
+        columnModel.getColumn(1).setPreferredWidth(50);  // Qty
+        columnModel.getColumn(2).setPreferredWidth(100); // Location
+        columnModel.getColumn(3).setPreferredWidth(120); // Vendor
+        columnModel.getColumn(4).setPreferredWidth(80);  // Price
+        columnModel.getColumn(5).setPreferredWidth(300); // Details
     }
 
-    // Add to main table (AllItemsPanel)
-    public void addItem(ItemData item) {
-        allItems.add(item);
-        updateTableModel();
-    }
+    private void setupTableRenderers() {
 
-    // Add to temporary storage (Tools panel)
-    public void addTemporaryItem(ItemData item) {
-        temporaryItems.add(item);
-    }
+        table.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                                                           boolean isSelected, boolean hasFocus,
+                                                           int row, int column) {
+                Component component = super.getTableCellRendererComponent(table, value,
+                        isSelected, hasFocus, row, column);
+                if (value instanceof Number) {
+                    ((JLabel) component).setHorizontalAlignment(SwingConstants.CENTER);
+                } else {
+                    ((JLabel) component).setHorizontalAlignment(SwingConstants.LEFT);
+                }
 
-    // Get temporary items
-    public List<ItemData> getTemporaryItems() {
-        return new ArrayList<>(temporaryItems);
-    }
-
-    // Get temporary items count
-    public int getTemporaryItemsCount() {
-        return temporaryItems.size();
-    }
-
-    // Clear temporary items
-    public void clearTemporaryItems() {
-        temporaryItems.clear();
-    }
-
-    // Transfer all temporary items to main table
-    public void transferTemporaryToMain() {
-        if (temporaryItems.isEmpty()) {
-            return;
-        }
-        allItems.addAll(temporaryItems);
-        temporaryItems.clear();
-        updateTableModel();
-    }
-
-    // Transfer specific temporary item to main table
-    public void transferTemporaryItemToMain(int index) {
-        if (index >= 0 && index < temporaryItems.size()) {
-            allItems.add(temporaryItems.get(index));
-            temporaryItems.remove(index);
-            updateTableModel();
-        }
-    }
-
-    // Remove from main table
-    public void removeItem(int index) {
-        if (index >= 0 && index < allItems.size()) {
-            allItems.remove(index);
-            updateTableModel();
-        }
-    }
-
-    // Remove from temporary storage
-    public void removeTemporaryItem(int index) {
-        if (index >= 0 && index < temporaryItems.size()) {
-            temporaryItems.remove(index);
-        }
-    }
-
-    // Update item in main table
-    public void updateItem(int index, ItemData newItem) {
-        if (index >= 0 && index < allItems.size()) {
-            allItems.set(index, newItem);
-            updateTableModel();
-        }
-    }
-
-    // Update item in temporary storage
-    public void updateTemporaryItem(int index, ItemData newItem) {
-        if (index >= 0 && index < temporaryItems.size()) {
-            temporaryItems.set(index, newItem);
-        }
-    }
-
-    private void updateTableModel() {
-        allItemsTableModel.setRowCount(0);
-        for (int i = 0; i < allItems.size(); i++) {
-            ItemData item = allItems.get(i);
-            allItemsTableModel.addRow(new Object[]{
-                    i + 1, // No.
-                    item.getCategory(),
-                    item.getName(),
-                    item.getQuantity(),
-                    item.getLocation(),
-                    item.getPrice(), // Store as double for sorting
-                    item.getDetails()
-            });
-        }
-    }
-
-    public void searchItems(String searchText) {
-        allItemsTableModel.setRowCount(0);
-
-        if (searchText == null || searchText.trim().isEmpty()) {
-            updateTableModel();
-            return;
-        }
-
-        String searchLower = searchText.toLowerCase().trim();
-        int displayedIndex = 1;
-        for (int i = 0; i < allItems.size(); i++) {
-            ItemData item = allItems.get(i);
-            if (item.getName().toLowerCase().contains(searchLower) ||
-                    item.getCategory().toLowerCase().contains(searchLower) ||
-                    item.getLocation().toLowerCase().contains(searchLower) ||
-                    item.getDetails().toLowerCase().contains(searchLower) ||
-                    item.getVendor().toLowerCase().contains(searchLower)) {
-                allItemsTableModel.addRow(new Object[]{
-                        displayedIndex++,
-                        item.getCategory(),
-                        item.getName(),
-                        item.getQuantity(),
-                        item.getLocation(),
-                        item.getPrice(),
-                        item.getDetails()
-                });
+                return component;
             }
-        }
-    }
+        });
 
-    public DefaultTableModel getAllItemsTableModel() {
-        return allItemsTableModel;
-    }
-
-    public List<ItemData> getAllItems() {
-        return new ArrayList<>(allItems);
-    }
-
-    public List<ItemData> getItemsByCategory(String category) {
-        List<ItemData> result = new ArrayList<>();
-        for (ItemData item : allItems) {
-            if (item.getCategory().equalsIgnoreCase(category)) {
-                result.add(item);
+        table.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                adjustRowHeights();
             }
+        });
+    }
+
+    public void adjustRowHeights() {
+        for (int row = 0; row < table.getRowCount(); row++) {
+            int maxHeight = 30;
+
+            for (int col = 0; col < table.getColumnCount(); col++) {
+                Object cellValue = table.getValueAt(row, col);
+                if (cellValue != null) {
+                    String cellText = cellValue.toString();
+                    if (!cellText.isEmpty()) {
+
+                        JTextArea tempTextArea = new JTextArea(cellText);
+                        tempTextArea.setLineWrap(true);
+                        tempTextArea.setWrapStyleWord(true);
+                        tempTextArea.setFont(table.getFont());
+
+                        int columnWidth = table.getColumnModel().getColumn(col).getWidth();
+                        tempTextArea.setSize(columnWidth - 10, Integer.MAX_VALUE); // Subtract padding
+
+                        int textHeight = tempTextArea.getPreferredSize().height + 8; // Add padding
+                        maxHeight = Math.max(maxHeight, textHeight);
+                    }
+                }
+            }
+
+            table.setRowHeight(row, Math.min(maxHeight, 200));
         }
-        return result;
+    }
+
+    public void setColumnWidths(int... widths) {
+        TableColumnModel columnModel = table.getColumnModel();
+        for (int i = 0; i < Math.min(widths.length, columnModel.getColumnCount()); i++) {
+            columnModel.getColumn(i).setPreferredWidth(widths[i]);
+            columnModel.getColumn(i).setMinWidth(widths[i] / 2);
+        }
+    }
+
+    public void setDefaultColumnWidths() {
+        setColumnWidths(150, 60, 120, 150, 80, 250);
+    }
+
+    public JTable getTable() {
+        return table;
+    }
+
+    public DefaultTableModel getTableModel() {
+        return tableModel;
+    }
+
+    public void clearTable() {
+        tableModel.setRowCount(0);
+    }
+
+    public void addRow(Object[] rowData) {
+        tableModel.addRow(rowData);
+        adjustRowHeights();
+    }
+
+    public void setData(Object[][] data) {
+        clearTable();
+        for (Object[] row : data) {
+            addRow(row);
+        }
+    }
+
+    public void removeRow(int row) {
+        if (row >= 0 && row < tableModel.getRowCount()) {
+            tableModel.removeRow(row);
+        }
+    }
+
+    public int getSelectedRow() {
+        return table.getSelectedRow();
+    }
+
+    public Object getValueAt(int row, int column) {
+        return tableModel.getValueAt(row, column);
+    }
+
+    public void setSelectionListener(java.awt.event.MouseListener listener) {
+        table.addMouseListener(listener);
+    }
+
+    public void setColumnNames(String[] columnNames) {
+        tableModel.setColumnIdentifiers(columnNames);
     }
 }
