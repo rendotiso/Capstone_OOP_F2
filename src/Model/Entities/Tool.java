@@ -16,17 +16,17 @@ public class Tool extends Item implements Maintainable {
 
     //maintenance attributes
     private boolean maintenanceNeeded;
-    private String lastMaintenanceDate;
+    private String LastMaintenanceDate;
     private int maintenanceIntervalDays;
 
     public Tool(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, String location, String toolType,
-                String steelGrade, String material, boolean maintenanceNeeded, String lastMaintenanceDate, int maintenanceIntervalDays) {
+                String steelGrade, String material, boolean maintenanceNeeded, String LastMaintenanceDate, int maintenanceIntervalDays) {
         super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.TOOLS, location);
         this.toolType = toolType;
         this.steelGrade = steelGrade;
         this.material = material;
         this.maintenanceNeeded = true;
-        this.lastMaintenanceDate = lastMaintenanceDate;
+        this.LastMaintenanceDate = LastMaintenanceDate;
         this.maintenanceIntervalDays = maintenanceIntervalDays;
     }
 
@@ -42,7 +42,7 @@ public class Tool extends Item implements Maintainable {
         return maintenanceNeeded;
     }
     public String getLastMaintenanceDate() {
-        return lastMaintenanceDate;
+        return LastMaintenanceDate;
     }
     public int getMaintenanceIntervalDays() {
         return maintenanceIntervalDays;
@@ -59,8 +59,8 @@ public class Tool extends Item implements Maintainable {
     public void setMaintenanceNeeded(boolean maintenanceNeeded) {
         this.maintenanceNeeded = maintenanceNeeded;
     }
-    public void setLastMaintenanceDate(String lastMaintenanceDate) {
-        this.lastMaintenanceDate = lastMaintenanceDate;
+    public void setLastMaintenanceDate(String LastMaintenanceDate) {
+        this.LastMaintenanceDate = LastMaintenanceDate;
     }
     public void setMaintenanceIntervalDays(int days) {
         this.maintenanceIntervalDays = days;
@@ -73,12 +73,12 @@ public class Tool extends Item implements Maintainable {
     }
     @Override
     public int getDaysUntilMaintenanceDue() {
-        if (lastMaintenanceDate == null || lastMaintenanceDate.isEmpty()) {
+        if (LastMaintenanceDate == null || LastMaintenanceDate.isEmpty()) {
             return 0;
         }
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-            LocalDate lastMaintenance = LocalDate.parse(lastMaintenanceDate, formatter);
+            LocalDate lastMaintenance = LocalDate.parse(LastMaintenanceDate, formatter);
             LocalDate nextMaintenanceDate = lastMaintenance.plusDays(365);
             LocalDate today = LocalDate.now();
             if (today.isBefore(nextMaintenanceDate)) {

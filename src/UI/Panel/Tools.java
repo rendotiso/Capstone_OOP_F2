@@ -10,16 +10,18 @@ import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class Tools extends JPanel {
     // ATTRIBUTES
     private JPanel panelist, rootPanel, tools_panel, panel, table_panel, description_panel;
-    private JTextField name_field, size_field, vendor_field, price_field, purchased_field, tooltype_field, material_field, LMD_field;
+    private JTextField name_field, size_field, vendor_field, price_field, purchased_field, tooltype_field, material_field, LastMaintenanceDate_field;
     private JTextArea textArea1;
     private JLabel tools_label, name_label, quantity_label, location_label, vendor_label, price_label,
             purchase_label, tooltype_label, material_label, requiresmaintenance_label, size_label, description_label,
-            maintenanceInterval_label, LMD_label, maintenanceNeeded_label;
+            maintenanceIntervalDateDays_label, LastMaintenanceDate_label, maintenanceNeeded_label;
     private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton, REFRESHButton;
     private JComboBox<String> location_combobox;
     private JTable table1;
@@ -27,7 +29,7 @@ public class Tools extends JPanel {
     private JCheckBox requiresMaintenanceCheckBox, maintenanceNeededCheckBox;
     private JPanel radiopanel1, maintenancePanel;
     private JScrollPane textAreaScroll;
-    private JSpinner spinner1, maintenanceIntervalSpinner;
+    private JSpinner spinner1, maintenanceIntervalDateDays;
     private JScrollPane scrollPane;
     private ItemTable itemTable;
     private final InventoryManager inventoryManager;
@@ -36,7 +38,7 @@ public class Tools extends JPanel {
     //Placeholders texts
     private static final String DATE_PLACEHOLDER = "MM/DD/YYYY";
     private static final String PURCHASED_PLACEHOLDER = "MM/DD/YYYY";
-    private static final String LMD_PLACEHOLDER = "MM/DD/YYYY";
+    private static final String LastMaintenanceDate_PLACEHOLDER = "MM/DD/YYYY";
 
     public Tools() {
         inventoryManager = InventoryManager.getInstance();
@@ -46,7 +48,6 @@ public class Tools extends JPanel {
         setupPlaceholders();
         setupMaintenanceListener();
         setupButtonListeners();
-        setupTable();
         setupTableSelectionListener();
     }
 
@@ -72,7 +73,7 @@ public class Tools extends JPanel {
         purchased_field = new JTextField(8);
         tooltype_field = new JTextField(8);
         material_field = new JTextField(8);
-        LMD_field = new JTextField(8);
+        LastMaintenanceDate_field = new JTextField(8);
 
         textArea1 = new JTextArea(3, 15);
         textArea1.setLineWrap(true);
@@ -107,9 +108,9 @@ public class Tools extends JPanel {
         material_label = new JLabel("MATERIAL:");
         size_label = new JLabel("STEEL GRADE:");
         requiresmaintenance_label = new JLabel("REQUIRES MAINTENANCE:");
-        maintenanceInterval_label = new JLabel("MAINTENANCE INTERVAL (DAYS):");
+        maintenanceIntervalDateDays_label = new JLabel("MAINTENANCE INTERVAL (DAYS):");
         maintenanceNeeded_label = new JLabel("MAINTENANCE NEEDED:");
-        LMD_label = new JLabel("LAST MAINTENANCE DATE:");
+        LastMaintenanceDate_label = new JLabel("LAST MAINTENANCE DATE:");
         description_label = new JLabel("DESCRIPTION/NOTE:");
 
         // Initialize buttons
@@ -135,12 +136,12 @@ public class Tools extends JPanel {
         maintenanceNeededCheckBox = new JCheckBox();
 
         // Initialize maintenance interval spinner
-        maintenanceIntervalSpinner = new JSpinner(new SpinnerNumberModel(30, 1, 365, 1));
-        JSpinner.NumberEditor intervalEditor = new JSpinner.NumberEditor(maintenanceIntervalSpinner, "#");
-        maintenanceIntervalSpinner.setEditor(intervalEditor);
+        maintenanceIntervalDateDays = new JSpinner(new SpinnerNumberModel(30, 1, 365, 1));
+        JSpinner.NumberEditor intervalEditor = new JSpinner.NumberEditor(maintenanceIntervalDateDays, "#");
+        maintenanceIntervalDateDays.setEditor(intervalEditor);
 
         // Force left alignment
-        JComponent intervalEditorComp = maintenanceIntervalSpinner.getEditor();
+        JComponent intervalEditorComp = maintenanceIntervalDateDays.getEditor();
         if (intervalEditorComp instanceof JSpinner.DefaultEditor) {
             JTextField textField = ((JSpinner.DefaultEditor) intervalEditorComp).getTextField();
             textField.setHorizontalAlignment(SwingConstants.LEFT);
@@ -328,14 +329,14 @@ public class Tools extends JPanel {
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
         formGbc.anchor = GridBagConstraints.WEST;
-        panel.add(maintenanceInterval_label, formGbc);
+        panel.add(maintenanceIntervalDateDays_label, formGbc);
 
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;
         formGbc.weightx = 1.0;
         formGbc.anchor = GridBagConstraints.WEST;
-        maintenanceIntervalSpinner.setPreferredSize(new Dimension(80, 25));
-        panel.add(maintenanceIntervalSpinner, formGbc);
+        maintenanceIntervalDateDays.setPreferredSize(new Dimension(80, 25));
+        panel.add(maintenanceIntervalDateDays, formGbc);
 
         row++;
 
@@ -391,7 +392,7 @@ public class Tools extends JPanel {
 
         // Table panel (right side)
         table_panel.setLayout(new BorderLayout());
-        table_panel.add(scrollPane, BorderLayout.CENTER);
+        table_panel.add(itemTable, BorderLayout.CENTER);
 
         // Add table panel to root panel (right side)
         gbc.gridx = 1;
@@ -448,7 +449,7 @@ public class Tools extends JPanel {
 
         // Set spinner background
         spinner1.setBackground(bg);
-        maintenanceIntervalSpinner.setBackground(bg);
+        maintenanceIntervalDateDays.setBackground(bg);
 
         // Customize the spinner editor
         JComponent editorComp = spinner1.getEditor();
@@ -460,7 +461,7 @@ public class Tools extends JPanel {
         }
 
         // Customize maintenance interval spinner text field
-        JComponent intervalEditorComp = maintenanceIntervalSpinner.getEditor();
+        JComponent intervalEditorComp = maintenanceIntervalDateDays.getEditor();
         if (intervalEditorComp instanceof JSpinner.DefaultEditor) {
             JTextField textField = ((JSpinner.DefaultEditor) intervalEditorComp).getTextField();
             textField.setBackground(bg);
@@ -498,7 +499,7 @@ public class Tools extends JPanel {
         material_label.setForeground(black);
         size_label.setForeground(black);
         requiresmaintenance_label.setForeground(black);
-        maintenanceInterval_label.setForeground(black);
+        maintenanceIntervalDateDays_label.setForeground(black);
         description_label.setForeground(black);
 
         // Set button colors
@@ -544,7 +545,7 @@ public class Tools extends JPanel {
         material_label.setFont(labelFont);
         size_label.setFont(labelFont);
         requiresmaintenance_label.setFont(labelFont);
-        maintenanceInterval_label.setFont(labelFont);
+        maintenanceIntervalDateDays_label.setFont(labelFont);
         description_label.setFont(labelFont);
 
         name_field.setFont(fieldFont);
@@ -559,7 +560,7 @@ public class Tools extends JPanel {
 
         // Set spinner font
         spinner1.setFont(fieldFont);
-        maintenanceIntervalSpinner.setFont(fieldFont);
+        maintenanceIntervalDateDays.setFont(fieldFont);
 
         // Set checkbox font
         requiresMaintenanceCheckBox.setFont(checkboxFont);
@@ -581,8 +582,8 @@ public class Tools extends JPanel {
         // Set placeholder text for warranty field
         purchased_field.setText(DATE_PLACEHOLDER);
 
-        // Set placeholder for LMD field
-        LMD_field.setText(LMD_PLACEHOLDER);
+        // Set placeholder for LastMaintenanceDate field
+        LastMaintenanceDate_field.setText(LastMaintenanceDate_PLACEHOLDER);
 
         // Add focus listener
         purchased_field.addFocusListener(new FocusAdapter() {
@@ -613,9 +614,9 @@ public class Tools extends JPanel {
     public int getQuantityInput() {
         return (int) spinner1.getValue();
     }
-    public String getLMDInput() {
-        String text = LMD_field.getText();
-        if (text.equals(LMD_PLACEHOLDER)) {
+    public String getLastMaintenanceDateInput() {
+        String text = LastMaintenanceDate_field.getText();
+        if (text.equals(LastMaintenanceDate_PLACEHOLDER)) {
             return "";
         }
         return text;
@@ -661,8 +662,8 @@ public class Tools extends JPanel {
         return maintenanceNeededCheckBox.isSelected();
     }
 
-    public int getMaintenanceInterval() {
-        return (int) maintenanceIntervalSpinner.getValue();
+    public int getMaintenanceIntervalDateDays() {
+        return (int) maintenanceIntervalDateDays.getValue();
     }
 
     // SETTERS
@@ -672,15 +673,15 @@ public class Tools extends JPanel {
     public void setQuantityInput(int quantity) {
         spinner1.setValue(quantity);
     }
-    public void setLMDInput(String date) {
+    public void setLastMaintenanceDateInput(String date) {
         if (date == null || date.trim().isEmpty()) {
-            LMD_field.setText(LMD_PLACEHOLDER);
-            LMD_field.setForeground(new Color(100, 100, 100, 180));
-            LMD_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+            LastMaintenanceDate_field.setText(LastMaintenanceDate_PLACEHOLDER);
+            LastMaintenanceDate_field.setForeground(new Color(100, 100, 100, 180));
+            LastMaintenanceDate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
         } else {
-            LMD_field.setText(date);
-            LMD_field.setForeground(Color.BLACK);
-            LMD_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            LastMaintenanceDate_field.setText(date);
+            LastMaintenanceDate_field.setForeground(Color.BLACK);
+            LastMaintenanceDate_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         }
     }
     public void setPurchaseDateInput(String date) {
@@ -722,14 +723,18 @@ public class Tools extends JPanel {
         maintenanceNeededCheckBox.setSelected(needsMaintenance);
 
         if (needsMaintenance) {
-            LMD_field.setBackground(new Color(0xFFE5E5));
-            LMD_label.setForeground(new Color(0xFF0000));
-            LMD_label.setText("LAST MAINTENANCE DATE: (URGENT!)");
+            LastMaintenanceDate_field.setBackground(new Color(0xFFE5E5));
+            LastMaintenanceDate_label.setForeground(new Color(0xFF0000));
+            LastMaintenanceDate_label.setText("LAST MAINTENANCE DATE: (URGENT!)");
         } else {
-            LMD_field.setBackground(new Color(0xF5F5F5));
-            LMD_label.setForeground(Color.BLACK);
-            LMD_label.setText("LAST MAINTENANCE DATE:");
+            LastMaintenanceDate_field.setBackground(new Color(0xF5F5F5));
+            LastMaintenanceDate_label.setForeground(Color.BLACK);
+            LastMaintenanceDate_label.setText("LAST MAINTENANCE DATE:");
         }
+    }
+    
+    public void setmaintenanceIntervalDateDaysDays(JSpinner maintenanceIntervalDateDays){
+        this.maintenanceIntervalDateDays = maintenanceIntervalDateDays;
     }
 
     // DATA LOADING AND ACTION LISTENERS
@@ -778,8 +783,8 @@ public class Tools extends JPanel {
                 getSizeInput(),
                 getMaterialInput(),
                 getMaintenanceNeeded(),
-                getLMDInput(),
-                setMaintenanceIntervalDays(), // THE FIX FOR THIS: MAKE INTERNVAL DAYS GETTER AND SETTER METHODS HERE
+                getLastMaintenanceDateInput(),
+                getMaintenanceIntervalDateDays() // THE FIX FOR THIS: MAKE INTERNVAL DAYS GETTER AND SETTER METHODS HERE
         );
     }
 
@@ -817,9 +822,20 @@ public class Tools extends JPanel {
         }
 
         if (!validateDateField(getPurchaseDateInput(), "Purchase Date")) return false;
-        if (!validateDateField(getLMDInput(), "Last Maintenance Date")) return false;
+        if (!validateDateField(getLastMaintenanceDateInput(), "Last Maintenance Date")) return false;
 
         return true;
+    }
+
+    private boolean isFutureDate(String dateStr) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+            LocalDate inputDate = LocalDate.parse(dateStr, formatter);
+            LocalDate today = LocalDate.now();
+            return inputDate.isAfter(today);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private boolean validateDateField(String dateText, String fieldName) {
@@ -943,7 +959,7 @@ public class Tools extends JPanel {
         maintenanceNeededCheckBox.setSelected(false);
 
         // Reset date fields to placeholders
-        setFieldToPlaceholder(LMD_field, LMD_PLACEHOLDER);
+        setFieldToPlaceholder(LastMaintenanceDate_field, LastMaintenanceDate_PLACEHOLDER);
         setFieldToPlaceholder(purchased_field, PURCHASED_PLACEHOLDER);
         setFieldToPlaceholder(purchased_field, DATE_PLACEHOLDER);
 
@@ -967,11 +983,6 @@ public class Tools extends JPanel {
                 }
             }
         });
-    }
-
-    private void setupTable() {
-        itemTable.setColumnNames(new String[]{"Name", "Qty", "Location", "Vendor", "Price", "Details"});
-        loadItems();
     }
 
     private void populateFormFromSelectedRow(int selectedRow) {
@@ -998,7 +1009,7 @@ public class Tools extends JPanel {
         setDescriptionInput(tool.getDescription());
         setLocationInput(tool.getLocation());
         setMaintenanceNeeded(tool.getMaintenanceNeeded());
-        setLMDInput(tool.getLastMaintenanceDate());
+        setLastMaintenanceDateInput(tool.getLastMaintenanceDate());
     }
 
     //(copy paste here the needed stuff, already implemented the maitenance listener since its
@@ -1014,29 +1025,16 @@ public class Tools extends JPanel {
         maintenanceNeededCheckBox.addChangeListener(e -> {
             if (maintenanceNeededCheckBox.isSelected()) {
 
-                LMD_field.setBackground(new Color(0xFFE5E5));
-                LMD_label.setForeground(new Color(0xFF0000));
-                LMD_label.setText("LAST MAINTENANCE DATE: (URGENT!)");
+                LastMaintenanceDate_field.setBackground(new Color(0xFFE5E5));
+                LastMaintenanceDate_label.setForeground(new Color(0xFF0000));
+                LastMaintenanceDate_label.setText("LAST MAINTENANCE DATE: (URGENT!)");
                 maintenanceNeeded_label.setForeground(new Color(0xFF0000));
             } else {
 
-                LMD_field.setBackground(new Color(0xF5F5F5));
-                LMD_label.setForeground(Color.BLACK);
-                LMD_label.setText("LAST MAINTENANCE DATE:");
+                LastMaintenanceDate_field.setBackground(new Color(0xF5F5F5));
+                LastMaintenanceDate_label.setForeground(Color.BLACK);
+                LastMaintenanceDate_label.setText("LAST MAINTENANCE DATE:");
                 maintenanceNeeded_label.setForeground(Color.BLACK);
-            }
-        });
-
-        requiresMaintenanceCheckBox.addActionListener(e -> {
-            boolean requiresMaintenance = requiresMaintenanceCheckBox.isSelected();
-            maintenanceIntervalSpinner.setEnabled(requiresMaintenance);
-            LMD_field.setEnabled(requiresMaintenance);
-            maintenanceNeededCheckBox.setEnabled(requiresMaintenance);
-
-            if (!requiresMaintenance) {
-                maintenanceIntervalSpinner.setValue(30);
-                setLMDInput("");
-                maintenanceNeededCheckBox.setSelected(false);
             }
         });
     }
