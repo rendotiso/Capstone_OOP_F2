@@ -19,6 +19,8 @@ public abstract class Item {
         this.purchasePrice = purchasePrice;
         this.purchaseDate = purchaseDate;
         this.vendor = vendor;
+        this.category = category;
+        this.location = location;
     }
 
     //GETTERS
@@ -65,7 +67,7 @@ public abstract class Item {
 
     //ABSTRACT METHODS
     public String descriptionDetails() {
-        return String.format("%s - %s (Qty: %d)", name, category, quantity);
+        return String.format("%s - %s (Date bought - %s)", name, category, purchaseDate);
     }
     public abstract double calculateValue();
 
