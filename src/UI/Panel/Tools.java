@@ -17,10 +17,10 @@ import java.util.List;
 public class Tools extends JPanel {
     // ATTRIBUTES
     private JPanel panelist, rootPanel, tools_panel, panel, table_panel, description_panel;
-    private JTextField name_field, size_field, vendor_field, price_field, purchased_field, tooltype_field, material_field, LastMaintenanceDate_field;
+    private JTextField name_field, steelgrade_field, vendor_field, price_field, purchased_field, tooltype_field, material_field, LastMaintenanceDate_field;
     private JTextArea textArea1;
     private JLabel tools_label, name_label, quantity_label, location_label, vendor_label, price_label,
-            purchase_label, tooltype_label, material_label, requiresmaintenance_label, size_label, description_label,
+            purchase_label, tooltype_label, material_label, requiresmaintenance_label, steelgrade_label, description_label,
             maintenanceIntervalDateDays_label, LastMaintenanceDate_label, maintenanceNeeded_label;
     private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton, REFRESHButton;
     private JComboBox<String> location_combobox;
@@ -67,7 +67,7 @@ public class Tools extends JPanel {
 
         // Initialize form fields
         name_field = new JTextField(8);
-        size_field = new JTextField(8);
+        steelgrade_field = new JTextField(8);
         vendor_field = new JTextField(8);
         price_field = new JTextField(8);
         purchased_field = new JTextField(8);
@@ -106,7 +106,7 @@ public class Tools extends JPanel {
         purchase_label = new JLabel("PURCHASED DATE:");
         tooltype_label = new JLabel("TOOL TYPE:");
         material_label = new JLabel("MATERIAL:");
-        size_label = new JLabel("STEEL GRADE:");
+        steelgrade_label = new JLabel("STEEL GRADE:");
         requiresmaintenance_label = new JLabel("REQUIRES MAINTENANCE:");
         maintenanceIntervalDateDays_label = new JLabel("MAINTENANCE INTERVAL (DAYS):");
         maintenanceNeeded_label = new JLabel("MAINTENANCE NEEDED:");
@@ -295,13 +295,13 @@ public class Tools extends JPanel {
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
-        panel.add(size_label, formGbc);
+        panel.add(steelgrade_label, formGbc);
 
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;
         formGbc.weightx = 1.0;
-        size_field.setPreferredSize(new Dimension(80, 25));
-        panel.add(size_field, formGbc);
+        steelgrade_field.setPreferredSize(new Dimension(80, 25));
+        panel.add(steelgrade_field, formGbc);
 
         row++;
 
@@ -438,7 +438,7 @@ public class Tools extends JPanel {
 
         // Set text field backgrounds
         name_field.setBackground(bg);
-        size_field.setBackground(bg);
+        steelgrade_field.setBackground(bg);
         vendor_field.setBackground(bg);
         price_field.setBackground(bg);
         purchased_field.setBackground(bg);
@@ -475,7 +475,7 @@ public class Tools extends JPanel {
 
         // Set foreground colors
         name_field.setForeground(black);
-        size_field.setForeground(black);
+        steelgrade_field.setForeground(black);
         vendor_field.setForeground(black);
         price_field.setForeground(black);
         purchased_field.setForeground(placeholderColor);
@@ -497,7 +497,7 @@ public class Tools extends JPanel {
         purchase_label.setForeground(black);
         tooltype_label.setForeground(black);
         material_label.setForeground(black);
-        size_label.setForeground(black);
+        steelgrade_label.setForeground(black);
         requiresmaintenance_label.setForeground(black);
         maintenanceIntervalDateDays_label.setForeground(black);
         description_label.setForeground(black);
@@ -543,13 +543,13 @@ public class Tools extends JPanel {
         purchase_label.setFont(labelFont);
         tooltype_label.setFont(labelFont);
         material_label.setFont(labelFont);
-        size_label.setFont(labelFont);
+        steelgrade_label.setFont(labelFont);
         requiresmaintenance_label.setFont(labelFont);
         maintenanceIntervalDateDays_label.setFont(labelFont);
         description_label.setFont(labelFont);
 
         name_field.setFont(fieldFont);
-        size_field.setFont(fieldFont);
+        steelgrade_field.setFont(fieldFont);
         vendor_field.setFont(fieldFont);
         price_field.setFont(fieldFont);
         purchased_field.setFont(placeholderFont);
@@ -639,8 +639,8 @@ public class Tools extends JPanel {
         return tooltype_field.getText();
     }
 
-    public String getSizeInput() {
-        return size_field.getText();
+    public String getSteelGradeInput() {
+        return steelgrade_field.getText();
     }
 
     public String getMaterialInput() {
@@ -705,8 +705,8 @@ public class Tools extends JPanel {
     public void setToolTypeInput(String tooltype) {
         tooltype_field.setText(tooltype);
     }
-    public void setSizeInput(String size) {
-        size_field.setText(size);
+    public void setSteelGradeInput(String size) {
+        steelgrade_field.setText(size);
     }
     public void setDescriptionInput(String description) {
         textArea1.setText(description);
@@ -780,7 +780,7 @@ public class Tools extends JPanel {
                 getVendorInput(),
                 getLocationInput(),
                 getToolTypeInput(),
-                getSizeInput(),
+                getSteelGradeInput(),
                 getMaterialInput(),
                 getMaintenanceNeeded(),
                 getLastMaintenanceDateInput(),
@@ -816,7 +816,7 @@ public class Tools extends JPanel {
             return false;
         }
 
-        if (getSizeInput().trim().isEmpty()) {
+        if (getSteelGradeInput().trim().isEmpty()) {
             showError("Size cannot be empty!");
             return false;
         }
@@ -946,7 +946,7 @@ public class Tools extends JPanel {
         vendor_field.setText("");
         price_field.setText("");
         tooltype_field.setText("");
-        size_field.setText("");
+        steelgrade_field.setText("");
         textArea1.setText("");
 
         // Reset spinner
@@ -1005,7 +1005,7 @@ public class Tools extends JPanel {
         setPriceInput(String.valueOf(tool.getPurchasePrice()));
         setPurchaseDateInput(tool.getPurchaseDate());
         setToolTypeInput(tool.getToolType());
-        setSizeInput(tool.getSteelGrade());  // DONT FORGET TO CHANGE THE SIZEINPUT TO BE STEELGRADEINPUT
+        setSteelGradeInput(tool.getSteelGrade());  // DONT FORGET TO CHANGE THE SIZEINPUT TO BE STEELGRADEINPUT
         setDescriptionInput(tool.getDescription());
         setLocationInput(tool.getLocation());
         setMaintenanceNeeded(tool.getMaintenanceNeeded());
