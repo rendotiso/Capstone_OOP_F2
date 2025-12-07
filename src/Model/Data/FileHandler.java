@@ -18,7 +18,7 @@ public class FileHandler {
         if (items == null) throw new IllegalArgumentException("Item List is empty.");
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
-            bw.write("CATEGORY,NAME,DESCRIPTION,QUANTITY,PURCHASE_PRICE,PURCHASE_DATE,VENDOR,LOCATION,ATTRIBUTE1,ATTRIBUTE2,ATTRIBUTE3,ATTRIBUTE4,ATTRIBUTE5,ATTRIBUTE6");
+            bw.write("CATEGORY,NAME,DESCRIPTION,QUANTITY,PURCHASE_PRICE,PURCHASE_DATE,VENDOR,LOCATION,ATTRIBUTE1,ATTRIBUTE2,ATTRIBUTE3,ATTRIBUTE4,ATTRIBUTE5,ATTRIBUTE6,ATTRIBUTE7");
             bw.newLine();
             for (Item item : items) {
                 String line = convertToLine(item);

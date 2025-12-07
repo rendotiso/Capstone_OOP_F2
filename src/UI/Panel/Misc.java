@@ -452,6 +452,11 @@ public class Misc extends JPanel {
         UPDATEButton.setOpaque(true);
         REMOVEButton.setOpaque(true);
 
+        ADDButton.setFocusable(false);
+        UPDATEButton.setFocusable(false);
+        REMOVEButton.setFocusable(false);
+        CLEARButton.setFocusable(false);
+
         // Set fonts
         Font labelFont = new Font("Segoe UI", Font.BOLD, 14);
         Font fieldFont = new Font("Segoe UI", Font.PLAIN, 14);

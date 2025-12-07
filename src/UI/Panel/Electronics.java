@@ -814,10 +814,13 @@ public class Electronics extends JPanel {
                     "Input Error", JOptionPane.ERROR_MESSAGE);
             return true;
         }
-        if (getPriceInput().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Price cannot be empty!",
-                    "Input Error", JOptionPane.ERROR_MESSAGE);
-            return true;
+        try {
+            double price = Double.parseDouble(price_field.getText().trim());
+            if (price <= 0) {
+                throw new IllegalArgumentException("Price must be greater than 0");
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Price must be a valid number");
         }
         if (getQuantityInput() <= 0) {
             JOptionPane.showMessageDialog(this, "Quantity cannot be empty!",
@@ -828,6 +831,13 @@ public class Electronics extends JPanel {
             JOptionPane.showMessageDialog(this, "Location cannot be empty!",
                     "Input Error", JOptionPane.ERROR_MESSAGE);
             return true;
+        }
+
+
+        if (!warranty_field.getText().trim().matches("\\d{2}/\\d{2}/\\d{4}") ||
+                !purchaseDate_field.getText().trim().matches("\\d{2}/\\d{2}/\\d{4}") ||
+        !LMD_field.getText().trim().matches("\\d{2}/\\d{2}/\\d{4}")){
+            throw new IllegalArgumentException("Date must be in MM/DD/YYYY format");
         }
 
         if(getBrandInput().trim().isEmpty()) {
@@ -842,9 +852,48 @@ public class Electronics extends JPanel {
         }
         return  false;
     }
-    private void updateItem(){
-
-
+    private void updateItem() {
+//        if (selectedIndex >= 0) {
+//            try {
+//                Electronics electronics = createElectronicsFromForm();
+//                int managerIndex = findManagerIndex();
+//                if (managerIndex >= 0) {
+//                    manager.updateItem(managerIndex, electronics);
+//                    loadItems();
+//                    clearForm();
+//                    JOptionPane.showMessageDialog(this, "Electronics item updated successfully!");
+//                }
+//            } catch (Exception e) {
+//                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(),
+//                        "Update Error", JOptionPane.ERROR_MESSAGE);
+//            }
+//        }
+//    }
+//
+//    private int findManagerIndex() {
+//        if (selectedIndex >= 0) {
+//            List<Item> allItems = manager.getAllItems();
+//            Item selectedItem = tableModel.getItemAt(selectedIndex);
+//            for (int i = 0; i < allItems.size(); i++) {
+//                if (allItems.get(i) instanceof Electronics &&
+//                        allItems.get(i).getName().equals(selectedItem.getName())) {
+//                    return i;
+//                }
+//            }
+//        }
+//        return -1;
+//    }
+//    private void populateForm(Electronics electronics) {
+//        name_field.setText(electronics.getName());
+//        textArea1.setText(electronics.getDescription());
+//        quantitySpinner.setValue(electronics.getQuantity());
+//        priceField.setText(String.valueOf(electronics.getPurchasePrice()));
+//        dateField.setText(electronics.getPurchaseDate());
+//        vendorField.setText(electronics.getVendor());
+//        locationCombo.setSelectedItem(electronics.getLocation());
+//        brandField.setText(electronics.getBrand());
+//        modelField.setText(electronics.getModel());
+//        warrantyField.setText(electronics.getWarrantyPeriod());
     }
 
     private void removeItem() {

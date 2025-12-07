@@ -2,7 +2,7 @@ package Model.Enums;
 
 public enum Category {
     FOOD,
-    ELECTORNICS,
+    ELECTRONICS,
     TOOLS,
     CLOTHING,
     MISCELLANEOUS

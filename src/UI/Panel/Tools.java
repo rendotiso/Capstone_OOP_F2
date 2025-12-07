@@ -2,8 +2,6 @@ package UI.Panel;
 
 import UI.Utilities.ItemTable;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -12,10 +10,10 @@ import java.awt.event.FocusEvent;
 public class Tools extends JPanel {
     // ATTRIBUTES
     private JPanel panelist, rootPanel, tools_panel, panel, table_panel, description_panel;
-    private JTextField name_field, size_field, vendor_field, price_field, warranty_field, tooltype_field, material_field;
+    private JTextField name_field, size_field, vendor_field, price_field, purchasedate_field, tooltype_field, material_field;
     private JTextArea textArea1;
     private JLabel tools_label, name_label, quantity_label, location_label, vendor_label, price_label,
-            warranty_label, tooltype_label, material_label, requiresmaintenance_label, size_label, description_label,
+            purchase_label, tooltype_label, material_label, requiresmaintenance_label, size_label, description_label,
             maintenanceInterval_label;
     private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton;
     private JComboBox<String> location_combobox;
@@ -26,23 +24,13 @@ public class Tools extends JPanel {
     private JScrollPane textAreaScroll;
     private JSpinner spinner1, maintenanceIntervalSpinner;
     private JScrollPane scrollPane;
-
-    // Table model for dynamic data
-    private DefaultTableModel tableModel;
-    private ItemTable sharedData;
-    private int selectedRowIndex = -1;
-    private String originalItemId = "";
-
-    // Placeholder texts
-    private static final String WARRANTY_PLACEHOLDER = "MM/DD/YYYY";
+    private static final String DATE_PLACEHOLDER = "MM/DD/YYYY";
 
     public Tools() {
-        sharedData = ItemTable.getInstance();
         initComponents();
         setupLayout();
         setupAppearance();
         setupPlaceholders();
-        createTable();
         setupButtonListeners();
     }
 
@@ -64,7 +52,7 @@ public class Tools extends JPanel {
         size_field = new JTextField(8);
         vendor_field = new JTextField(8);
         price_field = new JTextField(8);
-        warranty_field = new JTextField(8);
+        purchasedate_field = new JTextField(8);
         tooltype_field = new JTextField(8);
         material_field = new JTextField(8);
 
@@ -93,7 +81,7 @@ public class Tools extends JPanel {
         location_label = new JLabel("LOCATION:");
         vendor_label = new JLabel("VENDOR:");
         price_label = new JLabel("PRICE:");
-        warranty_label = new JLabel("PURCHASED DATE:");
+        purchase_label = new JLabel("PURCHASED DATE:");
         tooltype_label = new JLabel("TOOL TYPE:");
         material_label = new JLabel("MATERIAL:");
         size_label = new JLabel("STEEL GRADE:");
@@ -234,17 +222,17 @@ public class Tools extends JPanel {
 
         row++;
 
-        // Row 5: Warranty Date
+        // Row 5: Purchase Date
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
-        panel.add(warranty_label, formGbc);
+        panel.add(purchase_label, formGbc);
 
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;
         formGbc.weightx = 1.0;
-        warranty_field.setPreferredSize(new Dimension(80, 25));
-        panel.add(warranty_field, formGbc);
+        purchasedate_field.setPreferredSize(new Dimension(80, 25));
+        panel.add(purchasedate_field, formGbc);
 
         row++;
 
@@ -424,7 +412,7 @@ public class Tools extends JPanel {
         size_field.setBackground(bg);
         vendor_field.setBackground(bg);
         price_field.setBackground(bg);
-        warranty_field.setBackground(bg);
+        purchasedate_field.setBackground(bg);
         tooltype_field.setBackground(bg);
         material_field.setBackground(bg);
         textArea1.setBackground(bg);
@@ -461,7 +449,7 @@ public class Tools extends JPanel {
         size_field.setForeground(black);
         vendor_field.setForeground(black);
         price_field.setForeground(black);
-        warranty_field.setForeground(placeholderColor);
+        purchasedate_field.setForeground(placeholderColor);
         tooltype_field.setForeground(black);
         material_field.setForeground(black);
         textArea1.setForeground(black);
@@ -477,7 +465,7 @@ public class Tools extends JPanel {
         location_label.setForeground(black);
         vendor_label.setForeground(black);
         price_label.setForeground(black);
-        warranty_label.setForeground(black);
+        purchase_label.setForeground(black);
         tooltype_label.setForeground(black);
         material_label.setForeground(black);
         size_label.setForeground(black);
@@ -501,6 +489,11 @@ public class Tools extends JPanel {
         UPDATEButton.setOpaque(true);
         REMOVEButton.setOpaque(true);
 
+        ADDButton.setFocusable(false);
+        UPDATEButton.setFocusable(false);
+        REMOVEButton.setFocusable(false);
+        CLEARButton.setFocusable(false);
+
         // Set fonts
         Font labelFont = new Font("Segoe UI", Font.BOLD, 14);
         Font fieldFont = new Font("Segoe UI", Font.PLAIN, 14);
@@ -515,7 +508,7 @@ public class Tools extends JPanel {
         location_label.setFont(labelFont);
         vendor_label.setFont(labelFont);
         price_label.setFont(labelFont);
-        warranty_label.setFont(labelFont);
+        purchase_label.setFont(labelFont);
         tooltype_label.setFont(labelFont);
         material_label.setFont(labelFont);
         size_label.setFont(labelFont);
@@ -527,7 +520,7 @@ public class Tools extends JPanel {
         size_field.setFont(fieldFont);
         vendor_field.setFont(fieldFont);
         price_field.setFont(fieldFont);
-        warranty_field.setFont(placeholderFont);
+        purchasedate_field.setFont(placeholderFont);
         tooltype_field.setFont(fieldFont);
         material_field.setFont(fieldFont);
         textArea1.setFont(fieldFont);
@@ -549,276 +542,48 @@ public class Tools extends JPanel {
 
     private void setupPlaceholders() {
         // Set placeholder text for warranty field
-        warranty_field.setText(WARRANTY_PLACEHOLDER);
+        purchasedate_field.setText(DATE_PLACEHOLDER);
 
         // Add focus listener
-        warranty_field.addFocusListener(new FocusAdapter() {
+        purchasedate_field.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (warranty_field.getText().equals(WARRANTY_PLACEHOLDER)) {
-                    warranty_field.setText("");
-                    warranty_field.setForeground(Color.BLACK);
-                    warranty_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+                if (purchasedate_field.getText().equals(DATE_PLACEHOLDER)) {
+                    purchasedate_field.setText("");
+                    purchasedate_field.setForeground(Color.BLACK);
+                    purchasedate_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
                 }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                if (warranty_field.getText().isEmpty()) {
-                    warranty_field.setText(WARRANTY_PLACEHOLDER);
-                    warranty_field.setForeground(new Color(100, 100, 100, 180));
-                    warranty_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+                if (purchasedate_field.getText().isEmpty()) {
+                    purchasedate_field.setText(DATE_PLACEHOLDER);
+                    purchasedate_field.setForeground(new Color(100, 100, 100, 180));
+                    purchasedate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
                 }
             }
         });
     }
 
     private void setupButtonListeners() {
-        ADDButton.addActionListener(e -> addItemToTable());
-        CLEARButton.addActionListener(e -> clearForm());
-        UPDATEButton.addActionListener(e -> updateToMainTable());
-        REMOVEButton.addActionListener(e -> removeItemFromTable());
-
-        // Set all buttons to non-focusable for better UX
-        ADDButton.setFocusable(false);
-        CLEARButton.setFocusable(false);
-        UPDATEButton.setFocusable(false);
-        REMOVEButton.setFocusable(false);
+//        ADDButton.addActionListener(e -> addItemToTable());
+//        CLEARButton.addActionListener(e -> clearForm());
+//        UPDATEButton.addActionListener(e -> updateToMainTable());
+//        REMOVEButton.addActionListener(e -> removeItemFromTable());
+//
+//        // Set all buttons to non-focusable for better UX
+//        ADDButton.setFocusable(false);
+//        CLEARButton.setFocusable(false);
+//        UPDATEButton.setFocusable(false);
+//        REMOVEButton.setFocusable(false);
     }
 
-    private void addItemToTable() {
-        // Validate required fields
-        if (getNameInput().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Name is required!", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        String priceInput = getPriceInput().trim();
-        if (priceInput.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Price is required!", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Parse price to double with 2 decimal places
-        double price;
-        try {
-            // Remove any currency symbols and commas
-            String cleanPrice = priceInput.replaceAll("[^\\d.]", "");
-            price = Double.parseDouble(cleanPrice);
-            // Round to 2 decimal places
-            price = Math.round(price * 100.0) / 100.0;
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Invalid price format! Please enter a valid number.",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Get values from form
-        String name = getNameInput();
-        int quantity = getQuantityInput();
-        String location = getLocationInput();
-        String vendor = getVendorInput();
-
-        // Build details string with all additional information
-        String details = buildDetailsString();
-
-        // Create item data with double price
-        ItemTable.ItemData item = new ItemTable.ItemData(
-                "Tools",      // Category
-                name,
-                quantity,
-                location,
-                vendor,
-                price,        // Double price
-                details
-        );
-
-        // Add to TEMPORARY storage only (not to main table)
-        sharedData.addTemporaryItem(item);
-
-        // Also add to local table with formatted price
-        tableModel.addRow(new Object[]{
-                name,
-                quantity,
-                location,
-                vendor,
-                String.format("$%.2f", price),  // Formatted price for display
-                details
-        });
-
-        // Clear form after adding
-        clearForm();
-
-        // Show success message
-        JOptionPane.showMessageDialog(this, "Tool added to local table successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    private String buildDetailsString() {
-        StringBuilder details = new StringBuilder();
-
-        // Add purchased date if provided
-        String warranty = getWarrantyInput();
-        if (!warranty.isEmpty() && !warranty.equals(WARRANTY_PLACEHOLDER)) {
-            details.append("Purchased: ").append(warranty).append(" | ");
-        }
-
-        // Add tool type if provided
-        String toolType = getToolTypeInput();
-        if (!toolType.trim().isEmpty()) {
-            details.append("Type: ").append(toolType).append(" | ");
-        }
-
-        // Add material if provided
-        String material = getMaterialInput();
-        if (!material.trim().isEmpty()) {
-            details.append("Material: ").append(material).append(" | ");
-        }
-
-        // Add steel grade if provided
-        String size = getSizeInput();
-        if (!size.trim().isEmpty()) {
-            details.append("Steel Grade: ").append(size).append(" | ");
-        }
-
-        // Add maintenance information if required
-        if (requiresMaintenance()) {
-            details.append("Maintenance: Required");
-            int interval = getMaintenanceInterval();
-            if (interval > 0) {
-                details.append(" (Every ").append(interval).append(" days)");
-            }
-            details.append(" | ");
-        } else {
-            details.append("Maintenance: Not Required | ");
-        }
-
-        // Add description if provided
-        String description = getDescriptionInput();
-        if (!description.trim().isEmpty()) {
-            details.append("Notes: ").append(description);
-        }
-
-        // Remove trailing " | " if it exists
-        String detailsStr = details.toString();
-        if (detailsStr.endsWith(" | ")) {
-            detailsStr = detailsStr.substring(0, detailsStr.length() - 3);
-        }
-
-        return detailsStr;
-    }
-
-    private void updateToMainTable() {
-        int tempCount = sharedData.getTemporaryItemsCount();
-        if (tempCount == 0) {
-            JOptionPane.showMessageDialog(this, "No items in local table to update!", "Info", JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-
-        int confirm = JOptionPane.showConfirmDialog(this,
-                "Transfer " + tempCount + " item(s) from local table to main inventory?",
-                "Confirm Transfer",
-                JOptionPane.YES_NO_OPTION);
-
-        if (confirm == JOptionPane.YES_OPTION) {
-            // Transfer all temporary items to main table
-            sharedData.transferTemporaryToMain();
-
-            // Clear local table
-            tableModel.setRowCount(0);
-
-            JOptionPane.showMessageDialog(this,
-                    tempCount + " item(s) transferred to main inventory successfully!",
-                    "Transfer Complete",
-                    JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-
-    private void removeItemFromTable() {
-        int selectedRow = table1.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a row to remove!", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        int confirm = JOptionPane.showConfirmDialog(this,
-                "Are you sure you want to remove this tool from local table?",
-                "Confirm Removal",
-                JOptionPane.YES_NO_OPTION);
-
-        if (confirm == JOptionPane.YES_OPTION) {
-            // Get the item name to identify it in temporary storage
-            String itemName = (String) tableModel.getValueAt(selectedRow, 0);
-
-            // Find and remove from temporary storage
-            java.util.List<ItemTable.ItemData> tempItems = sharedData.getTemporaryItems();
-            for (int i = 0; i < tempItems.size(); i++) {
-                ItemTable.ItemData item = tempItems.get(i);
-                if (item.getName().equals(itemName)) {
-                    sharedData.removeTemporaryItem(i);
-                    break;
-                }
-            }
-
-            // Remove from local table
-            tableModel.removeRow(selectedRow);
-            JOptionPane.showMessageDialog(this, "Tool removed from local table successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-
-    // PUBLIC METHODS
-
-    public void clearForm() {
-        name_field.setText("");
-        spinner1.setValue(1);
-        size_field.setText("");
-        vendor_field.setText("");
-        price_field.setText("");
-
-        // Reset warranty field to placeholder
-        warranty_field.setText(WARRANTY_PLACEHOLDER);
-        warranty_field.setForeground(new Color(100, 100, 100, 180));
-        warranty_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
-
-        tooltype_field.setText("");
-        material_field.setText("");
-        textArea1.setText("");
-        location_combobox.setSelectedIndex(0);
-
-        // Reset checkbox to unchecked
-        requiresMaintenanceCheckBox.setSelected(false);
-
-        // Reset maintenance interval to default value
-        maintenanceIntervalSpinner.setValue(30);
-
-        // Reset selection
-        selectedRowIndex = -1;
-        originalItemId = "";
-    }
-
-    // Clear local table completely
-    public void clearLocalTable() {
-        int rowCount = tableModel.getRowCount();
-        if (rowCount == 0) {
-            return;
-        }
-
-        int confirm = JOptionPane.showConfirmDialog(this,
-                "Clear all " + rowCount + " item(s) from local table?",
-                "Confirm Clear",
-                JOptionPane.YES_NO_OPTION);
-
-        if (confirm == JOptionPane.YES_OPTION) {
-            tableModel.setRowCount(0);
-            sharedData.clearTemporaryItems();
-            JOptionPane.showMessageDialog(this, "Local table cleared!", "Success", JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
 
     // Checkbox getter method
     public boolean requiresMaintenance() {
         return requiresMaintenanceCheckBox.isSelected();
     }
-
     public void setRequiresMaintenance(boolean requires) {
         requiresMaintenanceCheckBox.setSelected(requires);
     }
@@ -827,7 +592,6 @@ public class Tools extends JPanel {
     public int getMaintenanceInterval() {
         return (int) maintenanceIntervalSpinner.getValue();
     }
-
     public void setMaintenanceInterval(int days) {
         maintenanceIntervalSpinner.setValue(days);
     }
@@ -836,365 +600,105 @@ public class Tools extends JPanel {
     public void addAddButtonListener(ActionListener listener) {
         ADDButton.addActionListener(listener);
     }
-
     public void addClearButtonListener(ActionListener listener) {
         CLEARButton.addActionListener(listener);
     }
-
     public void addUpdateButtonListener(ActionListener listener) {
         UPDATEButton.addActionListener(listener);
     }
-
     public void addRemoveButtonListener(ActionListener listener) {
         REMOVEButton.addActionListener(listener);
     }
-
     public int getSelectedTableRow() {
         return table1.getSelectedRow();
     }
-
     public JButton getAddButton() {
         return ADDButton;
     }
-
     public JButton getClearButton() {
         return CLEARButton;
     }
-
     public JButton getUpdateButton() {
         return UPDATEButton;
     }
-
     public JButton getRemoveButton() {
         return REMOVEButton;
     }
 
-    // Form field getter methods
+    //GETTERS
     public String getNameInput() {
         return name_field.getText();
     }
-
     public int getQuantityInput() {
         return (int) spinner1.getValue();
     }
-
     public String getSizeInput() {
         return size_field.getText();
     }
-
     public String getVendorInput() {
         return vendor_field.getText();
     }
-
     public String getPriceInput() {
         return price_field.getText();
     }
-
-    public String getWarrantyInput() {
-        String text = warranty_field.getText();
-        if (text.equals(WARRANTY_PLACEHOLDER)) {
+    public String getPurchaseDateInput() {
+        String text = purchasedate_field.getText();
+        if (text.equals(DATE_PLACEHOLDER)) {
             return "";
         }
         return text;
     }
-
     public String getToolTypeInput() {
         return tooltype_field.getText();
     }
-
     public String getMaterialInput() {
         return material_field.getText();
     }
-
     public String getDescriptionInput() {
         return textArea1.getText();
     }
-
     public String getLocationInput() {
         return (String) location_combobox.getSelectedItem();
     }
 
-    // Setter methods for form fields
+    // SETTER
     public void setNameInput(String name) {
         name_field.setText(name);
     }
-
     public void setQuantityInput(int quantity) {
         spinner1.setValue(quantity);
     }
-
     public void setSizeInput(String size) {
         size_field.setText(size);
     }
-
     public void setVendorInput(String vendor) {
         vendor_field.setText(vendor);
     }
-
     public void setPriceInput(String price) {
         price_field.setText(price);
     }
-
-    public void setWarrantyInput(String warranty) {
-        if (warranty == null || warranty.trim().isEmpty()) {
-            warranty_field.setText(WARRANTY_PLACEHOLDER);
-            warranty_field.setForeground(new Color(100, 100, 100, 180));
-            warranty_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+    public void setPurchaseDateInput(String warranty) {
+        if (purchasedate_field == null || warranty.trim().isEmpty()) {
+            purchasedate_field.setText(DATE_PLACEHOLDER);
+            purchasedate_field.setForeground(new Color(100, 100, 100, 180));
+            purchasedate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
         } else {
-            warranty_field.setText(warranty);
-            warranty_field.setForeground(Color.BLACK);
-            warranty_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            purchasedate_field.setText(warranty);
+            purchasedate_field.setForeground(Color.BLACK);
+            purchasedate_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         }
     }
-
     public void setToolTypeInput(String toolType) {
         tooltype_field.setText(toolType);
     }
-
     public void setMaterialInput(String material) {
         material_field.setText(material);
     }
-
     public void setDescriptionInput(String description) {
         textArea1.setText(description);
     }
-
     public void setLocationInput(String location) {
         location_combobox.setSelectedItem(location);
     }
 
-    private void createTable() {
-        // Create table model with column names
-        String[] columnNames = {"Name", "Qty", "Location", "Vendor", "Price", "Details"};
-        tableModel = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                // Return proper class for each column
-                switch (columnIndex) {
-                    case 1: // Quantity column
-                        return Integer.class;
-                    default:
-                        return String.class;
-                }
-            }
-
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                // Make table non-editable directly
-                return false;
-            }
-        };
-
-        table1.setModel(tableModel);
-
-        // Create a custom cell renderer for wrapping text
-        table1.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                                                           boolean isSelected, boolean hasFocus, int row, int column) {
-                // For Name (0), Location (2), Vendor (3), and Details (5) columns, use JTextArea for wrapping
-                if (column == 0 || column == 2 || column == 3 || column == 5) {
-                    JTextArea textArea = new JTextArea();
-                    textArea.setText(value != null ? value.toString() : "");
-                    textArea.setLineWrap(true);
-                    textArea.setWrapStyleWord(true);
-                    textArea.setFont(table.getFont());
-                    textArea.setOpaque(true);
-
-                    // Set background and foreground colors
-                    if (isSelected) {
-                        textArea.setBackground(table.getSelectionBackground());
-                        textArea.setForeground(table.getSelectionForeground());
-                    } else {
-                        textArea.setBackground(table.getBackground());
-                        textArea.setForeground(table.getForeground());
-                    }
-
-                    // Set border
-                    textArea.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-
-                    return textArea;
-                } else {
-                    // For other columns (Qty, Price), use default renderer
-                    Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
-                    // Center align both Qty (column 1) and Price (column 4)
-                    if (comp instanceof JLabel) {
-                        ((JLabel) comp).setHorizontalAlignment(SwingConstants.CENTER);
-                    }
-
-                    return comp;
-                }
-            }
-        });
-
-        // Set a specific renderer for Integer class (Qty column) to ensure center alignment
-        table1.setDefaultRenderer(Integer.class, new javax.swing.table.DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                                                           boolean isSelected, boolean hasFocus, int row, int column) {
-                Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
-                // Center align the text
-                if (comp instanceof JLabel) {
-                    ((JLabel) comp).setHorizontalAlignment(SwingConstants.CENTER);
-                }
-
-                return comp;
-            }
-        });
-
-        // Set initial row height
-        table1.setRowHeight(25);
-
-        // Add component listener to adjust row heights dynamically
-        table1.addComponentListener(new java.awt.event.ComponentAdapter() {
-            @Override
-            public void componentResized(java.awt.event.ComponentEvent e) {
-                adjustRowHeights();
-            }
-        });
-
-        // Table styling
-        table1.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
-        table1.getTableHeader().setBackground(new Color(70, 130, 180));
-        table1.getTableHeader().setForeground(Color.WHITE);
-        table1.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        table1.setSelectionBackground(new Color(100, 149, 237));
-        table1.setSelectionForeground(Color.WHITE);
-        table1.setGridColor(Color.LIGHT_GRAY);
-        table1.setShowGrid(true);
-
-        // Set column widths
-        TableColumnModel columnModel = table1.getColumnModel();
-        columnModel.getColumn(0).setPreferredWidth(120); // Name
-        columnModel.getColumn(1).setPreferredWidth(50);  // Qty
-        columnModel.getColumn(2).setPreferredWidth(100); // Location
-        columnModel.getColumn(3).setPreferredWidth(120); // Vendor
-        columnModel.getColumn(4).setPreferredWidth(80);  // Price
-        columnModel.getColumn(5).setPreferredWidth(300); // Details
-
-        // Add mouse listener to populate form when row is clicked
-        table1.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                int row = table1.rowAtPoint(evt.getPoint());
-                if (row >= 0 && row < table1.getRowCount()) {
-                    populateFormFromTable(row);
-                }
-            }
-        });
-    }
-
-    private void adjustRowHeights() {
-        for (int row = 0; row < table1.getRowCount(); row++) {
-            int maxHeight = 25; // Minimum height
-
-            // Check each column that can wrap text
-            for (int col = 0; col < table1.getColumnCount(); col++) {
-                if (col == 0 || col == 2 || col == 3 || col == 5) { // Name, Location, Vendor, Details
-                    Object cellValue = table1.getValueAt(row, col);
-                    if (cellValue != null) {
-                        String cellText = cellValue.toString();
-                        if (!cellText.isEmpty()) {
-                            JTextArea tempTextArea = new JTextArea(cellText);
-                            tempTextArea.setLineWrap(true);
-                            tempTextArea.setWrapStyleWord(true);
-                            tempTextArea.setFont(table1.getFont());
-                            tempTextArea.setSize(table1.getColumnModel().getColumn(col).getWidth(), Integer.MAX_VALUE);
-
-                            int textHeight = tempTextArea.getPreferredSize().height + 4; // Add padding
-                            maxHeight = Math.max(maxHeight, textHeight);
-                        }
-                    }
-                }
-            }
-
-            table1.setRowHeight(row, Math.min(maxHeight, 200)); // Cap at 200px
-        }
-    }
-
-    private void populateFormFromTable(int row) {
-        selectedRowIndex = row;
-
-        // Get values from table
-        String name = (String) tableModel.getValueAt(row, 0);
-        Integer quantity = (Integer) tableModel.getValueAt(row, 1);
-        String location = (String) tableModel.getValueAt(row, 2);
-        String vendor = (String) tableModel.getValueAt(row, 3);
-        String priceDisplay = (String) tableModel.getValueAt(row, 4);
-        String details = (String) tableModel.getValueAt(row, 5);
-
-        // Store original item name for identification
-        originalItemId = name;
-
-        // Populate basic fields
-        setNameInput(name);
-        if (quantity != null) setQuantityInput(quantity);
-        setLocationInput(location);
-        setVendorInput(vendor);
-
-        // Parse price from formatted string to set in form
-        try {
-            String cleanPrice = priceDisplay.replaceAll("[^\\d.]", "");
-            double price = Double.parseDouble(cleanPrice);
-            // Set price without formatting in the input field
-            price_field.setText(String.valueOf(price));
-        } catch (NumberFormatException e) {
-            price_field.setText("");
-        }
-
-        // Parse details string to populate additional fields
-        if (details != null && !details.isEmpty()) {
-            parseDetailsString(details);
-        }
-    }
-
-    private void parseDetailsString(String details) {
-        String[] parts = details.split(" \\| ");
-
-        // Reset additional fields first
-        setWarrantyInput("");
-        setToolTypeInput("");
-        setMaterialInput("");
-        setSizeInput("");
-        setRequiresMaintenance(false);
-        setMaintenanceInterval(30);
-        setDescriptionInput("");
-
-        for (String part : parts) {
-            if (part.startsWith("Purchased: ")) {
-                setWarrantyInput(part.substring(11));
-            } else if (part.startsWith("Type: ")) {
-                setToolTypeInput(part.substring(6));
-            } else if (part.startsWith("Material: ")) {
-                setMaterialInput(part.substring(10));
-            } else if (part.startsWith("Steel Grade: ")) {
-                setSizeInput(part.substring(13));
-            } else if (part.startsWith("Maintenance: ")) {
-                if (part.contains("Required")) {
-                    setRequiresMaintenance(true);
-                    // Extract interval if present
-                    if (part.contains("Every ")) {
-                        String intervalStr = part.substring(part.indexOf("Every ") + 6, part.indexOf(" days)"));
-                        try {
-                            int interval = Integer.parseInt(intervalStr);
-                            setMaintenanceInterval(interval);
-                        } catch (NumberFormatException e) {
-                            // Keep default value
-                        }
-                    }
-                } else {
-                    setRequiresMaintenance(false);
-                }
-            } else if (part.startsWith("Notes: ")) {
-                setDescriptionInput(part.substring(7));
-            }
-        }
-    }
-
-    // Get the table for external access
-    public JTable getTable() {
-        return table1;
-    }
 }

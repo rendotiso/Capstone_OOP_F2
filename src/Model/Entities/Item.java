@@ -67,7 +67,7 @@ public abstract class Item {
 
     //ABSTRACT METHODS
     public String descriptionDetails() {
-        return String.format("%s - %s (Date bought - %s)", name, category, purchaseDate);
+        return String.format("%s - %s (Date bought - %s)", description, category, purchaseDate);
     }
     public abstract double calculateValue();
 
