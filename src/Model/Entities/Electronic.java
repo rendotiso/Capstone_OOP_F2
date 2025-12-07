@@ -4,6 +4,7 @@ import Model.Enums.Category;
 import Model.Interface.Maintainable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 
 public class Electronic extends Item implements Maintainable {
@@ -13,20 +14,15 @@ public class Electronic extends Item implements Maintainable {
 
     //maintenance attributes
     private boolean maintenanceNeeded;
-    private LocalDate lastMaintenanceDate;
+    private String lastMaintenanceDate;
 
-    public Electronic(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, String location, String warrantyPeriod, String brand, String model, boolean maintenanceNeeded) {
-        super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("Electronics"), location);
+    public Electronic(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, String location, String warrantyPeriod, String brand, String model, boolean maintenanceNeeded, String lastMaintenanceDate) {
+        super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("ELECTRONICS"), location);
         setWarrantyPeriod(warrantyPeriod);
         setBrand(brand);
         setModel(model);
         this.maintenanceNeeded = maintenanceNeeded;
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            this.lastMaintenanceDate = LocalDate.parse(purchaseDate, formatter);
-        } catch (Exception e) {
-            this.lastMaintenanceDate = LocalDate.now();
-        }
+        this.lastMaintenanceDate = lastMaintenanceDate;
     }
 
     //GETTERS
@@ -42,7 +38,7 @@ public class Electronic extends Item implements Maintainable {
     public boolean getMaintenanceNeeded() {
         return maintenanceNeeded;
     }
-    public LocalDate getLastMaintenanceDate() {
+    public String getLastMaintenanceDate() {
         return lastMaintenanceDate;
     }
 
@@ -56,23 +52,28 @@ public class Electronic extends Item implements Maintainable {
     public void setModel(String model) {
         this.model = model;
     }
-    public void setLastMaintenanceDate(LocalDate lastMaintenanceDate) {
+    public void setLastMaintenanceDate(String lastMaintenanceDate) {
         this.lastMaintenanceDate = lastMaintenanceDate;
     }
 
 
     //METHODS
     @Override
-    public int getDaysUntilMaintenanceDue(){
-        if (lastMaintenanceDate == null) {
+    public int getDaysUntilMaintenanceDue() {
+        if (lastMaintenanceDate == null || lastMaintenanceDate.isEmpty()) {
             return 0;
         }
-        LocalDate nextMaintenanceDate = lastMaintenanceDate.plusDays(365);
-        LocalDate today = LocalDate.now();
-
-        if (today.isBefore(nextMaintenanceDate)) {
-            return (int) ChronoUnit.DAYS.between(today, nextMaintenanceDate);
-        } else {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+            LocalDate lastMaintenance = LocalDate.parse(lastMaintenanceDate, formatter);
+            LocalDate nextMaintenanceDate = lastMaintenance.plusDays(365);
+            LocalDate today = LocalDate.now();
+            if (today.isBefore(nextMaintenanceDate)) {
+                return (int) ChronoUnit.DAYS.between(today, nextMaintenanceDate);
+            } else {
+                return 0;
+            }
+        } catch (DateTimeParseException e) {
             return 0;
         }
     }
