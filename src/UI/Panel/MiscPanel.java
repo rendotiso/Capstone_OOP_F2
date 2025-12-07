@@ -1,9 +1,17 @@
 package UI.Panel;
 
 import Model.Data.InventoryManager;
+import Model.Entities.Miscellaneous;
+import Model.Entities.Item;
+import UI.Utilities.ItemTable;
+import Model.Enums.Category;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Objects;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -14,27 +22,27 @@ public class MiscPanel extends JPanel {
 
     // ATTRIBUTES
     private JPanel panelist, rootPanel, miscellaneous_panel, panel, table_panel, description_panel;
-    private JTextField name_field, vendor_field, price_field, warranty_field, itemtype_field, usage_field;
+    private JTextField name_field, vendor_field, price_field, purchaseDate_field, itemtype_field, usage_field;
     private JTextArea textArea1;
     private JLabel miscellaneous_label, name_label, quantity_label, location_label, vendor_label,
-            price_label, warranty_label, itemtype_label, usage_label, condition_label, description_label;
+            price_label, purchaseDate_label, itemtype_label, usage_label, condition_label, description_label;
     private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton, REFRESHButton;
     private JComboBox<String> location_combobox;
-    private JTable table1;
+    private ItemTable itemTable;
     private JPanel panelButton;
     private JRadioButton INTACTRadioButton;
     private JRadioButton DAMAGEDRadioButton;
     private JPanel radiopanel1;
     private JScrollPane textAreaScroll;
     private JSpinner spinner1;
-    private JScrollPane scrollPane;
     private final InventoryManager inventoryManager;
+    private int selectedIndex = -1;
 
     // Button groups for radio buttons
     private ButtonGroup conditionGroup;
 
     // Placeholder texts
-    private static final String WARRANTY_PLACEHOLDER = "MM/DD/YYYY";
+    private static final String purchaseDate_PLACEHOLDER = "MM/DD/YYYY";
 
     public MiscPanel() {
         inventoryManager = InventoryManager.getInstance();
@@ -43,6 +51,8 @@ public class MiscPanel extends JPanel {
         setupAppearance();
         setupPlaceholders();
         setupButtonListeners();
+        setupTableSelectionListener();
+        loadItems();
     }
 
     private void initComponents() {
@@ -62,7 +72,7 @@ public class MiscPanel extends JPanel {
         name_field = new JTextField(8);
         vendor_field = new JTextField(8);
         price_field = new JTextField(8);
-        warranty_field = new JTextField(8);
+        purchaseDate_field = new JTextField(8);
         itemtype_field = new JTextField(8);
         usage_field = new JTextField(8);
         textArea1 = new JTextArea(3, 15);
@@ -90,7 +100,7 @@ public class MiscPanel extends JPanel {
         location_label = new JLabel("LOCATION:");
         vendor_label = new JLabel("VENDOR:");  // Fixed from "venodor_label"
         price_label = new JLabel("PRICE:");
-        warranty_label = new JLabel("PURCHASED DATE:");
+        purchaseDate_label = new JLabel("PURCHASED DATE:");
         itemtype_label = new JLabel("ITEM TYPE:");  // Fixed from "itemtyep_label"
         usage_label = new JLabel("USAGE:");
         condition_label = new JLabel("CONDITION:");
@@ -121,9 +131,9 @@ public class MiscPanel extends JPanel {
         // Set default selection
         INTACTRadioButton.setSelected(true);  // Default: INTACT
 
-        table1 = new JTable();
-        scrollPane = new JScrollPane(table1);
         textAreaScroll = new JScrollPane(textArea1);
+        String[] columnNames = {"Name", "Quantity", "Location", "Vendor", "Price", "Details"};
+        itemTable = new ItemTable(columnNames);
 
         INTACTRadioButton.setFocusable(false);
         DAMAGEDRadioButton.setFocusable(false);
@@ -228,17 +238,17 @@ public class MiscPanel extends JPanel {
 
         row++;
 
-        // Row 5: Warranty Date
+        // Row 5: purchaseDate Date
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
-        panel.add(warranty_label, formGbc);
+        panel.add(purchaseDate_label, formGbc);
 
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;
         formGbc.weightx = 1.0;
-        warranty_field.setPreferredSize(new Dimension(80, 25));
-        panel.add(warranty_field, formGbc);
+        purchaseDate_field.setPreferredSize(new Dimension(80, 25));
+        panel.add(purchaseDate_field, formGbc);
 
         row++;
 
@@ -342,7 +352,7 @@ public class MiscPanel extends JPanel {
 
         // Table panel (right side)
         table_panel.setLayout(new BorderLayout());
-        table_panel.add(scrollPane, BorderLayout.CENTER);
+        table_panel.add(itemTable, BorderLayout.CENTER);
 
         // Add table panel to root panel (right side)
         gbc.gridx = 1;
@@ -390,7 +400,7 @@ public class MiscPanel extends JPanel {
         name_field.setBackground(bg);
         vendor_field.setBackground(bg);
         price_field.setBackground(bg);
-        warranty_field.setBackground(bg);
+        purchaseDate_field.setBackground(bg);
         itemtype_field.setBackground(bg);
         usage_field.setBackground(bg);
         textArea1.setBackground(bg);
@@ -420,7 +430,7 @@ public class MiscPanel extends JPanel {
         name_field.setForeground(black);
         vendor_field.setForeground(black);
         price_field.setForeground(black);
-        warranty_field.setForeground(placeholderColor);
+        purchaseDate_field.setForeground(placeholderColor);
         itemtype_field.setForeground(black);
         usage_field.setForeground(black);
         textArea1.setForeground(black);
@@ -437,7 +447,7 @@ public class MiscPanel extends JPanel {
         location_label.setForeground(black);
         vendor_label.setForeground(black);
         price_label.setForeground(black);
-        warranty_label.setForeground(black);
+        purchaseDate_label.setForeground(black);
         itemtype_label.setForeground(black);
         usage_label.setForeground(black);
         condition_label.setForeground(black);
@@ -482,7 +492,7 @@ public class MiscPanel extends JPanel {
         location_label.setFont(labelFont);
         vendor_label.setFont(labelFont);
         price_label.setFont(labelFont);
-        warranty_label.setFont(labelFont);
+        purchaseDate_label.setFont(labelFont);
         itemtype_label.setFont(labelFont);
         usage_label.setFont(labelFont);
         condition_label.setFont(labelFont);
@@ -491,7 +501,7 @@ public class MiscPanel extends JPanel {
         name_field.setFont(fieldFont);
         vendor_field.setFont(fieldFont);
         price_field.setFont(fieldFont);
-        warranty_field.setFont(placeholderFont);
+        purchaseDate_field.setFont(placeholderFont);
         itemtype_field.setFont(fieldFont);
         usage_field.setFont(fieldFont);
         textArea1.setFont(fieldFont);
@@ -513,26 +523,26 @@ public class MiscPanel extends JPanel {
     }
 
     private void setupPlaceholders() {
-        // Set placeholder text for warranty field
-        warranty_field.setText(WARRANTY_PLACEHOLDER);
+        // Set placeholder text for purchaseDate field
+        purchaseDate_field.setText(purchaseDate_PLACEHOLDER);
 
         // Add focus listener to handle placeholder behavior
-        warranty_field.addFocusListener(new FocusAdapter() {
+        purchaseDate_field.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (warranty_field.getText().equals(WARRANTY_PLACEHOLDER)) {
-                    warranty_field.setText("");
-                    warranty_field.setForeground(Color.BLACK);
-                    warranty_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+                if (purchaseDate_field.getText().equals(purchaseDate_PLACEHOLDER)) {
+                    purchaseDate_field.setText("");
+                    purchaseDate_field.setForeground(Color.BLACK);
+                    purchaseDate_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
                 }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                if (warranty_field.getText().isEmpty()) {
-                    warranty_field.setText(WARRANTY_PLACEHOLDER);
-                    warranty_field.setForeground(new Color(100, 100, 100, 180));
-                    warranty_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+                if (purchaseDate_field.getText().isEmpty()) {
+                    purchaseDate_field.setText(purchaseDate_PLACEHOLDER);
+                    purchaseDate_field.setForeground(new Color(100, 100, 100, 180));
+                    purchaseDate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
                 }
             }
         });
@@ -562,9 +572,9 @@ public class MiscPanel extends JPanel {
     public String getPriceInput() {
         return price_field.getText();
     }
-    public String getWarrantyInput() {
-        String text = warranty_field.getText();
-        if (text.equals(WARRANTY_PLACEHOLDER)) {
+    public String getPurchaseDateInput() {
+        String text = purchaseDate_field.getText();
+        if (text.equals(purchaseDate_PLACEHOLDER)) {
             return "";
         }
         return text;
@@ -582,11 +592,11 @@ public class MiscPanel extends JPanel {
     public String getLocationInput() {
         return (String) location_combobox.getSelectedItem();
     }
-    public String getCondition() {
+    public boolean getIsConditionInput() {
         if (DAMAGEDRadioButton.isSelected()) {
-            return "DAMAGED";
+            return true;
         }
-        return "INTACT";
+        return false;
     }
 
     // SETTER
@@ -611,15 +621,15 @@ public class MiscPanel extends JPanel {
     public void setPriceInput(String price) {
         price_field.setText(price);
     }
-    public void setWarrantyInput(String warranty) {
-        if (warranty == null || warranty.trim().isEmpty()) {
-            warranty_field.setText(WARRANTY_PLACEHOLDER);
-            warranty_field.setForeground(new Color(100, 100, 100, 180));
-            warranty_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+    public void setpurchaseDateInput(String purchaseDate) {
+        if (purchaseDate == null || purchaseDate.trim().isEmpty()) {
+            purchaseDate_field.setText(purchaseDate_PLACEHOLDER);
+            purchaseDate_field.setForeground(new Color(100, 100, 100, 180));
+            purchaseDate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
         } else {
-            warranty_field.setText(warranty);
-            warranty_field.setForeground(Color.BLACK);
-            warranty_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            purchaseDate_field.setText(purchaseDate);
+            purchaseDate_field.setForeground(Color.BLACK);
+            purchaseDate_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         }
     }
     public void setItemTypeInput(String itemType) {
@@ -635,8 +645,8 @@ public class MiscPanel extends JPanel {
         location_combobox.setSelectedItem(location);
     }
 
-    public void setCondition(boolean isIntact) {
-        if (isIntact) {
+    public void setCondition(boolean condition) {
+        if (condition) {
             INTACTRadioButton.setSelected(true);
         } else {
             DAMAGEDRadioButton.setSelected(true);
@@ -651,31 +661,272 @@ public class MiscPanel extends JPanel {
     }
 
     // DATA LOADING AND ACTION LISENERS
-    private void setupButtonListeners() {
-//        ADDButton.addActionListener(e -> addItem());
-//        UPDATEButton.addActionListener(e -> updateItem());
-//        REMOVEButton.addActionListener(e -> removeItem());
-//        CLEARButton.addActionListener(e -> clearForm());
-//        REFRESHButton.addActionListener(e -> refreshForm());
+
+    private void loadItems() {
+        itemTable.clearTable();
+
+        // Force reload from file to get latest data
+        inventoryManager.loadFromFile();
+
+        inventoryManager.getItemsByCategory(Category.MISCELLANEOUS).stream()
+                .filter(Miscellaneous.class::isInstance)
+                .map(Miscellaneous.class::cast)
+                .forEach(miscellaneous -> {
+                    itemTable.addRow(new Object[]{
+                            miscellaneous.getName(),
+                            miscellaneous.getQuantity(),
+                            miscellaneous.getLocation(),
+                            miscellaneous.getVendor(),
+                            miscellaneous.getPurchasePrice(),
+                            miscellaneous.descriptionDetails()
+                    });
+                });
+
+        itemTable.adjustRowHeights();
     }
 
+    private double parsePrice(String priceStr) {
+        if (priceStr == null || priceStr.trim().isEmpty()) {
+            return 0.0;
+        }
+        String cleaned = priceStr.replace("$", "").replace(",", "").trim();
+        return Double.parseDouble(cleaned);
+    }
 
-    public void clearForm() {
+    private Miscellaneous createMiscellaneousFromForm() {
+        return new Miscellaneous(
+                getNameInput(),
+                getDescriptionInput(),
+                getQuantityInput(),
+                parsePrice(getPriceInput()),
+                getPurchaseDateInput(),
+                getVendorInput(),
+                getLocationInput(),
+                getItemTypeInput(),
+                getUsageInput(),
+                getIsConditionInput()
+        );
+    }
+
+    private boolean validateForm() {
+        if (getNameInput().trim().isEmpty()) {
+            showError("Name cannot be empty!");
+            return false;
+        }
+
+        try {
+            double price = parsePrice(getPriceInput());
+            if (price <= 0) {
+                showError("Price must be greater than 0");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            showError("Price must be a valid number");
+            return false;
+        }
+
+        if (getQuantityInput() <= 0) {
+            showError("Quantity must be greater than 0");
+            return false;
+        }
+
+        if (getIsConditionInput()) {
+            showError("Condition cannot be empty!");
+            return false;
+        }
+
+        if (getItemTypeInput().trim().isEmpty()) {
+            showError("Item Type cannot be empty!");
+            return false;
+        }
+
+        if (getUsageInput().trim().isEmpty()) {
+            showError("Usage cannot be empty!");
+            return false;
+        }
+        
+        if (!validateDateField(getPurchaseDateInput(), "Purchase Date")) return false;
+
+        return true;
+    }
+
+    private boolean isFutureDate(String dateStr) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+            LocalDate inputDate = LocalDate.parse(dateStr, formatter);
+            LocalDate today = LocalDate.now();
+            return inputDate.isAfter(today);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    private boolean validateDateField(String dateText, String fieldName) {
+        if (!dateText.isEmpty() && !dateText.matches("\\d{2}/\\d{2}/\\d{4}")) {
+            showError(fieldName + " must be in MM/DD/YYYY format");
+            return false;
+        }
+        return true;
+    }
+
+    private void showError(String message) {
+        JOptionPane.showMessageDialog(this, message, "Input Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void showSuccess(String message) {
+        JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    // ============ EVENT HANDLERS ============
+
+    private void setupButtonListeners() {
+        ADDButton.addActionListener(e -> addItem());
+        UPDATEButton.addActionListener(e -> updateItem());
+        REMOVEButton.addActionListener(e -> removeItem());
+        CLEARButton.addActionListener(e -> clearForm());
+        REFRESHButton.addActionListener(e -> refreshForm());
+    }
+
+    private void addItem() {
+        try {
+            if (validateForm()) {
+                Miscellaneous miscellaneous = createMiscellaneousFromForm();
+                inventoryManager.addItem(miscellaneous);
+                loadItems();
+                clearForm();
+                showSuccess("Miscellaneous item added successfully!");
+            }
+        } catch (IOException e) {
+            showError("Error saving item: " + e.getMessage());
+        } catch (Exception e) {
+            showError("Error: " + e.getMessage());
+        }
+    }
+
+    private void updateItem() {
+        if (selectedIndex >= 0) {
+            try {
+                if (validateForm()) {
+                    Miscellaneous miscellaneous = createMiscellaneousFromForm();
+                    java.util.List<Item> allItems = inventoryManager.getAllItems();
+                    List<Item> miscellaneousItems = inventoryManager.getItemsByCategory(Category.MISCELLANEOUS);
+
+                    if (selectedIndex < miscellaneousItems.size()) {
+                        Item originalItem = miscellaneousItems.get(selectedIndex);
+                        int actualIndex = allItems.indexOf(originalItem);
+                        if (actualIndex != -1) {
+                            inventoryManager.updateItem(actualIndex, miscellaneous);
+                            loadItems();
+                            clearForm();
+                            selectedIndex = -1;
+                            showSuccess("Miscellaneous item updated successfully!");
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                showError("Update Error: " + e.getMessage());
+            }
+        } else {
+            showError("Please select a row to update!");
+        }
+    }
+
+    private void removeItem() {
+        if (selectedIndex >= 0) {
+            try {
+                int confirm = JOptionPane.showConfirmDialog(this,
+                        "Are you sure you want to remove this miscellaneous item?",
+                        "Confirm Removal", JOptionPane.YES_NO_OPTION);
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    List<Item> miscellaneousItems = inventoryManager.getItemsByCategory(Category.MISCELLANEOUS);
+
+                    if (selectedIndex < miscellaneousItems.size()) {
+                        Item itemToRemove = miscellaneousItems.get(selectedIndex);
+                        inventoryManager.removeItem(itemToRemove);
+                        loadItems();
+                        clearForm();
+                        selectedIndex = -1;
+                        showSuccess("Item removed successfully!");
+                    }
+                }
+            } catch (Exception e) {
+                showError("Error removing item: " + e.getMessage());
+            }
+        } else {
+            showError("Please select a row to remove!");
+        }
+    }
+
+    private void refreshForm() {
+        loadItems();
+        clearForm();
+        selectedIndex = -1;
+    }
+
+    private void clearForm() {
+        // Clear text fields
         name_field.setText("");
-        spinner1.setValue(1);
         vendor_field.setText("");
         price_field.setText("");
-
-        // Reset warranty field to placeholder
-        warranty_field.setText(WARRANTY_PLACEHOLDER);
-        warranty_field.setForeground(new Color(100, 100, 100, 180));
-        warranty_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
-
-        itemtype_field.setText("");
         usage_field.setText("");
+        itemtype_field.setText("");
         textArea1.setText("");
+
+        // Reset spinner
+        spinner1.setValue(1);
+
+        // Reset combo box
         location_combobox.setSelectedIndex(0);
 
-        INTACTRadioButton.setSelected(true);
+        // Reset date fields to placeholders
+        setFieldToPlaceholder(purchaseDate_field, purchaseDate_PLACEHOLDER);
+
+        // Clear table selection
+        itemTable.clearSelection();
+    }
+
+    private void setFieldToPlaceholder(JTextField field, String placeholder) {
+        field.setText(placeholder);
+        field.setForeground(new Color(100, 100, 100, 180));
+        field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+    }
+
+    private void setupTableSelectionListener() {
+        itemTable.getTable().getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = itemTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    selectedIndex = selectedRow;
+                    populateFormFromSelectedRow(selectedRow);
+                }
+            }
+        });
+    }
+
+    private void populateFormFromSelectedRow(int selectedRow) {
+        try {
+            List<Item> miscellaneousItems = inventoryManager.getItemsByCategory(Category.MISCELLANEOUS);
+
+            if (selectedRow < miscellaneousItems.size()) {
+                Miscellaneous miscellaneous = (Miscellaneous) miscellaneousItems.get(selectedRow);
+                populateForm(miscellaneous);
+            }
+        } catch (Exception e) {
+            showError("Error loading item data: " + e.getMessage());
+        }
+    }
+
+    private void populateForm(Miscellaneous miscellaneous) {
+        setNameInput(miscellaneous.getName());
+        setQuantityInput(miscellaneous.getQuantity());
+        setVendorInput(miscellaneous.getVendor());
+        setPriceInput(String.valueOf(miscellaneous.getPurchasePrice()));
+        setpurchaseDateInput(miscellaneous.getPurchaseDate());
+        setCondition(miscellaneous.getIsCondition());
+        setUsageInput(miscellaneous.getUsage());
+        setItemTypeInput(miscellaneous.getItemType());
+        setDescriptionInput(miscellaneous.getDescription());
+        setLocationInput(miscellaneous.getLocation());
     }
 }
