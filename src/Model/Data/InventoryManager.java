@@ -13,7 +13,7 @@ public class InventoryManager {
 
     public InventoryManager() {
         items = new ArrayList<>();
-        this.fileHandler = new FileHandler("inventory.txt");
+        fileHandler = new FileHandler();
         loadFromFile();
     }
 
@@ -39,7 +39,7 @@ public class InventoryManager {
         return removed;
     }
 
-    //UPDATEITEM
+    //UPDATE ITEM
     public void updateItem(int index, Item item) throws IOException {
         if (item == null) {
         throw new IllegalArgumentException("Updated item cannot be null");
@@ -80,13 +80,12 @@ public class InventoryManager {
         try {
             items = fileHandler.loadData();
         } catch (Exception e) {
-            System.err.println("Error loading from file: " + e.getMessage());
             items = new ArrayList<>();
         }
     }
     public List<Item> searchItems(String searchTerm) {
         if (searchTerm == null || searchTerm.trim().isEmpty()) {
-            return new ArrayList<>(items); // Return all items if search is empty
+            return new ArrayList<>(items); 
         }
 
         String term = searchTerm.toLowerCase().trim();

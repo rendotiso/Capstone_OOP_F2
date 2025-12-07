@@ -25,7 +25,7 @@ public class Electronics extends JPanel {
     private JComboBox<String> location_combobox;
     private ItemTable itemTable;
     private JPanel panelButton;
-    private JScrollPane textAreaScroll, scrollPane;;
+    private JScrollPane textAreaScroll; // Removed: scrollPane variable
     private JSpinner spinner1;
     private InventoryManager inventoryManager;
 
@@ -42,8 +42,17 @@ public class Electronics extends JPanel {
         setupMaintenanceListener();
         setupButtonListeners();
         loadTableData();
-    }
 
+        // Add listener to adjust row heights when panel is shown
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentShown(java.awt.event.ComponentEvent e) {
+                SwingUtilities.invokeLater(() -> {
+                    itemTable.adjustRowHeights();
+                });
+            }
+        });
+    }
 
     private void initComponents() {
         // Initialize panels
@@ -119,7 +128,7 @@ public class Electronics extends JPanel {
 
         String[] columnNames = {"Name", "Quantity", "Location", "Vendor", "Price", "Details"};
         itemTable = new ItemTable(columnNames);
-        scrollPane = new JScrollPane(itemTable.getTable());
+        // Removed: scrollPane = new JScrollPane(itemTable.getTable());
     }
 
     private void setupLayout() {
@@ -356,7 +365,8 @@ public class Electronics extends JPanel {
 
         // Table panel (right side)
         table_panel.setLayout(new BorderLayout());
-        table_panel.add(scrollPane, BorderLayout.CENTER);
+        // FIX: Use itemTable directly instead of scrollPane
+        table_panel.add(itemTable, BorderLayout.CENTER);
 
         // Add table panel to root panel (right side)
         gbc.gridx = 1;
@@ -634,7 +644,9 @@ public class Electronics extends JPanel {
         }
 
         // Adjust row heights after loading data
-        itemTable.adjustRowHeights();
+        SwingUtilities.invokeLater(() -> {
+            itemTable.adjustRowHeights();
+        });
     }
 
     private double parsePrice(String priceStr) {
