@@ -1,9 +1,20 @@
 package UI.Panel;
 
 import Model.Data.InventoryManager;
-import javax.swing.*;
+import Model.Entities.Clothing;
+import Model.Entities.Item;
+import Model.Enums.Category;
+import UI.Utilities.ItemTable;
+
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Objects;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
@@ -11,18 +22,21 @@ public class Clothing extends JPanel {
 
     // ATTRIBUTES
     private JPanel panelist, rootPanel, Clothes_panel, panel, table_panel, description_panel;
-    private JTextField name_field, vendor_field, price_field, condition_field, fabrictype_field;
+    private JTextField name_field, vendor_field, price_field, condition_field, fabrictype_field, purchaseDate_field;
     private JTextArea textArea1;
     private JLabel Clothes_label, name_label, quantity_label, location_label, vendor_label, price_label,
-            condition_label, fabrictype_label, size_label, description_label;
+            condition_label, fabrictype_label, size_label, description_label, purchaseDate_label;
     private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton, REFRESHButton;
     private JComboBox<String> location_combobox, size_combobox;
-    private JTable table1;
+    private ItemTable itemTable;
     private JPanel panelButton;
     private JScrollPane textAreaScroll;
     private JSpinner spinner1;
-    private JScrollPane scrollPane;
     private final InventoryManager inventoryManager;
+    private int selectedIndex = -1;
+
+    // Placeholder texts
+    private static final String DATE_PLACEHOLDER  = "MM/DD/YYYY";
 
     public Clothing() {
         inventoryManager = InventoryManager.getInstance();
@@ -30,6 +44,9 @@ public class Clothing extends JPanel {
         setupLayout();
         setupAppearance();
         setupButtonListeners();
+        setupTableSelectionListener();
+        loadItems();
+        setupPlaceholders();
     }
 
     private void initComponents() {
@@ -46,6 +63,7 @@ public class Clothing extends JPanel {
         name_field = new JTextField(8);
         vendor_field = new JTextField(8);
         price_field = new JTextField(8);
+        purchaseDate_field = new JTextField(8);
         condition_field = new JTextField(8);
         fabrictype_field = new JTextField(8);
 
@@ -75,6 +93,7 @@ public class Clothing extends JPanel {
         location_label = new JLabel("LOCATION:");
         vendor_label = new JLabel("VENDOR:");
         price_label = new JLabel("PRICE:");
+        purchaseDate_label = new JLabel("PURCHASE DATE:");
         condition_label = new JLabel("CONDITION:");
         fabrictype_label = new JLabel("FABRIC TYPE:");
         size_label = new JLabel("SIZE:");
@@ -97,7 +116,9 @@ public class Clothing extends JPanel {
                 "XS", "S", "M", "L", "XL", "XXL"
         });
 
-        scrollPane = new JScrollPane();
+        textAreaScroll = new JScrollPane(textArea1);
+        String[] columnNames = {"Name", "Quantity", "Location", "Vendor", "Price", "Details"};
+        itemTable = new ItemTable(columnNames);
     }
 
     private void setupLayout() {
@@ -199,7 +220,21 @@ public class Clothing extends JPanel {
 
         row++;
 
-        // Row 5: Warranty - same as Food class
+        // Row 5: Purchase Date - same as Food class
+        formGbc.gridx = 0; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.NONE;
+        formGbc.weightx = 0;
+        panel.add(purchaseDate_label, formGbc);
+
+        formGbc.gridx = 1; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.HORIZONTAL;
+        formGbc.weightx = 1.0;
+        purchaseDate_field.setPreferredSize(new Dimension(80, 25));
+        panel.add(purchaseDate_field, formGbc);
+
+        row++;
+
+        // Row 6: Condition - same as Food class
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
@@ -213,7 +248,7 @@ public class Clothing extends JPanel {
 
         row++;
 
-        // Row 6: Fabric Type
+        // Row 7: Fabric Type
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
@@ -293,7 +328,7 @@ public class Clothing extends JPanel {
 
         // Table panel (right side) - same as Food class
         table_panel.setLayout(new BorderLayout());
-        table_panel.add(scrollPane, BorderLayout.CENTER);
+        table_panel.add(itemTable, BorderLayout.CENTER);
 
         // Add table panel to root panel (right side) - same proportions as Food class
         gbc.gridx = 1;
@@ -339,6 +374,7 @@ public class Clothing extends JPanel {
         name_field.setBackground(bg);
         vendor_field.setBackground(bg);
         price_field.setBackground(bg);
+        purchaseDate_field.setBackground(bg);
         condition_field.setBackground(bg);
         fabrictype_field.setBackground(bg);
         size_combobox.setBackground(bg);
@@ -361,6 +397,7 @@ public class Clothing extends JPanel {
         name_field.setForeground(black);
         vendor_field.setForeground(black);
         price_field.setForeground(black);
+        purchaseDate_field.setForeground(black);
         condition_field.setForeground(placeholderColor);
         fabrictype_field.setForeground(black);
         size_combobox.setForeground(black);
@@ -374,6 +411,7 @@ public class Clothing extends JPanel {
         location_label.setForeground(black);
         vendor_label.setForeground(black);
         price_label.setForeground(black);
+        purchaseDate_label.setForeground(black);
         condition_label.setForeground(black);
         fabrictype_label.setForeground(black);
         size_label.setForeground(black);
@@ -417,6 +455,7 @@ public class Clothing extends JPanel {
         location_label.setFont(labelFont);
         vendor_label.setFont(labelFont);
         price_label.setFont(labelFont);
+        purchaseDate_label.setFont(labelFont);
         condition_label.setFont(labelFont);
         fabrictype_label.setFont(labelFont);
         size_label.setFont(labelFont);
@@ -425,6 +464,7 @@ public class Clothing extends JPanel {
         name_field.setFont(fieldFont);
         vendor_field.setFont(fieldFont);
         price_field.setFont(fieldFont);
+        purchaseDate_field.setFont(fieldFont);
         condition_field.setFont(placeholderFont);
         fabrictype_field.setFont(fieldFont);
         size_combobox.setFont(fieldFont);
@@ -442,34 +482,71 @@ public class Clothing extends JPanel {
         REFRESHButton.setFont(buttonFont);
 
     }
+    private void setupPlaceholders() {
+        purchaseDate_field.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (purchaseDate_field.getText().equals(DATE_PLACEHOLDER)) {
+                    purchaseDate_field.setText("");
+                    purchaseDate_field.setForeground(Color.BLACK);
+                    purchaseDate_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+                }
+            }
 
-    //GETTERS
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (purchaseDate_field.getText().isEmpty()) { // Fixed: use purchaseDate_field
+                    purchaseDate_field.setText(DATE_PLACEHOLDER);
+                    purchaseDate_field.setForeground(new Color(100, 100, 100, 180));
+                    purchaseDate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+                }
+            }
+        });
+    }
+
+        //GETTERS
     public String getNameInput() {
         return name_field.getText();
     }
+
     public int getQuantityInput() {
         return (int) spinner1.getValue();
     }
-    public String getSizeInput() {
-        return (String) size_combobox.getSelectedItem();
-    }
+
     public String getVendorInput() {
         return vendor_field.getText();
     }
+
     public String getPriceInput() {
         return price_field.getText();
     }
-    public String getConditionInput() {
-        return condition_field.getText();
+
+    public String getPurchaseDateInput() {
+        String text = purchaseDate_field.getText();
+        if (text.equals(DATE_PLACEHOLDER)) {
+            return "";
+        }
+        return text;
     }
-    public String getFabricTypeInput() {
-        return fabrictype_field.getText();
-    }
+
     public String getDescriptionInput() {
         return textArea1.getText();
     }
+
     public String getLocationInput() {
         return (String) location_combobox.getSelectedItem();
+    }
+
+    public String getConditionInput() {
+        return condition_field.getText();
+    }
+
+    public String getFabricTypeInput() {
+        return fabrictype_field.getText();
+    }
+
+    public String getSizeInput() {
+        return (String) size_combobox.getSelectedItem();
     }
 
     //SETTERS
@@ -488,6 +565,17 @@ public class Clothing extends JPanel {
     public void setPriceInput(String price) {
         price_field.setText(price);
     }
+    public void setPurchaseDateInput(String date) {
+        if (date == null || date.trim().isEmpty()) {
+            purchaseDate_field.setText(DATE_PLACEHOLDER);
+            purchaseDate_field.setForeground(new Color(100, 100, 100, 180));
+            purchaseDate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+        } else {
+            purchaseDate_field.setText(date);
+            purchaseDate_field.setForeground(Color.BLACK);
+            purchaseDate_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        }
+    }
     public void setConditionInput(String condition) {
         condition_field.setText(condition);
     }
@@ -503,27 +591,267 @@ public class Clothing extends JPanel {
 
     // DATA LOADING AND ACTION LISTENERS BELOW
 
-    public void clearForm() {
+    private void loadItems() {
+        itemTable.clearTable();
+
+        // Force reload from file to get latest data
+        inventoryManager.loadFromFile();
+
+        inventoryManager.getItemsByCategory(Category.CLOTHING).stream()
+                .filter(Model.Entities.Clothing.class::isInstance)
+                .map(Model.Entities.Clothing.class::cast)
+                .forEach(clothing -> {
+                    itemTable.addRow(new Object[]{
+                            clothing.getName(),
+                            clothing.getQuantity(),
+                            clothing.getLocation(),
+                            clothing.getVendor(),
+                            clothing.descriptionDetails()
+                    });
+                });
+
+        itemTable.adjustRowHeights();
+    }
+
+    private double parsePrice(String priceStr) {
+        if (priceStr == null || priceStr.trim().isEmpty()) {
+            return 0.0;
+        }
+        String cleaned = priceStr.replace("$", "").replace(",", "").trim();
+        return Double.parseDouble(cleaned);
+    }
+
+    private Model.Entities.Clothing createClothingFromForm() {
+        return new Model.Entities.Clothing(
+                getNameInput(),
+                getDescriptionInput(),
+                getQuantityInput(),
+                parsePrice(getPriceInput()),
+                getVendorInput(),
+                getLocationInput(),
+                getConditionInput(),
+                getFabricTypeInput(),
+                getSizeInput(),
+                getPurchaseDateInput()
+        );
+    }
+
+    private boolean validateForm() {
+        if (getNameInput().trim().isEmpty()) {
+            showError("Name cannot be empty!");
+            return false;
+        }
+
+        try {
+            double price = parsePrice(getPriceInput());
+            if (price <= 0) {
+                showError("Price must be greater than 0");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            showError("Price must be a valid number");
+            return false;
+        }
+
+        if (getQuantityInput() <= 0) {
+            showError("Quantity must be greater than 0");
+            return false;
+        }
+
+        if (getConditionInput().trim().isEmpty()) {
+            showError("Condition cannot be empty!");
+            return false;
+        }
+
+        if (getFabricTypeInput().trim().isEmpty()) {
+            showError("Fabric Type cannot be empty!");
+            return false;
+        }
+
+        if (getSizeInput().trim().isEmpty()) {
+            showError("Size Type cannot be empty!");
+            return false;
+        }
+
+        if (!validateDateField(getPurchaseDateInput(), "Purchase Date")) return false;
+
+        return true;
+    }
+
+
+    private boolean isFutureDate(String dateStr) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+            LocalDate inputDate = LocalDate.parse(dateStr, formatter);
+            LocalDate today = LocalDate.now();
+            return inputDate.isAfter(today);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean validateDateField(String dateText, String fieldName) {
+        if (!dateText.isEmpty() && !dateText.matches("\\d{2}/\\d{2}/\\d{4}")) {
+            showError(fieldName + " must be in MM/DD/YYYY format");
+            return false;
+        }
+        return true;
+    }
+
+    private void showError(String message) {
+        JOptionPane.showMessageDialog(this, message, "Input Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void showSuccess(String message) {
+        JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    // ============ EVENT HANDLERS ============
+    public void setupButtonListeners(){
+        ADDButton.addActionListener(e -> addItem());
+        UPDATEButton.addActionListener(e -> updateItem());
+        REMOVEButton.addActionListener(e -> removeItem());
+        CLEARButton.addActionListener(e -> clearForm());
+        REFRESHButton.addActionListener(e -> refreshForm());
+    }
+
+    private void addItem() {
+        try {
+            if (validateForm()) {
+                Model.Entities.Clothing clothing = createClothingFromForm();
+                inventoryManager.addItem(clothing);
+                loadItems();
+                clearForm();
+                showSuccess("Clothing item added successfully!");
+            }
+        } catch (IOException e) {
+            showError("Error saving item: " + e.getMessage());
+        } catch (Exception e) {
+            showError("Error: " + e.getMessage());
+        }
+    }
+
+    private void updateItem() {
+        if (selectedIndex >= 0) {
+            try {
+                if (validateForm()) {
+                    Clothing clothing = createClothingFromForm();
+                    java.util.List<Item> allItems = inventoryManager.getAllItems();
+                    List<Item> clothingItems = inventoryManager.getItemsByCategory(Category.CLOTHING);
+
+                    if (selectedIndex < clothingItems.size()) {
+                        Item originalItem = clothingItems.get(selectedIndex);
+                        int actualIndex = allItems.indexOf(originalItem);
+                        if (actualIndex != -1) {
+                            inventoryManager.updateItem(actualIndex, clothing);
+                            loadItems();
+                            clearForm();
+                            selectedIndex = -1;
+                            showSuccess("Clothing item updated successfully!");
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                showError("Update Error: " + e.getMessage());
+            }
+        } else {
+            showError("Please select a row to update!");
+        }
+    }
+
+    private void removeItem() {
+        if (selectedIndex >= 0) {
+            try {
+                int confirm = JOptionPane.showConfirmDialog(this,
+                        "Are you sure you want to remove this clothing item?",
+                        "Confirm Removal", JOptionPane.YES_NO_OPTION);
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    List<Item> clothingItems = inventoryManager.getItemsByCategory(Category.CLOTHING);
+
+                    if (selectedIndex < clothingItems.size()) {
+                        Item itemToRemove = clothingItems.get(selectedIndex);
+                        inventoryManager.removeItem(itemToRemove);
+                        loadItems();
+                        clearForm();
+                        selectedIndex = -1;
+                        showSuccess("Item removed successfully!");
+                    }
+                }
+            } catch (Exception e) {
+                showError("Error removing item: " + e.getMessage());
+            }
+        } else {
+            showError("Please select a row to remove!");
+        }
+    }
+
+    private void refreshForm() {
+        loadItems();
+        clearForm();
+        selectedIndex = -1;
+    }
+
+    private void clearForm() {
+        // Clear text fields
         name_field.setText("");
-        spinner1.setValue(1);
-        size_combobox.setSelectedItem("");
         vendor_field.setText("");
         price_field.setText("");
-
-
+        condition_field.setText("");
         fabrictype_field.setText("");
         textArea1.setText("");
-        location_combobox.setSelectedIndex(0);
 
+        // Reset spinner
+        spinner1.setValue(1);
+
+        // Reset date fields to placeholders
+        setFieldToPlaceholder(purchaseDate_field, DATE_PLACEHOLDER);
+
+        // Clear table selection
+        itemTable.clearSelection();
     }
 
-    public void setupButtonListeners(){
-//        ADDButton.addActionListener(e -> addItem());
-//        UPDATEButton.addActionListener(e -> updateItem());
-//        REMOVEButton.addActionListener(e -> removeItem());
-//        CLEARButton.addActionListener(e -> clearForm());
-//        REFRESHButton.addActionListener(e -> refreshForm());
+    private void setFieldToPlaceholder(JTextField field, String placeholder) {
+        field.setText(placeholder);
+        field.setForeground(new Color(100, 100, 100, 180));
+        field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
     }
 
+    private void setupTableSelectionListener() {
+        itemTable.getTable().getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = itemTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    selectedIndex = selectedRow;
+                    populateFormFromSelectedRow(selectedRow);
+                }
+            }
+        });
+    }
 
+    private void populateFormFromSelectedRow(int selectedRow) {
+        try {
+            List<Item> clothingItems = inventoryManager.getItemsByCategory(Category.CLOTHING);
+
+            if (selectedRow < clothingItems.size()) {
+                Model.Entities.Clothing clothing = (Clothing) clothingItems.get(selectedRow);
+                populateForm(clothing);
+            }
+        } catch (Exception e) {
+            showError("Error loading item data: " + e.getMessage());
+        }
+    }
+
+    private void populateForm(Model.Entities.Clothing clothing) {
+        setNameInput(clothing.getName());
+        setQuantityInput(clothing.getQuantity());
+        setVendorInput(clothing.getVendor());
+        setPriceInput(String.valueOf(clothing.getPurchasePrice()));
+        setPurchaseDateInput(clothing.getPurchaseDate());
+        setConditionInput(clothing.getCondition());
+        setFabrictypeInput(clothing.getFabricType());
+        setSizeInput(String.valueOf(clothing.getSize()));
+        setDescriptionInput(clothing.getDescription());
+        setLocationInput(String.valueOf(clothing.getLocation()));
+    }
 }
