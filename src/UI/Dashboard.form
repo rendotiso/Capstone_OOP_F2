@@ -83,7 +83,7 @@
               </component>
               <component id="77eb5" class="javax.swing.JButton" binding="electronicsButton" default-binding="true">
                 <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                     <minimum-size width="150" height="-1"/>
                     <preferred-size width="150" height="-1"/>
                     <maximum-size width="150" height="-1"/>
@@ -93,6 +93,48 @@
                   <background color="-657931"/>
                   <foreground color="-16777216"/>
                   <text value="Electronics"/>
+                </properties>
+              </component>
+              <component id="2ec45" class="javax.swing.JButton" binding="toolsButton">
+                <constraints>
+                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                    <minimum-size width="150" height="-1"/>
+                    <preferred-size width="150" height="-1"/>
+                    <maximum-size width="150" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-657931"/>
+                  <foreground color="-16777216"/>
+                  <text value="Tools"/>
+                </properties>
+              </component>
+              <component id="7ba5e" class="javax.swing.JButton" binding="miscellaneousButton">
+                <constraints>
+                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                    <minimum-size width="150" height="-1"/>
+                    <preferred-size width="150" height="-1"/>
+                    <maximum-size width="150" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-657931"/>
+                  <foreground color="-16777216"/>
+                  <text value="Miscellaneous"/>
+                </properties>
+              </component>
+              <component id="44fb" class="javax.swing.JButton" binding="foodButton">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                    <minimum-size width="150" height="-1"/>
+                    <preferred-size width="150" height="-1"/>
+                    <maximum-size width="150" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-657931"/>
+                  <foreground color="-16777216"/>
+                  <text value="Food"/>
                 </properties>
               </component>
               <component id="5cd74" class="javax.swing.JButton" binding="clothingButton">
@@ -107,48 +149,6 @@
                   <background color="-657931"/>
                   <foreground color="-16777216"/>
                   <text value="Clothing"/>
-                </properties>
-              </component>
-              <component id="44fb" class="javax.swing.JButton" binding="foodButton">
-                <constraints>
-                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                    <minimum-size width="150" height="-1"/>
-                    <preferred-size width="150" height="-1"/>
-                    <maximum-size width="150" height="-1"/>
-                  </grid>
-                </constraints>
-                <properties>
-                  <background color="-657931"/>
-                  <foreground color="-16777216"/>
-                  <text value="Food"/>
-                </properties>
-              </component>
-              <component id="7ba5e" class="javax.swing.JButton" binding="miscellaneousButton">
-                <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                    <minimum-size width="150" height="-1"/>
-                    <preferred-size width="150" height="-1"/>
-                    <maximum-size width="150" height="-1"/>
-                  </grid>
-                </constraints>
-                <properties>
-                  <background color="-657931"/>
-                  <foreground color="-16777216"/>
-                  <text value="Miscellaneous"/>
-                </properties>
-              </component>
-              <component id="2ec45" class="javax.swing.JButton" binding="toolsButton">
-                <constraints>
-                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                    <minimum-size width="150" height="-1"/>
-                    <preferred-size width="150" height="-1"/>
-                    <maximum-size width="150" height="-1"/>
-                  </grid>
-                </constraints>
-                <properties>
-                  <background color="-657931"/>
-                  <foreground color="-16777216"/>
-                  <text value="Tools"/>
                 </properties>
               </component>
             </children>
