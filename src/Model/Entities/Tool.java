@@ -94,7 +94,7 @@ public class Tool extends Item implements Maintainable {
     public String descriptionDetails() {
         String maintenanceStatus = needsMaintenance() ? "NEEDS MAINTENANCE" : "OK";
         int daysLeft = getDaysUntilMaintenanceDue();
-        return String.format("%s | Type: %s, Size: %s, Material: %s | Maintenance: %s (%d days)",
+        return String.format("%s Type: %s \n Steel Grade: %s \n Material: %s \n Maintenance: %s (%d days)",
                 super.descriptionDetails(), toolType, steelGrade, material, maintenanceStatus, daysLeft);
     }
     @Override

@@ -14,11 +14,12 @@ import java.awt.*;
 public class AllItemsPanel extends JPanel {
     private JTextField searchField;
     private JButton searchButton, clearButton, refreshButton, deleteButton;
-    private ItemTable itemTable;
-    private InventoryManager inventoryManager;
+    private final ItemTable itemTable;
+    private final InventoryManager inventoryManager;
+    private int selectedIndex = -1; // Track selected row like in Electronics
 
     public AllItemsPanel() {
-        inventoryManager = new InventoryManager();
+        inventoryManager = InventoryManager.getInstance();
 
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -40,7 +41,8 @@ public class AllItemsPanel extends JPanel {
 
         setupTableAppearance();
         setupListeners();
-        loadTableData();
+        setupTableSelectionListener(); // Add table selection listener
+        loadItems();
     }
 
     private JPanel createSearchPanel() {
@@ -96,19 +98,35 @@ public class AllItemsPanel extends JPanel {
     }
 
     private void setupListeners() {
-        clearButton.addActionListener(e -> searchField.setText(""));
+        clearButton.addActionListener(e -> {
+            searchField.setText("");
+            loadItems(); // Load all items when clearing search
+        });
+
         searchButton.addActionListener(e -> searchFunction());
         clearButton.setFocusable(false);
         searchButton.setFocusable(false);
         refreshButton.setFocusable(false);
         deleteButton.setFocusable(false);
 
-        // Add functional listeners
+        // Add functional listeners - similar to Electronics
         refreshButton.addActionListener(e -> refreshFunction());
         deleteButton.addActionListener(e -> deleteFunction());
 
         // Add Enter key listener to search field
         searchField.addActionListener(e -> searchFunction());
+    }
+
+    // Setup table selection listener like in Electronics
+    private void setupTableSelectionListener() {
+        itemTable.getTable().getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = itemTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    selectedIndex = selectedRow; // Store the selected index
+                }
+            }
+        });
     }
 
     private void searchFunction() {
@@ -123,86 +141,59 @@ public class AllItemsPanel extends JPanel {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error searching items: " + e.getMessage(),
                     "Search Error", JOptionPane.ERROR_MESSAGE);
-            loadTableData();
+            loadItems();
         }
     }
 
+    // Refresh function similar to Electronics
     private void refreshFunction() {
-        // Reload all items from database
-        loadTableData();
-
-        // Clear search field
+        loadItems();
         searchField.setText("");
+        selectedIndex = -1; // Reset selection like in Electronics
+        itemTable.clearSelection(); // Clear table selection
 
-        // Show confirmation message
         JOptionPane.showMessageDialog(this,
                 "Table refreshed successfully.",
                 "Refresh Complete",
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
+    // Delete function similar to Electronics
     private void deleteFunction() {
-        JTable table = itemTable.getTable();
-        int selectedRow = table.getSelectedRow();
-
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this,
-                    "Please select an item to delete.",
-                    "No Selection",
-                    JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        // Get the actual item No. (displayed in column 0)
-        int displayItemNo = (Integer) table.getValueAt(selectedRow, 0);
-
-        // Convert to actual index in the list (displayItemNo - 1)
-        int itemIndex = displayItemNo - 1;
-
-        // Get the item's name for confirmation message
-        String itemName = (String) table.getValueAt(selectedRow, 2);
-
-        // Ask for confirmation
-        int confirm = JOptionPane.showConfirmDialog(this,
-                "Are you sure you want to delete item: " + itemName + "?",
-                "Confirm Delete",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE);
-
-        if (confirm == JOptionPane.YES_OPTION) {
+        if (selectedIndex >= 0) {
             try {
-                // Get all items to find the actual item to delete
+                // Get all items
                 List<Item> allItems = inventoryManager.getAllItems();
 
-                if (itemIndex >= 0 && itemIndex < allItems.size()) {
-                    Item itemToDelete = allItems.get(itemIndex);
+                // Get the selected item from the table
+                DefaultTableModel model = itemTable.getTableModel();
+                if (selectedIndex < model.getRowCount()) {
+                    int displayItemNo = (Integer) model.getValueAt(selectedIndex, 0);
+                    int itemIndex = displayItemNo - 1; // Convert display number to actual index
+                    String itemName = (String) model.getValueAt(selectedIndex, 2);
 
-                    // Delete the item from database
-                    boolean deleted = inventoryManager.removeItem(itemToDelete);
+                    // Confirm deletion - similar to Electronics
+                    int confirm = JOptionPane.showConfirmDialog(this,
+                            "Are you sure you want to delete item: " + itemName + "?",
+                            "Confirm Delete",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.WARNING_MESSAGE);
 
-                    if (deleted) {
-                        // Remove from table
-                        DefaultTableModel model = itemTable.getTableModel();
-                        model.removeRow(selectedRow);
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        if (itemIndex >= 0 && itemIndex < allItems.size()) {
+                            Item itemToDelete = allItems.get(itemIndex);
+                            inventoryManager.removeItem(itemToDelete);
 
-                        // Update item numbers for remaining rows
-                        updateItemNumbers();
+                            // Refresh the table - similar to Electronics
+                            loadItems();
+                            selectedIndex = -1; // Reset selection
 
-                        JOptionPane.showMessageDialog(this,
-                                "Item deleted successfully.",
-                                "Delete Complete",
-                                JOptionPane.INFORMATION_MESSAGE);
-                    } else {
-                        JOptionPane.showMessageDialog(this,
-                                "Failed to delete item. Please try again.",
-                                "Delete Failed",
-                                JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(this,
+                                    "Item deleted successfully.",
+                                    "Delete Complete",
+                                    JOptionPane.INFORMATION_MESSAGE);
+                        }
                     }
-                } else {
-                    JOptionPane.showMessageDialog(this,
-                            "Invalid item selection. Please refresh and try again.",
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this,
@@ -210,6 +201,11 @@ public class AllItemsPanel extends JPanel {
                         "Delete Error",
                         JOptionPane.ERROR_MESSAGE);
             }
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "Please select a row to delete!",
+                    "No Selection",
+                    JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -220,22 +216,40 @@ public class AllItemsPanel extends JPanel {
         }
     }
 
-    private void loadTableData() {
+    // Load items method similar to Electronics
+    private void loadItems() {
+        itemTable.clearTable();
+
         List<Item> allItems = inventoryManager.getAllItems();
-        updateTableWithItems(allItems);
+        int itemNo = 1;
+        for (Item item : allItems) {
+            Object[] rowData = new Object[]{
+                    itemNo++,
+                    item.getCategory() != null ? item.getCategory().toString() : "",
+                    item.getName(),
+                    item.getQuantity(),
+                    item.getLocation(),
+                    item.getPurchasePrice(),
+                    item.descriptionDetails()
+            };
+            itemTable.addRow(rowData);
+        }
+
+        itemTable.adjustRowHeights();
     }
 
     private void updateTableWithItems(List<Item> items) {
-        DefaultTableModel model = itemTable.getTableModel();
-        model.setRowCount(0);
+        itemTable.clearTable();
 
         int itemNo = 1;
         for (Item item : items) {
             Object[] rowData = createTableRow(item, itemNo++);
-            model.addRow(rowData);
+            itemTable.addRow(rowData);
         }
 
         itemTable.adjustRowHeights();
+        selectedIndex = -1; // Reset selection when updating table
+        itemTable.clearSelection(); // Clear table selection
     }
 
     private Object[] createTableRow(Item item, int itemNo) {
@@ -253,18 +267,15 @@ public class AllItemsPanel extends JPanel {
     private void setupTableAppearance() {
         JTable table = itemTable.getTable();
 
-        // Set basic table properties
         table.setRowHeight(30); // Initial row height
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        // Style the table header
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         table.getTableHeader().setBackground(new Color(70, 130, 180));
         table.getTableHeader().setForeground(Color.WHITE);
         table.getTableHeader().setReorderingAllowed(false);
 
-        // Style the table
         table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         table.setSelectionBackground(new Color(100, 149, 237));
         table.setSelectionForeground(Color.WHITE);
@@ -272,7 +283,6 @@ public class AllItemsPanel extends JPanel {
         table.setShowGrid(true);
         table.setIntercellSpacing(new Dimension(1, 1));
 
-        // Set custom cell renderer with proper column alignment
         table.setDefaultRenderer(Object.class, new TableCellRenderer() {
             private final DefaultTableCellRenderer defaultRenderer = new DefaultTableCellRenderer();
             private final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
@@ -281,10 +291,8 @@ public class AllItemsPanel extends JPanel {
             {
                 centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
                 centerRenderer.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-
                 priceRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
                 priceRenderer.setFont(new Font("Segoe UI", Font.BOLD, 12));
-
                 defaultRenderer.setFont(new Font("Segoe UI", Font.PLAIN, 12));
             }
 
@@ -292,42 +300,35 @@ public class AllItemsPanel extends JPanel {
             public Component getTableCellRendererComponent(JTable table, Object value,
                                                            boolean isSelected, boolean hasFocus,
                                                            int row, int column) {
-
-                // Column 0: No. - Center aligned and bold
                 if (column == 0) {
                     Component comp = centerRenderer.getTableCellRendererComponent(
                             table, value, isSelected, hasFocus, row, column);
                     comp.setFont(new Font("Segoe UI", Font.BOLD, 12));
                     return comp;
                 }
-                // Column 1: Category - Left aligned (default)
                 else if (column == 1) {
                     Component comp = defaultRenderer.getTableCellRendererComponent(
                             table, value, isSelected, hasFocus, row, column);
                     ((JLabel) comp).setHorizontalAlignment(SwingConstants.LEFT);
                     return comp;
                 }
-                // Column 2: Name - Left aligned (default)
                 else if (column == 2) {
                     Component comp = defaultRenderer.getTableCellRendererComponent(
                             table, value, isSelected, hasFocus, row, column);
                     ((JLabel) comp).setHorizontalAlignment(SwingConstants.LEFT);
                     return comp;
                 }
-                // Column 3: Quantity - Center aligned
                 else if (column == 3) {
                     Component comp = centerRenderer.getTableCellRendererComponent(
                             table, value, isSelected, hasFocus, row, column);
                     return comp;
                 }
-                // Column 4: Location - Left aligned (default)
                 else if (column == 4) {
                     Component comp = defaultRenderer.getTableCellRendererComponent(
                             table, value, isSelected, hasFocus, row, column);
                     ((JLabel) comp).setHorizontalAlignment(SwingConstants.LEFT);
                     return comp;
                 }
-                // Column 5: Price - Right aligned with currency format
                 else if (column == 5) {
                     if (value instanceof Double) {
                         priceRenderer.setText(String.format("$%.2f", (Double) value));
@@ -385,7 +386,6 @@ public class AllItemsPanel extends JPanel {
             }
         });
 
-        // Set column widths for AllItemsPanel
         // Column indices: 0:No., 1:Category, 2:Name, 3:Quantity, 4:Location, 5:Price, 6:Details
         TableColumnModel columnModel = table.getColumnModel();
         columnModel.getColumn(0).setPreferredWidth(50);   // No. - smaller for just numbers
@@ -413,7 +413,6 @@ public class AllItemsPanel extends JPanel {
             }
         });
 
-        // Add mouse listener for row selection
         table.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {

@@ -1,20 +1,31 @@
 package Model.Data;
 
 import Model.Entities.*;
+import Model.Enums.Category;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 // This Class handles the CRUD operations ; ensure usage of Exception Handling
 public class InventoryManager {
+    private static InventoryManager instance;
     private List<Item> items;
     private final FileHandler fileHandler;
 
-    public InventoryManager() {
+    // Make constructor private for singleton pattern
+    private InventoryManager() {
         items = new ArrayList<>();
         fileHandler = new FileHandler();
         loadFromFile();
+    }
+
+    public static synchronized InventoryManager getInstance() {
+        if (instance == null) {
+            instance = new InventoryManager();
+        }
+        return instance;
     }
 
     // ADDITEM
@@ -42,16 +53,22 @@ public class InventoryManager {
     //UPDATE ITEM
     public void updateItem(int index, Item item) throws IOException {
         if (item == null) {
-        throw new IllegalArgumentException("Updated item cannot be null");
-    }
+            throw new IllegalArgumentException("Updated item cannot be null");
+        }
         if (index >= 0 && index < items.size()) {
-            items.set(index, item);
+            items.set(index, item);  // This REPLACES the item at that index
             savetoFile();
         }
     }
 
     public List<Item> getAllItems() {
-        return items;
+        return new ArrayList<>(items); // Return a copy to prevent external modification
+    }
+
+    public List<Item> getItemsByCategory(Category category) {
+        return items.stream()
+                .filter(item -> item.getCategory() == category)
+                .collect(Collectors.toList());
     }
 
     public boolean searchItem(Item item, String searchTerm) {
@@ -76,16 +93,18 @@ public class InventoryManager {
             System.err.println("Error saving to file: " + e.getMessage());
         }
     }
-    private void loadFromFile() {
+
+    public void loadFromFile() {
         try {
             items = fileHandler.loadData();
         } catch (Exception e) {
             items = new ArrayList<>();
         }
     }
+
     public List<Item> searchItems(String searchTerm) {
         if (searchTerm == null || searchTerm.trim().isEmpty()) {
-            return new ArrayList<>(items); 
+            return new ArrayList<>(items);
         }
 
         String term = searchTerm.toLowerCase().trim();
@@ -98,5 +117,10 @@ public class InventoryManager {
         }
 
         return filteredItems;
+    }
+
+    // Optional: Method to clear the singleton instance (useful for testing)
+    public static void resetInstance() {
+        instance = null;
     }
 }

@@ -2,6 +2,8 @@ package Model.Entities;
 
 import Model.Enums.Category;
 
+import java.util.Objects;
+
 public abstract class Item {
     private String name;
     private String description;
@@ -67,7 +69,8 @@ public abstract class Item {
 
     //ABSTRACT METHODS
     public String descriptionDetails() {
-        return String.format("%s - %s (Date bought - %s)", description, category, purchaseDate);
+        if(Objects.equals(description, " ")) description = "No Description";
+        return String.format("%s \nDate bought - %s\n", description, purchaseDate);
     }
     public abstract double calculateValue();
 

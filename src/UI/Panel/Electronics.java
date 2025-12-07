@@ -21,13 +21,14 @@ public class Electronics extends JPanel {
             price_label,warranty_label,model_label, brand_label, LMD_label,
             description_label,  maintenance_label, purchaseDate_label;
     private JCheckBox maintenanceNeeded;
-    private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton;
+    private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton, REFRESHButton;
     private JComboBox<String> location_combobox;
     private ItemTable itemTable;
     private JPanel panelButton;
-    private JScrollPane textAreaScroll; // Removed: scrollPane variable
+    private JScrollPane textAreaScroll;
     private JSpinner spinner1;
-    private InventoryManager inventoryManager;
+    private final InventoryManager inventoryManager;
+    private int selectedIndex = -1;
 
     // Placeholder texts
     private static final String DATE_PLACEHOLDER  = "MM/DD/YYYY";
@@ -35,13 +36,15 @@ public class Electronics extends JPanel {
     private static final String LMD_PLACEHOLDER  = "MM/DD/YYYY";
 
     public Electronics() {
+        inventoryManager = InventoryManager.getInstance();
         initComponents();
         setupLayout();
         setupAppearance();
         setupPlaceholders();
         setupMaintenanceListener();
+        setupTableSelectionListener();
         setupButtonListeners();
-        loadTableData();
+        loadItems();
 
         // Add listener to adjust row heights when panel is shown
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -116,6 +119,7 @@ public class Electronics extends JPanel {
         CLEARButton = new JButton("CLEAR");
         UPDATEButton = new JButton("UPDATE");
         REMOVEButton = new JButton("REMOVE");
+        REFRESHButton = new JButton("REFRESH");
 
         // Initialize combo boxes
         location_combobox = new JComboBox<>(new String[]{
@@ -123,9 +127,6 @@ public class Electronics extends JPanel {
         });
 
         textAreaScroll = new JScrollPane(textArea1);
-
-        inventoryManager = new InventoryManager();
-
         String[] columnNames = {"Name", "Quantity", "Location", "Vendor", "Price", "Details"};
         itemTable = new ItemTable(columnNames);
         // Removed: scrollPane = new JScrollPane(itemTable.getTable());
@@ -345,6 +346,7 @@ public class Electronics extends JPanel {
         panelButton.add(CLEARButton);
         panelButton.add(UPDATEButton);
         panelButton.add(REMOVEButton);
+        panelButton.add(REFRESHButton);
         description_panel.add(panelButton, descGbc);
 
         // Add description panel to main form panel
@@ -387,6 +389,7 @@ public class Electronics extends JPanel {
         Color black = new Color(-16777216);
         Color bg = new Color(0xF5F5F5);
         Color placeholderColor = new Color(100, 100, 100, 180);
+        Color buttonColor = new Color(70, 130, 180);
 
         // Set panels opaque
         panelist.setOpaque(true);
@@ -456,25 +459,29 @@ public class Electronics extends JPanel {
         maintenance_label.setForeground(black);
 
         // Set button colors
-        ADDButton.setBackground(new Color(70, 130, 180));
-        CLEARButton.setBackground(new Color(70, 130, 180));
-        UPDATEButton.setBackground(new Color(70, 130, 180));
-        REMOVEButton.setBackground(new Color(70, 130, 180));
+        ADDButton.setBackground(buttonColor);
+        CLEARButton.setBackground(buttonColor);
+        UPDATEButton.setBackground(buttonColor);
+        REMOVEButton.setBackground(buttonColor);
+        REFRESHButton.setBackground(buttonColor);
         ADDButton.setForeground(Color.white);
         CLEARButton.setForeground(Color.white);
         UPDATEButton.setForeground(Color.white);
         REMOVEButton.setForeground(Color.white);
+        REFRESHButton.setForeground(Color.white);
 
         // Make buttons opaque
         ADDButton.setOpaque(true);
         CLEARButton.setOpaque(true);
         UPDATEButton.setOpaque(true);
         REMOVEButton.setOpaque(true);
+        REFRESHButton.setOpaque(true);
 
         ADDButton.setFocusable(false);
         UPDATEButton.setFocusable(false);
         REMOVEButton.setFocusable(false);
         CLEARButton.setFocusable(false);
+        REFRESHButton.setFocusable(false);
 
         // Set fonts
         Font labelFont = new Font("Segoe UI", Font.BOLD, 14);
@@ -516,6 +523,7 @@ public class Electronics extends JPanel {
         CLEARButton.setFont(buttonFont);
         UPDATEButton.setFont(buttonFont);
         REMOVEButton.setFont(buttonFont);
+        REFRESHButton.setFont(buttonFont);
     }
     private void setupPlaceholders() {
         LMD_field.setText(LMD_PLACEHOLDER);
@@ -591,74 +599,6 @@ public class Electronics extends JPanel {
         });
     }
 
-    //TABLE
-    private void loadSelectedItemToForm(int row) {
-        try {
-            // Get all electronics items
-            List<Item> allItems = inventoryManager.getAllItems();
-            List<Item> electronicsItems = allItems.stream()
-                    .filter(item -> item.getCategory() == Category.ELECTRONICS)
-                    .toList();
-
-            if (row >= electronicsItems.size()) return;
-
-            Item item = electronicsItems.get(row);
-            if (item instanceof Electronic electronicItem) {
-                setNameInput(electronicItem.getName());
-                setQuantityInput(electronicItem.getQuantity());
-                setLocationInput(electronicItem.getLocation());
-                setVendorInput(electronicItem.getVendor());
-                setPriceInput(String.format("$%.2f", electronicItem.getPurchasePrice()));
-                setWarrantyInput(electronicItem.getPurchaseDate());
-                setModelInput(electronicItem.getModel());
-                setBrandInput(electronicItem.getBrand());
-                setLMDInput(electronicItem.getLastMaintenanceDate());
-                setDescriptionInput(electronicItem.getDescription());
-                setMaintenanceNeeded(electronicItem.getMaintenanceNeeded());
-            }
-        } catch (Exception ex) {
-            System.err.println("Error loading item: " + ex.getMessage());
-        }
-    }
-
-    private void loadTableData() {
-        List<Item> allItems = inventoryManager.getAllItems();
-        List<Item> electronicsItems = allItems.stream()
-                .filter(item -> item.getCategory() == Category.ELECTRONICS)
-                .toList();
-
-        itemTable.clearTable();
-
-        for (Item item : electronicsItems) {
-            if (item instanceof Electronic electronicItem) {
-                Object[] rowData = new Object[]{
-                        electronicItem.getName(),
-                        electronicItem.getQuantity(),
-                        electronicItem.getLocation(),
-                        electronicItem.getVendor(),
-                        electronicItem.getPurchasePrice(),
-                        electronicItem.descriptionDetails()
-                };
-                itemTable.addRow(rowData);
-            }
-        }
-
-        // Adjust row heights after loading data
-        SwingUtilities.invokeLater(() -> {
-            itemTable.adjustRowHeights();
-        });
-    }
-
-    private double parsePrice(String priceStr) {
-        if (priceStr == null || priceStr.trim().isEmpty()) {
-            return 0.0;
-        }
-        // Remove $ sign and any commas
-        String cleaned = priceStr.replace("$", "").replace(",", "").trim();
-        return Double.parseDouble(cleaned);
-    }
-
-
     //GETTERS
     public String getNameInput() {
         return name_field.getText();
@@ -730,13 +670,13 @@ public class Electronics extends JPanel {
     }
     public void setPurchaseDateInput(String date) {
         if (date == null || date.trim().isEmpty()) {
-            LMD_field.setText(DATE_PLACEHOLDER);
-            LMD_field.setForeground(new Color(100, 100, 100, 180));
-            LMD_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+            purchaseDate_field.setText(DATE_PLACEHOLDER);
+            purchaseDate_field.setForeground(new Color(100, 100, 100, 180));
+            purchaseDate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
         } else {
-            LMD_field.setText(date);
-            LMD_field.setForeground(Color.BLACK);
-            LMD_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            purchaseDate_field.setText(date);
+            purchaseDate_field.setForeground(Color.BLACK);
+            purchaseDate_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         }
     }
     public void setVendorInput(String vendor) {
@@ -783,205 +723,282 @@ public class Electronics extends JPanel {
     }
 
     // DATA LOADING AND ACTION LISTENERS
-    public void setupButtonListeners(){
+
+    private void loadItems() {
+        itemTable.clearTable();
+
+        // Force reload from file to get latest data
+        inventoryManager.loadFromFile();
+
+        inventoryManager.getItemsByCategory(Category.ELECTRONICS).stream()
+                .filter(Electronic.class::isInstance)
+                .map(Electronic.class::cast)
+                .forEach(electronic -> {
+                    itemTable.addRow(new Object[]{
+                            electronic.getName(),
+                            electronic.getQuantity(),
+                            electronic.getLocation(),
+                            electronic.getVendor(),
+                            electronic.getPurchasePrice(),
+                            electronic.descriptionDetails()
+                    });
+                });
+
+        itemTable.adjustRowHeights();
+    }
+
+    private double parsePrice(String priceStr) {
+        if (priceStr == null || priceStr.trim().isEmpty()) {
+            return 0.0;
+        }
+        String cleaned = priceStr.replace("$", "").replace(",", "").trim();
+        return Double.parseDouble(cleaned);
+    }
+
+    private Electronic createElectronicFromForm() {
+        return new Electronic(
+                getNameInput(),
+                getDescriptionInput(),
+                getQuantityInput(),
+                parsePrice(getPriceInput()),
+                getPurchaseDateInput(),
+                getVendorInput(),
+                getLocationInput(),
+                getWarrantyInput(),
+                getBrandInput(),
+                getModelInput(),
+                getMaintenanceNeeded(),
+                getLMDInput()
+        );
+    }
+
+    private boolean validateForm() {
+        if (getNameInput().trim().isEmpty()) {
+            showError("Name cannot be empty!");
+            return false;
+        }
+
+        try {
+            double price = parsePrice(getPriceInput());
+            if (price <= 0) {
+                showError("Price must be greater than 0");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            showError("Price must be a valid number");
+            return false;
+        }
+
+        if (getQuantityInput() <= 0) {
+            showError("Quantity must be greater than 0");
+            return false;
+        }
+
+        if (getBrandInput().trim().isEmpty()) {
+            showError("Brand cannot be empty!");
+            return false;
+        }
+
+        if (getModelInput().trim().isEmpty()) {
+            showError("Model cannot be empty!");
+            return false;
+        }
+
+        if (!validateDateField(getWarrantyInput(), "Warranty Date")) return false;
+        if (!validateDateField(getPurchaseDateInput(), "Purchase Date")) return false;
+        if (!validateDateField(getLMDInput(), "Last Maintenance Date")) return false;
+
+        return true;
+    }
+
+    private boolean validateDateField(String dateText, String fieldName) {
+        if (!dateText.isEmpty() && !dateText.matches("\\d{2}/\\d{2}/\\d{4}")) {
+            showError(fieldName + " must be in MM/DD/YYYY format");
+            return false;
+        }
+        return true;
+    }
+
+    private void showError(String message) {
+        JOptionPane.showMessageDialog(this, message, "Input Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void showSuccess(String message) {
+        JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    // ============ EVENT HANDLERS ============
+
+    public void setupButtonListeners() {
         ADDButton.addActionListener(e -> addItem());
         UPDATEButton.addActionListener(e -> updateItem());
         REMOVEButton.addActionListener(e -> removeItem());
         CLEARButton.addActionListener(e -> clearForm());
+        REFRESHButton.addActionListener(e -> refreshForm());
     }
 
-    private void addItem(){
+    private void addItem() {
         try {
-
-            if(validationErrors() == true) {
-                return;
+            if (validateForm()) {
+                Electronic electronic = createElectronicFromForm();
+                inventoryManager.addItem(electronic);
+                loadItems();
+                clearForm();
+                showSuccess("Electronic item added successfully!");
             }
-
-            Electronic item = new Electronic(getNameInput(), getDescriptionInput(), getQuantityInput(),
-                    parsePrice(getPriceInput()),getPurchaseDateInput(),getVendorInput(), getLocationInput(),
-                    getWarrantyInput(), getBrandInput(), getModelInput(), getMaintenanceNeeded(), getLMDInput()
-            );
-
-            inventoryManager.addItem(item);
-            loadTableData();
-            clearForm();
-
-            JOptionPane.showMessageDialog(this, "Item added successfully!",
-                    "Success", JOptionPane.INFORMATION_MESSAGE);
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Please enter a valid price",
-                    "Error", JOptionPane.ERROR_MESSAGE);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error saving item: " + e.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            showError("Error saving item: " + e.getMessage());
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            showError("Error: " + e.getMessage());
         }
     }
 
-    private boolean validationErrors(){
-        if (getNameInput().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Name cannot be empty!",
-                    "Input Error", JOptionPane.ERROR_MESSAGE);
-            return true;
-        }
-        try {
-            double price = Double.parseDouble(price_field.getText().trim());
-            if (price <= 0) {
-                throw new IllegalArgumentException("Price must be greater than 0");
-            }
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Price must be a valid number");
-        }
-        if (getQuantityInput() <= 0) {
-            JOptionPane.showMessageDialog(this, "Quantity cannot be empty!",
-                    "Input Error", JOptionPane.ERROR_MESSAGE);
-            return true;
-        }
-        if (getLocationInput().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Location cannot be empty!",
-                    "Input Error", JOptionPane.ERROR_MESSAGE);
-            return true;
-        }
-
-
-        if (!warranty_field.getText().trim().matches("\\d{2}/\\d{2}/\\d{4}") ||
-                !purchaseDate_field.getText().trim().matches("\\d{2}/\\d{2}/\\d{4}") ||
-        !LMD_field.getText().trim().matches("\\d{2}/\\d{2}/\\d{4}")){
-            throw new IllegalArgumentException("Date must be in MM/DD/YYYY format");
-        }
-
-        if(getBrandInput().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Brand cannot be empty!",
-                    "Input Error", JOptionPane.ERROR_MESSAGE);
-            return true;
-        }
-        if(getModelInput().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Model cannot be empty!",
-                    "Input Error", JOptionPane.ERROR_MESSAGE);
-            return true;
-        }
-        return  false;
-    }
     private void updateItem() {
-//        if (selectedIndex >= 0) {
-//            try {
-//                Electronics electronics = createElectronicsFromForm();
-//                int managerIndex = findManagerIndex();
-//                if (managerIndex >= 0) {
-//                    manager.updateItem(managerIndex, electronics);
-//                    loadItems();
-//                    clearForm();
-//                    JOptionPane.showMessageDialog(this, "Electronics item updated successfully!");
-//                }
-//            } catch (Exception e) {
-//                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(),
-//                        "Update Error", JOptionPane.ERROR_MESSAGE);
-//            }
-//        }
-//    }
-//
-//    private int findManagerIndex() {
-//        if (selectedIndex >= 0) {
-//            List<Item> allItems = manager.getAllItems();
-//            Item selectedItem = tableModel.getItemAt(selectedIndex);
-//            for (int i = 0; i < allItems.size(); i++) {
-//                if (allItems.get(i) instanceof Electronics &&
-//                        allItems.get(i).getName().equals(selectedItem.getName())) {
-//                    return i;
-//                }
-//            }
-//        }
-//        return -1;
-//    }
-//    private void populateForm(Electronics electronics) {
-//        name_field.setText(electronics.getName());
-//        textArea1.setText(electronics.getDescription());
-//        quantitySpinner.setValue(electronics.getQuantity());
-//        priceField.setText(String.valueOf(electronics.getPurchasePrice()));
-//        dateField.setText(electronics.getPurchaseDate());
-//        vendorField.setText(electronics.getVendor());
-//        locationCombo.setSelectedItem(electronics.getLocation());
-//        brandField.setText(electronics.getBrand());
-//        modelField.setText(electronics.getModel());
-//        warrantyField.setText(electronics.getWarrantyPeriod());
+        if (selectedIndex >= 0) {
+            try {
+                if (validateForm()) {
+                    Electronic electronic = createElectronicFromForm();
+                    List<Item> allItems = inventoryManager.getAllItems();
+                    List<Item> electronicsItems = inventoryManager.getItemsByCategory(Category.ELECTRONICS);
+
+                    if (selectedIndex < electronicsItems.size()) {
+                        Item originalItem = electronicsItems.get(selectedIndex);
+                        int actualIndex = allItems.indexOf(originalItem);
+                        if (actualIndex != -1) {
+                            inventoryManager.updateItem(actualIndex, electronic);
+                            loadItems();
+                            clearForm();
+                            selectedIndex = -1;
+                            showSuccess("Electronic item updated successfully!");
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                showError("Update Error: " + e.getMessage());
+            }
+        } else {
+            showError("Please select a row to update!");
+        }
     }
 
     private void removeItem() {
-        int selectedRow = itemTable.getSelectedRow();
+        if (selectedIndex >= 0) {
+            try {
+                int confirm = JOptionPane.showConfirmDialog(this,
+                        "Are you sure you want to remove this electronic item?",
+                        "Confirm Removal", JOptionPane.YES_NO_OPTION);
 
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a row to remove!", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+                if (confirm == JOptionPane.YES_OPTION) {
+                    List<Item> electronicsItems = inventoryManager.getItemsByCategory(Category.ELECTRONICS);
 
-        try {
-            int confirm = JOptionPane.showConfirmDialog(this,
-                    "Are you sure you want to remove this electronic item?",
-                    "Confirm Removal", JOptionPane.YES_NO_OPTION);
-
-            if (confirm == JOptionPane.YES_OPTION) {
-                List<Item> allItems = inventoryManager.getAllItems();
-                List<Item> electronicsItems = allItems.stream()
-                        .filter(item -> item.getCategory() == Category.ELECTRONICS)
-                        .toList();
-
-                Item itemToRemove = electronicsItems.get(selectedRow);
-                inventoryManager.removeItem(itemToRemove);
-                loadTableData();
-                clearForm();
-
-                JOptionPane.showMessageDialog(this, "Item removed successfully!", "Success",
-                        JOptionPane.INFORMATION_MESSAGE);
+                    if (selectedIndex < electronicsItems.size()) {
+                        Item itemToRemove = electronicsItems.get(selectedIndex);
+                        inventoryManager.removeItem(itemToRemove);
+                        loadItems();
+                        clearForm();
+                        selectedIndex = -1;
+                        showSuccess("Item removed successfully!");
+                    }
+                }
+            } catch (Exception e) {
+                showError("Error removing item: " + e.getMessage());
             }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error removing item: " + e.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            showError("Please select a row to remove!");
         }
     }
 
+    private void refreshForm() {
+        loadItems();
+        clearForm();
+        selectedIndex = -1;
+    }
+
     private void clearForm() {
+        // Clear text fields
         name_field.setText("");
-        spinner1.setValue(1);
         vendor_field.setText("");
         price_field.setText("");
-
-        LMD_field.setText(LMD_PLACEHOLDER);
-        LMD_field.setForeground(new Color(100, 100, 100, 180));
-        LMD_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
-
-        warranty_field.setText(WARRANTY_PLACEHOLDER);
-        warranty_field.setForeground(new Color(100, 100, 100, 180));
-        warranty_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
-
-        purchaseDate_field.setText(DATE_PLACEHOLDER);
-        purchaseDate_field.setForeground(new Color(100, 100, 100, 180));
-        purchaseDate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
-
         model_field.setText("");
         brand_field.setText("");
         textArea1.setText("");
+
+        // Reset spinner
+        spinner1.setValue(1);
+
+        // Reset combo box
         location_combobox.setSelectedIndex(0);
+
+        // Reset checkbox
         maintenanceNeeded.setSelected(false);
+
+        // Reset date fields to placeholders
+        setFieldToPlaceholder(LMD_field, LMD_PLACEHOLDER);
+        setFieldToPlaceholder(warranty_field, WARRANTY_PLACEHOLDER);
+        setFieldToPlaceholder(purchaseDate_field, DATE_PLACEHOLDER);
+
+        // Clear table selection
+        itemTable.clearSelection();
+    }
+
+    private void setFieldToPlaceholder(JTextField field, String placeholder) {
+        field.setText(placeholder);
+        field.setForeground(new Color(100, 100, 100, 180));
+        field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+    }
+
+    private void setupTableSelectionListener() {
+        itemTable.getTable().getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = itemTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    selectedIndex = selectedRow;
+                    populateFormFromSelectedRow(selectedRow);
+                }
+            }
+        });
+    }
+
+    private void populateFormFromSelectedRow(int selectedRow) {
+        try {
+            List<Item> electronicsItems = inventoryManager.getItemsByCategory(Category.ELECTRONICS);
+
+            if (selectedRow < electronicsItems.size()) {
+                Electronic electronic = (Electronic) electronicsItems.get(selectedRow);
+                populateForm(electronic);
+            }
+        } catch (Exception e) {
+            showError("Error loading item data: " + e.getMessage());
+        }
+    }
+
+    private void populateForm(Electronic electronic) {
+        setNameInput(electronic.getName());
+        setQuantityInput(electronic.getQuantity());
+        setVendorInput(electronic.getVendor());
+        setPriceInput(String.valueOf(electronic.getPurchasePrice()));
+        setPurchaseDateInput(electronic.getPurchaseDate());
+        setWarrantyInput(electronic.getWarrantyPeriod());
+        setModelInput(electronic.getModel());
+        setBrandInput(electronic.getBrand());
+        setDescriptionInput(electronic.getDescription());
+        setLocationInput(electronic.getLocation());
+        setMaintenanceNeeded(electronic.getMaintenanceNeeded());
+        setLMDInput(electronic.getLastMaintenanceDate());
     }
 
     private void setupMaintenanceListener() {
         maintenanceNeeded.addChangeListener(e -> {
             if (maintenanceNeeded.isSelected()) {
-
                 LMD_field.setBackground(new Color(0xFFE5E5));
                 LMD_label.setForeground(new Color(0xFF0000));
                 LMD_label.setText("LAST MAINTENANCE DATE: (URGENT!)");
             } else {
-
                 LMD_field.setBackground(new Color(0xF5F5F5));
                 LMD_label.setForeground(Color.BLACK);
                 LMD_label.setText("LAST MAINTENANCE DATE:");
             }
         });
     }
+
 }

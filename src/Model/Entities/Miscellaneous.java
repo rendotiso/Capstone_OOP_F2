@@ -40,9 +40,11 @@
         //METHODS
         @Override
         public String descriptionDetails() {
+            String condition;
+            if(isCondition) condition = "Intact";
+            else condition = "Damage";
             return super.descriptionDetails() +
-                    String.format(" | Quantity: %d units, Storage Location: %s", getQuantity(), getLocation()) +
-                    String.format(" | Type: %s, Usage: %s, Good Condition: %s", itemType, usage, getIsCondition());
+                    String.format("\nType: %s \n Usage: %s\nCondition: %s", itemType, usage,condition);
         }
 
         @Override

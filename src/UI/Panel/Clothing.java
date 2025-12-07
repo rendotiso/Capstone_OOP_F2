@@ -1,5 +1,6 @@
 package UI.Panel;
 
+import Model.Data.InventoryManager;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.Objects;
@@ -14,18 +15,21 @@ public class Clothing extends JPanel {
     private JTextArea textArea1;
     private JLabel Clothes_label, name_label, quantity_label, location_label, vendor_label, price_label,
             condition_label, fabrictype_label, size_label, description_label;
-    private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton;
+    private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton, REFRESHButton;
     private JComboBox<String> location_combobox, size_combobox;
     private JTable table1;
     private JPanel panelButton;
     private JScrollPane textAreaScroll;
     private JSpinner spinner1;
     private JScrollPane scrollPane;
+    private final InventoryManager inventoryManager;
 
     public Clothing() {
+        inventoryManager = InventoryManager.getInstance();
         initComponents();
         setupLayout();
         setupAppearance();
+        setupButtonListeners();
     }
 
     private void initComponents() {
@@ -81,6 +85,7 @@ public class Clothing extends JPanel {
         CLEARButton = new JButton("CLEAR");
         UPDATEButton = new JButton("UPDATE");
         REMOVEButton = new JButton("REMOVE");
+        REFRESHButton = new JButton("REFRESH");
 
         // Initialize combo boxes
         location_combobox = new JComboBox<>(new String[]{
@@ -267,6 +272,7 @@ public class Clothing extends JPanel {
         panelButton.add(CLEARButton);
         panelButton.add(UPDATEButton);
         panelButton.add(REMOVEButton);
+        panelButton.add(REFRESHButton);
         description_panel.add(panelButton, descGbc);
 
         // Add description panel to main form panel - same as Food class
@@ -309,6 +315,7 @@ public class Clothing extends JPanel {
         Color black = new Color(-16777216);
         Color bg = new Color(0xF5F5F5);
         Color placeholderColor = new Color(100, 100, 100, 180);
+        Color buttonColor = new Color(70, 130, 180);
 
         // Set panels opaque - same as Food class
         panelist.setOpaque(true);
@@ -373,25 +380,29 @@ public class Clothing extends JPanel {
         description_label.setForeground(black);
 
         // Set button colors - same as Food class
-        ADDButton.setBackground(new Color(70, 130, 180));
-        CLEARButton.setBackground(new Color(70, 130, 180));
-        UPDATEButton.setBackground(new Color(70, 130, 180));
-        REMOVEButton.setBackground(new Color(70, 130, 180));
+        ADDButton.setBackground(buttonColor);
+        CLEARButton.setBackground(buttonColor);
+        UPDATEButton.setBackground(buttonColor);
+        REMOVEButton.setBackground(buttonColor);
+        REFRESHButton.setBackground(buttonColor);
         ADDButton.setForeground(Color.white);
         CLEARButton.setForeground(Color.white);
         UPDATEButton.setForeground(Color.white);
         REMOVEButton.setForeground(Color.white);
+        REFRESHButton.setForeground(Color.white);
 
-        // Make buttons opaque - same as Food class
+        // Make buttons opaque
         ADDButton.setOpaque(true);
         CLEARButton.setOpaque(true);
         UPDATEButton.setOpaque(true);
         REMOVEButton.setOpaque(true);
+        REFRESHButton.setOpaque(true);
 
         ADDButton.setFocusable(false);
         UPDATEButton.setFocusable(false);
         REMOVEButton.setFocusable(false);
         CLEARButton.setFocusable(false);
+        REFRESHButton.setFocusable(false);
 
         // Set fonts - same as Food class
         Font labelFont = new Font("Segoe UI", Font.BOLD, 14);
@@ -428,63 +439,11 @@ public class Clothing extends JPanel {
         CLEARButton.setFont(buttonFont);
         UPDATEButton.setFont(buttonFont);
         REMOVEButton.setFont(buttonFont);
-    }
-
-
-    // PUBLIC METHODS - same pattern as Food class
-
-    public void clearForm() {
-        name_field.setText("");
-        spinner1.setValue(1);
-        size_combobox.setSelectedItem("");
-        vendor_field.setText("");
-        price_field.setText("");
-
-
-        fabrictype_field.setText("");
-        textArea1.setText("");
-        location_combobox.setSelectedIndex(0);
+        REFRESHButton.setFont(buttonFont);
 
     }
 
-    // Action listener methods - same as Food class
-    public void addAddButtonListener(ActionListener listener) {
-        ADDButton.addActionListener(listener);
-    }
-
-    public void addClearButtonListener(ActionListener listener) {
-        CLEARButton.addActionListener(listener);
-    }
-
-    public void addUpdateButtonListener(ActionListener listener) {
-        UPDATEButton.addActionListener(listener);
-    }
-
-    public void addRemoveButtonListener(ActionListener listener) {
-        REMOVEButton.addActionListener(listener);
-    }
-
-    public int getSelectedTableRow() {
-        return table1.getSelectedRow();
-    }
-
-    public JButton getAddButton() {
-        return ADDButton;
-    }
-
-    public JButton getClearButton() {
-        return CLEARButton;
-    }
-
-    public JButton getUpdateButton() {
-        return UPDATEButton;
-    }
-
-    public JButton getRemoveButton() {
-        return REMOVEButton;
-    }
-
-    // Form field getter methods - same pattern as Food class
+    //GETTERS
     public String getNameInput() {
         return name_field.getText();
     }
@@ -513,7 +472,7 @@ public class Clothing extends JPanel {
         return (String) location_combobox.getSelectedItem();
     }
 
-    // Setter methods for form fields - same pattern as Food class
+    //SETTERS
     public void setNameInput(String name) {
         name_field.setText(name);
     }
@@ -541,5 +500,30 @@ public class Clothing extends JPanel {
     public void setLocationInput(String location) {
         location_combobox.setSelectedItem(location);
     }
+
+    // DATA LOADING AND ACTION LISTENERS BELOW
+
+    public void clearForm() {
+        name_field.setText("");
+        spinner1.setValue(1);
+        size_combobox.setSelectedItem("");
+        vendor_field.setText("");
+        price_field.setText("");
+
+
+        fabrictype_field.setText("");
+        textArea1.setText("");
+        location_combobox.setSelectedIndex(0);
+
+    }
+
+    public void setupButtonListeners(){
+//        ADDButton.addActionListener(e -> addItem());
+//        UPDATEButton.addActionListener(e -> updateItem());
+//        REMOVEButton.addActionListener(e -> removeItem());
+//        CLEARButton.addActionListener(e -> clearForm());
+//        REFRESHButton.addActionListener(e -> refreshForm());
+    }
+
 
 }

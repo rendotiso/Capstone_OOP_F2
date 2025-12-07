@@ -1,5 +1,7 @@
 package UI.Panel;
 
+import Model.Data.InventoryManager;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.Objects;
@@ -16,7 +18,7 @@ public class Misc extends JPanel {
     private JTextArea textArea1;
     private JLabel miscellaneous_label, name_label, quantity_label, location_label, vendor_label,
             price_label, warranty_label, itemtype_label, usage_label, condition_label, description_label;
-    private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton;
+    private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton, REFRESHButton;
     private JComboBox<String> location_combobox;
     private JTable table1;
     private JPanel panelButton;
@@ -26,6 +28,7 @@ public class Misc extends JPanel {
     private JScrollPane textAreaScroll;
     private JSpinner spinner1;
     private JScrollPane scrollPane;
+    private final InventoryManager inventoryManager;
 
     // Button groups for radio buttons
     private ButtonGroup conditionGroup;
@@ -34,11 +37,12 @@ public class Misc extends JPanel {
     private static final String WARRANTY_PLACEHOLDER = "MM/DD/YYYY";
 
     public Misc() {
+        inventoryManager = InventoryManager.getInstance();
         initComponents();
         setupLayout();
         setupAppearance();
         setupPlaceholders();
-        createTable();
+        setupButtonListeners();
     }
 
     private void initComponents() {
@@ -97,6 +101,7 @@ public class Misc extends JPanel {
         CLEARButton = new JButton("CLEAR");
         UPDATEButton = new JButton("UPDATE");
         REMOVEButton = new JButton("REMOVE");
+        REFRESHButton = new JButton("REFRESH");
 
         // Initialize combo boxes
         location_combobox = new JComboBox<>(new String[]{
@@ -316,6 +321,7 @@ public class Misc extends JPanel {
         panelButton.add(CLEARButton);
         panelButton.add(UPDATEButton);
         panelButton.add(REMOVEButton);
+        panelButton.add(REFRESHButton);
         description_panel.add(panelButton, descGbc);
 
         // Add description panel to main form panel
@@ -358,6 +364,7 @@ public class Misc extends JPanel {
         Color black = new Color(-16777216);
         Color bg = new Color(0xF5F5F5);
         Color placeholderColor = new Color(100, 100, 100, 180);
+        Color buttonColor = new Color(70, 130, 180);
 
         // Set panels opaque
         panelist.setOpaque(true);
@@ -437,25 +444,29 @@ public class Misc extends JPanel {
         description_label.setForeground(black);
 
         // Set button colors
-        ADDButton.setBackground(new Color(70, 130, 180));
-        CLEARButton.setBackground(new Color(70, 130, 180));
-        UPDATEButton.setBackground(new Color(70, 130, 180));
-        REMOVEButton.setBackground(new Color(70, 130, 180));
+        ADDButton.setBackground(buttonColor);
+        CLEARButton.setBackground(buttonColor);
+        UPDATEButton.setBackground(buttonColor);
+        REMOVEButton.setBackground(buttonColor);
+        REFRESHButton.setBackground(buttonColor);
         ADDButton.setForeground(Color.white);
         CLEARButton.setForeground(Color.white);
         UPDATEButton.setForeground(Color.white);
         REMOVEButton.setForeground(Color.white);
+        REFRESHButton.setForeground(Color.white);
 
         // Make buttons opaque
         ADDButton.setOpaque(true);
         CLEARButton.setOpaque(true);
         UPDATEButton.setOpaque(true);
         REMOVEButton.setOpaque(true);
+        REFRESHButton.setOpaque(true);
 
         ADDButton.setFocusable(false);
         UPDATEButton.setFocusable(false);
         REMOVEButton.setFocusable(false);
         CLEARButton.setFocusable(false);
+        REFRESHButton.setFocusable(false);
 
         // Set fonts
         Font labelFont = new Font("Segoe UI", Font.BOLD, 14);
@@ -498,6 +509,7 @@ public class Misc extends JPanel {
         CLEARButton.setFont(buttonFont);
         UPDATEButton.setFont(buttonFont);
         REMOVEButton.setFont(buttonFont);
+        REFRESHButton.setFont(buttonFont);
     }
 
     private void setupPlaceholders() {
@@ -526,7 +538,127 @@ public class Misc extends JPanel {
         });
     }
 
-    // METHODS AND ACTION LISTENERS
+
+    // GETTERS
+    public boolean isIntact() {
+        return INTACTRadioButton.isSelected();
+    }
+    public boolean isDamaged() {
+        return DAMAGEDRadioButton.isSelected();
+    }
+    public String getNameInput() {
+        return name_field.getText();
+    }
+    public int getQuantityInput() {
+        return (int) spinner1.getValue();
+    }
+    public String getQuantityText() {
+        return String.valueOf(spinner1.getValue());
+    }
+
+    public String getVendorInput() {
+        return vendor_field.getText();
+    }
+    public String getPriceInput() {
+        return price_field.getText();
+    }
+    public String getWarrantyInput() {
+        String text = warranty_field.getText();
+        if (text.equals(WARRANTY_PLACEHOLDER)) {
+            return "";
+        }
+        return text;
+    }
+    public String getItemTypeInput() {
+        return itemtype_field.getText();
+    }
+    public String getUsageInput() {
+        return usage_field.getText();
+    }
+    public String getDescriptionInput() {
+        return textArea1.getText();
+    }
+
+    public String getLocationInput() {
+        return (String) location_combobox.getSelectedItem();
+    }
+    public String getCondition() {
+        if (DAMAGEDRadioButton.isSelected()) {
+            return "DAMAGED";
+        }
+        return "INTACT";
+    }
+
+    // SETTER
+    public void setNameInput(String name) {
+        name_field.setText(name);
+    }
+    public void setQuantityInput(int quantity) {
+        spinner1.setValue(quantity);
+    }
+
+    public void setQuantityText(String quantity) {
+        try {
+            int qty = Integer.parseInt(quantity);
+            spinner1.setValue(qty);
+        } catch (NumberFormatException e) {
+            spinner1.setValue(1);
+        }
+    }
+    public void setVendorInput(String vendor) {
+        vendor_field.setText(vendor);
+    }
+    public void setPriceInput(String price) {
+        price_field.setText(price);
+    }
+    public void setWarrantyInput(String warranty) {
+        if (warranty == null || warranty.trim().isEmpty()) {
+            warranty_field.setText(WARRANTY_PLACEHOLDER);
+            warranty_field.setForeground(new Color(100, 100, 100, 180));
+            warranty_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+        } else {
+            warranty_field.setText(warranty);
+            warranty_field.setForeground(Color.BLACK);
+            warranty_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        }
+    }
+    public void setItemTypeInput(String itemType) {
+        itemtype_field.setText(itemType);
+    }
+    public void setUsageInput(String usage) {
+        usage_field.setText(usage);
+    }
+    public void setDescriptionInput(String description) {
+        textArea1.setText(description);
+    }
+    public void setLocationInput(String location) {
+        location_combobox.setSelectedItem(location);
+    }
+
+    public void setCondition(boolean isIntact) {
+        if (isIntact) {
+            INTACTRadioButton.setSelected(true);
+        } else {
+            DAMAGEDRadioButton.setSelected(true);
+        }
+    }
+    public void setCondition(String condition) {
+        if ("DAMAGED".equalsIgnoreCase(condition)) {
+            DAMAGEDRadioButton.setSelected(true);
+        } else {
+            INTACTRadioButton.setSelected(true);
+        }
+    }
+
+    // DATA LOADING AND ACTION LISENERS
+    private void setupButtonListeners() {
+//        ADDButton.addActionListener(e -> addItem());
+//        UPDATEButton.addActionListener(e -> updateItem());
+//        REMOVEButton.addActionListener(e -> removeItem());
+//        CLEARButton.addActionListener(e -> clearForm());
+//        REFRESHButton.addActionListener(e -> refreshForm());
+    }
+
 
     public void clearForm() {
         name_field.setText("");
@@ -544,213 +676,6 @@ public class Misc extends JPanel {
         textArea1.setText("");
         location_combobox.setSelectedIndex(0);
 
-        // Reset radio button to default (INTACT)
         INTACTRadioButton.setSelected(true);
-    }
-
-    // Radio button getter methods
-    public boolean isIntact() {
-        return INTACTRadioButton.isSelected();
-    }
-
-    public boolean isDamaged() {
-        return DAMAGEDRadioButton.isSelected();
-    }
-
-    // Radio button setter methods
-    public void setCondition(boolean isIntact) {
-        if (isIntact) {
-            INTACTRadioButton.setSelected(true);
-        } else {
-            DAMAGEDRadioButton.setSelected(true);
-        }
-    }
-
-    public void setCondition(String condition) {
-        if ("DAMAGED".equalsIgnoreCase(condition)) {
-            DAMAGEDRadioButton.setSelected(true);
-        } else {
-            INTACTRadioButton.setSelected(true);
-        }
-    }
-
-    public void addAddButtonListener(ActionListener listener) {
-        ADDButton.addActionListener(listener);
-    }
-
-    public void addClearButtonListener(ActionListener listener) {
-        CLEARButton.addActionListener(listener);
-    }
-
-    public void addUpdateButtonListener(ActionListener listener) {
-        UPDATEButton.addActionListener(listener);
-    }
-
-    public void addRemoveButtonListener(ActionListener listener) {
-        REMOVEButton.addActionListener(listener);
-    }
-
-    public int getSelectedTableRow() {
-        return table1.getSelectedRow();
-    }
-
-    public JButton getAddButton() {
-        return ADDButton;
-    }
-
-    public JButton getClearButton() {
-        return CLEARButton;
-    }
-
-    public JButton getUpdateButton() {
-        return UPDATEButton;
-    }
-
-    public JButton getRemoveButton() {
-        return REMOVEButton;
-    }
-
-    // Form field getter methods
-    public String getNameInput() {
-        return name_field.getText();
-    }
-
-    public int getQuantityInput() {
-        return (int) spinner1.getValue();
-    }
-
-    // Added this method for compatibility if something is trying to access quantity_field as text
-    public String getQuantityText() {
-        return String.valueOf(spinner1.getValue());
-    }
-
-    public String getVendorInput() {
-        return vendor_field.getText();
-    }
-
-    public String getPriceInput() {
-        return price_field.getText();
-    }
-
-    public String getWarrantyInput() {
-        String text = warranty_field.getText();
-        if (text.equals(WARRANTY_PLACEHOLDER)) {
-            return "";
-        }
-        return text;
-    }
-
-    public String getItemTypeInput() {
-        return itemtype_field.getText();
-    }
-
-    public String getUsageInput() {
-        return usage_field.getText();
-    }
-
-    public String getDescriptionInput() {
-        return textArea1.getText();
-    }
-
-    public String getLocationInput() {
-        return (String) location_combobox.getSelectedItem();
-    }
-
-    public String getCondition() {
-        if (DAMAGEDRadioButton.isSelected()) {
-            return "DAMAGED";
-        }
-        return "INTACT";
-    }
-
-    // Setter methods for form fields
-    public void setNameInput(String name) {
-        name_field.setText(name);
-    }
-
-    public void setQuantityInput(int quantity) {
-        spinner1.setValue(quantity);
-    }
-
-    // Added this method for compatibility if something is trying to set quantity_field as text
-    public void setQuantityText(String quantity) {
-        try {
-            int qty = Integer.parseInt(quantity);
-            spinner1.setValue(qty);
-        } catch (NumberFormatException e) {
-            spinner1.setValue(1);
-        }
-    }
-
-    public void setVendorInput(String vendor) {
-        vendor_field.setText(vendor);
-    }
-
-    public void setPriceInput(String price) {
-        price_field.setText(price);
-    }
-
-    public void setWarrantyInput(String warranty) {
-        if (warranty == null || warranty.trim().isEmpty()) {
-            warranty_field.setText(WARRANTY_PLACEHOLDER);
-            warranty_field.setForeground(new Color(100, 100, 100, 180));
-            warranty_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
-        } else {
-            warranty_field.setText(warranty);
-            warranty_field.setForeground(Color.BLACK);
-            warranty_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        }
-    }
-
-    public void setItemTypeInput(String itemType) {
-        itemtype_field.setText(itemType);
-    }
-
-    public void setUsageInput(String usage) {
-        usage_field.setText(usage);
-    }
-
-    public void setDescriptionInput(String description) {
-        textArea1.setText(description);
-    }
-
-    public void setLocationInput(String location) {
-        location_combobox.setSelectedItem(location);
-    }
-
-    // Get the main panel
-    public JPanel getRootPanelMisc() {
-        return panelist;
-    }
-
-    private void createTable() {
-        Object[][] data = {
-                {"Tool Set", 1, "GARAGE", "Hardware Co", "$49.99"},
-                {"First Aid Kit", 2, "LIVING ROOM", "Medical Supply", "$29.99"},
-                {"Extension Cord", 3, "GARAGE", "Electronics Inc", "$19.99"}
-        };
-
-        Objects.requireNonNull(table1).setModel(new DefaultTableModel(
-                data,
-                new String[]{"Name", "Qty", "Location", "Vendor", "Price", "Details"}
-        ));
-
-        table1.setRowHeight(25);
-        table1.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
-        table1.getTableHeader().setBackground(new Color(70, 130, 180));
-        table1.getTableHeader().setForeground(Color.WHITE);
-        table1.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        table1.setSelectionBackground(new Color(100, 149, 237));
-        table1.setSelectionForeground(Color.WHITE);
-        table1.setGridColor(Color.LIGHT_GRAY);
-        table1.setShowGrid(true);
-
-        // Set column widths
-        table1.getColumnModel().getColumn(0).setPreferredWidth(50);
-        table1.getColumnModel().getColumn(1).setPreferredWidth(10);
-        table1.getColumnModel().getColumn(2).setPreferredWidth(50);
-        table1.getColumnModel().getColumn(3).setPreferredWidth(50);
-        table1.getColumnModel().getColumn(4).setPreferredWidth(10);
-        table1.getColumnModel().getColumn(5).setPreferredWidth(150);
     }
 }

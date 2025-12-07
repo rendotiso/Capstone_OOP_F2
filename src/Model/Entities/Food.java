@@ -82,7 +82,7 @@ public class Food extends Item{
         String itemType = (getIsPerishable() ? "Perishable" : "Non-Perishable") + (getIsCanned() ? " (Canned)" : "");
         String status = isExpired() ? "EXPIRED" : (isExpiringSoon() ? "Expiring Soon" : "OK");
         return super.descriptionDetails() +
-                String.format(" | Type: %s, Expiry Date: %s, Status: %s (%d days left)",
+                String.format("Type: %s\nExpiry Date: %s\nStatus: %s (%d days left)",
                         itemType, expiryDate, status, getDaysUntilExpiry());
     }
 

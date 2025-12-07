@@ -67,6 +67,6 @@ public class Clothing extends Item {
 
     @Override
     public String descriptionDetails() {
-        return super.descriptionDetails() + String.format(" | Size: %s, Condition: %s", size, condition);
+        return super.descriptionDetails() + String.format("Size: %s\nCondition: %s", size, condition);
     }
 }

@@ -218,6 +218,13 @@ public class ItemTable extends JScrollPane {
         tableModel.setRowCount(0);
     }
 
+    // In your ItemTable class:
+    public void clearSelection() {
+        if (table != null) {
+            table.clearSelection();
+        }
+    }
+
     public void addRow(Object[] rowData) {
         tableModel.addRow(rowData);
         SwingUtilities.invokeLater(() -> {

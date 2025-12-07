@@ -1,5 +1,7 @@
 package UI.Panel;
 
+import Model.Data.InventoryManager;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.Objects;
@@ -17,7 +19,7 @@ public class Food extends JPanel{
     private JLabel food_label, name_label, quantity_label,
             location_label, vendor_label, price_label, warranty_label, expireydate_label,
             perish_label, cannedgoods_label, description_label;
-    private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton;
+    private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton, REFRESHButton;
     private JComboBox<String> location_combobox;
     private JTable table1;
     private JPanel panelButton;
@@ -30,6 +32,7 @@ public class Food extends JPanel{
     private JScrollPane textAreaScroll;
     private JSpinner spinner1;
     private JScrollPane scrollPane;
+    private final InventoryManager inventoryManager;
 
     // Button groups for radio buttons
     private ButtonGroup perishGroup;
@@ -40,11 +43,12 @@ public class Food extends JPanel{
     private static final String EXPIRY_DATE_PLACEHOLDER = "MM/DD/YYYY";
 
     public Food() {
+        inventoryManager = InventoryManager.getInstance();
         initComponents();
         setupLayout();
         setupAppearance();
         setupPlaceholders();
-        createTable();
+        setupButtonListeners();
     }
 
     private void initComponents() {
@@ -98,8 +102,8 @@ public class Food extends JPanel{
         price_label = new JLabel("PRICE:");
         warranty_label = new JLabel("PURCHASED DATE:");
         expireydate_label = new JLabel("EXPIRY DATE:");
-        perish_label = new JLabel("PERISH:");
-        cannedgoods_label = new JLabel("CANNED GOOD:");
+        perish_label = new JLabel("PERISHABLE?");
+        cannedgoods_label = new JLabel("CANNED GOOD?");
         description_label = new JLabel("DESCRIPTION/NOTE:");
 
         // Initialize buttons
@@ -107,6 +111,7 @@ public class Food extends JPanel{
         CLEARButton = new JButton("CLEAR");
         UPDATEButton = new JButton("UPDATE");
         REMOVEButton = new JButton("REMOVE");
+        REFRESHButton = new JButton("REFRESH");
 
         // Initialize combo boxes
         location_combobox = new JComboBox<>(new String[]{
@@ -341,6 +346,7 @@ public class Food extends JPanel{
         panelButton.add(CLEARButton);
         panelButton.add(UPDATEButton);
         panelButton.add(REMOVEButton);
+        panelButton.add(REFRESHButton);
         description_panel.add(panelButton, descGbc);
 
         // Add description panel to main form panel
@@ -382,7 +388,8 @@ public class Food extends JPanel{
         Color header = new Color(0x4682B4);
         Color black = new Color(-16777216);
         Color bg = new Color(0xF5F5F5);
-        Color placeholderColor = new Color(100, 100, 100, 180); // Semi-transparent gray for placeholders
+        Color placeholderColor = new Color(100, 100, 100, 180);
+        Color buttonColor = new Color(70, 130, 180);
 
         // Set panels opaque
         panelist.setOpaque(true);
@@ -468,25 +475,29 @@ public class Food extends JPanel{
         description_label.setForeground(black);
 
         // Set button colors
-        ADDButton.setBackground(new Color(70, 130, 180));
-        CLEARButton.setBackground(new Color(70, 130, 180));
-        UPDATEButton.setBackground(new Color(70, 130, 180));
-        REMOVEButton.setBackground(new Color(70, 130, 180));
+        ADDButton.setBackground(buttonColor);
+        CLEARButton.setBackground(buttonColor);
+        UPDATEButton.setBackground(buttonColor);
+        REMOVEButton.setBackground(buttonColor);
+        REFRESHButton.setBackground(buttonColor);
         ADDButton.setForeground(Color.white);
         CLEARButton.setForeground(Color.white);
         UPDATEButton.setForeground(Color.white);
         REMOVEButton.setForeground(Color.white);
+        REFRESHButton.setForeground(Color.white);
 
         // Make buttons opaque
         ADDButton.setOpaque(true);
         CLEARButton.setOpaque(true);
         UPDATEButton.setOpaque(true);
         REMOVEButton.setOpaque(true);
+        REFRESHButton.setOpaque(true);
 
         ADDButton.setFocusable(false);
         UPDATEButton.setFocusable(false);
         REMOVEButton.setFocusable(false);
         CLEARButton.setFocusable(false);
+        REFRESHButton.setFocusable(false);
 
         // Set fonts
         Font labelFont = new Font("Segoe UI", Font.BOLD, 14);
@@ -530,6 +541,7 @@ public class Food extends JPanel{
         CLEARButton.setFont(buttonFont);
         UPDATEButton.setFont(buttonFont);
         REMOVEButton.setFont(buttonFont);
+        REFRESHButton.setFont(buttonFont);
     }
 
     private void setupPlaceholders() {
@@ -604,16 +616,89 @@ public class Food extends JPanel{
         NORadioButton1.setSelected(true);
     }
 
-    // Radio button getter methods
+    // GETTER
     public boolean isPerish() {
         return YESRadioButton.isSelected();
     }
-
     public boolean isCannedGood() {
         return YESRadioButton1.isSelected();
     }
+    public String getNameInput() {
+        return name_field.getText();
+    }
+    public int getQuantityInput() {
+        return (int) spinner1.getValue();
+    }
+    public String getVendorInput() {
+        return vendor_field.getText();
+    }
+    public String getPriceInput() {
+        return price_field.getText();
+    }
+    public String getWarrantyInput() {
+        String text = warranty_field.getText();
+        // Return empty string if it's the placeholder
+        if (text.equals(PURCHASE_DATE_PLACEHOLDER)) {
+            return "";
+        }
+        return text;
+    }
+    public String getExpiryDateInput() {
+        String text = expiredate_field.getText();
+        // Return empty string if it's the placeholder
+        if (text.equals(EXPIRY_DATE_PLACEHOLDER)) {
+            return "";
+        }
+        return text;
+    }
+    public String getDescriptionInput() {
+        return textArea1.getText();
+    }
+    public String getLocationInput() {
+        return (String) location_combobox.getSelectedItem();
+    }
 
-    // Radio button setter methods (optional)
+    // SETTER
+    public void setNameInput(String name) {
+        name_field.setText(name);
+    }
+    public void setQuantityInput(int quantity) {
+        spinner1.setValue(quantity);
+    }
+    public void setVendorInput(String vendor) {
+        vendor_field.setText(vendor);
+    }
+    public void setPriceInput(String price) {
+        price_field.setText(price);
+    }
+    public void setWarrantyInput(String warranty) {
+        if (warranty == null || warranty.trim().isEmpty()) {
+            warranty_field.setText(PURCHASE_DATE_PLACEHOLDER);
+            warranty_field.setForeground(new Color(100, 100, 100, 180));
+            warranty_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+        } else {
+            warranty_field.setText(warranty);
+            warranty_field.setForeground(Color.BLACK);
+            warranty_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        }
+    }
+    public void setExpiryDateInput(String expiryDate) {
+        if (expiryDate == null || expiryDate.trim().isEmpty()) {
+            expiredate_field.setText(EXPIRY_DATE_PLACEHOLDER);
+            expiredate_field.setForeground(new Color(100, 100, 100, 180));
+            expiredate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+        } else {
+            expiredate_field.setText(expiryDate);
+            expiredate_field.setForeground(Color.BLACK);
+            expiredate_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        }
+    }
+    public void setDescriptionInput(String description) {
+        textArea1.setText(description);
+    }
+    public void setLocationInput(String location) {
+        location_combobox.setSelectedItem(location);
+    }
     public void setPerish(boolean isPerish) {
         if (isPerish) {
             YESRadioButton.setSelected(true);
@@ -630,169 +715,13 @@ public class Food extends JPanel{
         }
     }
 
-    public void addAddButtonListener(ActionListener listener) {
-        ADDButton.addActionListener(listener);
+    // DATA LOADING AND ACTION LISTENER
+    private void setupButtonListeners() {
+//        ADDButton.addActionListener(e -> addItem());
+//        UPDATEButton.addActionListener(e -> updateItem());
+//        REMOVEButton.addActionListener(e -> removeItem());
+//        CLEARButton.addActionListener(e -> clearForm());
+//        REFRESHButton.addActionListener(e -> refreshForm());
     }
 
-    public void addClearButtonListener(ActionListener listener) {
-        CLEARButton.addActionListener(listener);
-    }
-
-    public void addUpdateButtonListener(ActionListener listener) {
-        UPDATEButton.addActionListener(listener);
-    }
-
-    public void addRemoveButtonListener(ActionListener listener) {
-        REMOVEButton.addActionListener(listener);
-    }
-
-    public int getSelectedTableRow() {
-        return table1.getSelectedRow();
-    }
-
-    public JButton getAddButton() {
-        return ADDButton;
-    }
-
-    public JButton getClearButton() {
-        return CLEARButton;
-    }
-
-    public JButton getUpdateButton() {
-        return UPDATEButton;
-    }
-
-    public JButton getRemoveButton() {
-        return REMOVEButton;
-    }
-
-    // Form field getter methods
-    public String getNameInput() {
-        return name_field.getText();
-    }
-
-    public int getQuantityInput() {
-        return (int) spinner1.getValue();
-    }
-
-    public String getVendorInput() {
-        return vendor_field.getText();
-    }
-
-    public String getPriceInput() {
-        return price_field.getText();
-    }
-
-    public String getWarrantyInput() {
-        String text = warranty_field.getText();
-        // Return empty string if it's the placeholder
-        if (text.equals(PURCHASE_DATE_PLACEHOLDER)) {
-            return "";
-        }
-        return text;
-    }
-
-    public String getExpiryDateInput() {
-        String text = expiredate_field.getText();
-        // Return empty string if it's the placeholder
-        if (text.equals(EXPIRY_DATE_PLACEHOLDER)) {
-            return "";
-        }
-        return text;
-    }
-
-    public String getDescriptionInput() {
-        return textArea1.getText();
-    }
-
-    public String getLocationInput() {
-        return (String) location_combobox.getSelectedItem();
-    }
-
-    // Setter methods for form fields
-    public void setNameInput(String name) {
-        name_field.setText(name);
-    }
-
-    public void setQuantityInput(int quantity) {
-        spinner1.setValue(quantity);
-    }
-
-    public void setVendorInput(String vendor) {
-        vendor_field.setText(vendor);
-    }
-
-    public void setPriceInput(String price) {
-        price_field.setText(price);
-    }
-
-    public void setWarrantyInput(String warranty) {
-        if (warranty == null || warranty.trim().isEmpty()) {
-            warranty_field.setText(PURCHASE_DATE_PLACEHOLDER);
-            warranty_field.setForeground(new Color(100, 100, 100, 180));
-            warranty_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
-        } else {
-            warranty_field.setText(warranty);
-            warranty_field.setForeground(Color.BLACK);
-            warranty_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        }
-    }
-
-    public void setExpiryDateInput(String expiryDate) {
-        if (expiryDate == null || expiryDate.trim().isEmpty()) {
-            expiredate_field.setText(EXPIRY_DATE_PLACEHOLDER);
-            expiredate_field.setForeground(new Color(100, 100, 100, 180));
-            expiredate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
-        } else {
-            expiredate_field.setText(expiryDate);
-            expiredate_field.setForeground(Color.BLACK);
-            expiredate_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        }
-    }
-
-    public void setDescriptionInput(String description) {
-        textArea1.setText(description);
-    }
-
-    public void setLocationInput(String location) {
-        location_combobox.setSelectedItem(location);
-    }
-
-    private void createTable(){
-        Object[][] data = {
-                {"The Dark Knight", 2008, 9.0, 123445},
-                {"INPUT", 2008, 9.0, 123445},
-                {"The Dark Knight", 2008, 9.0, 123445},
-                {"The Dark Knight", 2008, 9.0, 123445},
-                {"The Dark Knight", 2008, 9.0, 123445},
-                {"The Dark Knight", 2008, 9.0, 123445},
-                {"The Dark Knight", 2008, 9.0, 123445},
-                {"The Dark Knight", 2008, 9.0, 123445},
-                {"The Dark Knight", 2008, 9.0, 123445},
-                {"The Dark Knight", 2008, 9.0, 123445},
-                {"The Dark Knight", 2008, 9.0, 123445},
-                {"The Dark Knight", 2008, 9.0, 123445}
-        };
-        Objects.requireNonNull(table1).setModel(new DefaultTableModel(
-                data,
-                new String[]{"Name", "Qty", "Location", "Vendor", "Price", "Details"}
-        ));
-
-        table1.setRowHeight(25);
-        table1.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
-        table1.getTableHeader().setBackground(new Color(70, 130, 180));
-        table1.getTableHeader().setForeground(Color.WHITE);
-        table1.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        table1.setSelectionBackground(new Color(100, 149, 237));
-        table1.setSelectionForeground(Color.WHITE);
-        table1.setGridColor(Color.LIGHT_GRAY);
-        table1.setShowGrid(true);
-
-        table1.getColumnModel().getColumn(0).setPreferredWidth(50);
-        table1.getColumnModel().getColumn(1).setPreferredWidth(10);
-        table1.getColumnModel().getColumn(2).setPreferredWidth(50);
-        table1.getColumnModel().getColumn(3).setPreferredWidth(50);
-        table1.getColumnModel().getColumn(4).setPreferredWidth(10);
-        table1.getColumnModel().getColumn(5).setPreferredWidth(150);
-    }
 }

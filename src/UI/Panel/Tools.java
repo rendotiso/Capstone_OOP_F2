@@ -1,5 +1,6 @@
 package UI.Panel;
 
+import Model.Data.InventoryManager;
 import UI.Utilities.ItemTable;
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +16,7 @@ public class Tools extends JPanel {
     private JLabel tools_label, name_label, quantity_label, location_label, vendor_label, price_label,
             purchase_label, tooltype_label, material_label, requiresmaintenance_label, size_label, description_label,
             maintenanceInterval_label;
-    private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton;
+    private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton, REFRESHButton;
     private JComboBox<String> location_combobox;
     private JTable table1;
     private JPanel panelButton;
@@ -24,13 +25,16 @@ public class Tools extends JPanel {
     private JScrollPane textAreaScroll;
     private JSpinner spinner1, maintenanceIntervalSpinner;
     private JScrollPane scrollPane;
+    private final InventoryManager inventoryManager;
     private static final String DATE_PLACEHOLDER = "MM/DD/YYYY";
 
     public Tools() {
+        inventoryManager = InventoryManager.getInstance();
         initComponents();
         setupLayout();
         setupAppearance();
         setupPlaceholders();
+        setupMaintenanceListener();
         setupButtonListeners();
     }
 
@@ -94,6 +98,7 @@ public class Tools extends JPanel {
         CLEARButton = new JButton("CLEAR");
         UPDATEButton = new JButton("UPDATE");
         REMOVEButton = new JButton("REMOVE");
+        REFRESHButton = new JButton("REFRESH");
 
         // Initialize combo boxes
         location_combobox = new JComboBox<>(new String[]{
@@ -344,6 +349,7 @@ public class Tools extends JPanel {
         panelButton.add(CLEARButton);
         panelButton.add(UPDATEButton);
         panelButton.add(REMOVEButton);
+        panelButton.add(REFRESHButton);
         description_panel.add(panelButton, descGbc);
 
         // Add description panel to main form panel
@@ -386,6 +392,7 @@ public class Tools extends JPanel {
         Color black = new Color(-16777216);
         Color bg = new Color(0xF5F5F5);
         Color placeholderColor = new Color(100, 100, 100, 180);
+        Color buttonColor = new Color(70, 130, 180);
 
         // Set panels opaque
         panelist.setOpaque(true);
@@ -474,26 +481,29 @@ public class Tools extends JPanel {
         description_label.setForeground(black);
 
         // Set button colors
-        ADDButton.setBackground(new Color(70, 130, 180));
-        CLEARButton.setBackground(new Color(70, 130, 180));
-        UPDATEButton.setBackground(new Color(70, 130, 180));
-        REMOVEButton.setBackground(new Color(70, 130, 180));
+        ADDButton.setBackground(buttonColor);
+        CLEARButton.setBackground(buttonColor);
+        UPDATEButton.setBackground(buttonColor);
+        REMOVEButton.setBackground(buttonColor);
+        REFRESHButton.setBackground(buttonColor);
         ADDButton.setForeground(Color.white);
         CLEARButton.setForeground(Color.white);
         UPDATEButton.setForeground(Color.white);
         REMOVEButton.setForeground(Color.white);
+        REFRESHButton.setForeground(Color.white);
 
         // Make buttons opaque
         ADDButton.setOpaque(true);
         CLEARButton.setOpaque(true);
         UPDATEButton.setOpaque(true);
         REMOVEButton.setOpaque(true);
+        REFRESHButton.setOpaque(true);
 
         ADDButton.setFocusable(false);
         UPDATEButton.setFocusable(false);
         REMOVEButton.setFocusable(false);
         CLEARButton.setFocusable(false);
-
+        REFRESHButton.setFocusable(false);
         // Set fonts
         Font labelFont = new Font("Segoe UI", Font.BOLD, 14);
         Font fieldFont = new Font("Segoe UI", Font.PLAIN, 14);
@@ -538,6 +548,12 @@ public class Tools extends JPanel {
         CLEARButton.setFont(buttonFont);
         UPDATEButton.setFont(buttonFont);
         REMOVEButton.setFont(buttonFont);
+
+        ADDButton.setFocusable(false);
+        CLEARButton.setFocusable(false);
+        UPDATEButton.setFocusable(false);
+        REMOVEButton.setFocusable(false);
+        REFRESHButton.setFocusable(false);
     }
 
     private void setupPlaceholders() {
@@ -564,65 +580,6 @@ public class Tools extends JPanel {
                 }
             }
         });
-    }
-
-    private void setupButtonListeners() {
-//        ADDButton.addActionListener(e -> addItemToTable());
-//        CLEARButton.addActionListener(e -> clearForm());
-//        UPDATEButton.addActionListener(e -> updateToMainTable());
-//        REMOVEButton.addActionListener(e -> removeItemFromTable());
-//
-//        // Set all buttons to non-focusable for better UX
-//        ADDButton.setFocusable(false);
-//        CLEARButton.setFocusable(false);
-//        UPDATEButton.setFocusable(false);
-//        REMOVEButton.setFocusable(false);
-    }
-
-
-    // Checkbox getter method
-    public boolean requiresMaintenance() {
-        return requiresMaintenanceCheckBox.isSelected();
-    }
-    public void setRequiresMaintenance(boolean requires) {
-        requiresMaintenanceCheckBox.setSelected(requires);
-    }
-
-    // Maintenance interval getter method
-    public int getMaintenanceInterval() {
-        return (int) maintenanceIntervalSpinner.getValue();
-    }
-    public void setMaintenanceInterval(int days) {
-        maintenanceIntervalSpinner.setValue(days);
-    }
-
-    // Action listener methods
-    public void addAddButtonListener(ActionListener listener) {
-        ADDButton.addActionListener(listener);
-    }
-    public void addClearButtonListener(ActionListener listener) {
-        CLEARButton.addActionListener(listener);
-    }
-    public void addUpdateButtonListener(ActionListener listener) {
-        UPDATEButton.addActionListener(listener);
-    }
-    public void addRemoveButtonListener(ActionListener listener) {
-        REMOVEButton.addActionListener(listener);
-    }
-    public int getSelectedTableRow() {
-        return table1.getSelectedRow();
-    }
-    public JButton getAddButton() {
-        return ADDButton;
-    }
-    public JButton getClearButton() {
-        return CLEARButton;
-    }
-    public JButton getUpdateButton() {
-        return UPDATEButton;
-    }
-    public JButton getRemoveButton() {
-        return REMOVEButton;
     }
 
     //GETTERS
@@ -659,6 +616,12 @@ public class Tools extends JPanel {
     }
     public String getLocationInput() {
         return (String) location_combobox.getSelectedItem();
+    }
+    public boolean getRequiresMaintenance() {
+        return requiresMaintenanceCheckBox.isSelected();
+    }
+    public int getMaintenanceInterval() {
+        return (int) maintenanceIntervalSpinner.getValue();
     }
 
     // SETTER
@@ -700,5 +663,44 @@ public class Tools extends JPanel {
     public void setLocationInput(String location) {
         location_combobox.setSelectedItem(location);
     }
+    public void setRequiresMaintenance(boolean requires) {
+        requiresMaintenanceCheckBox.setSelected(requires);
+    }
+    public void setMaintenanceInterval(int days) {
+        maintenanceIntervalSpinner.setValue(days);
+    }
 
+    // DATA LOADING AND ACTION LISTENERS
+    private void setupButtonListeners() {
+//        ADDButton.addActionListener(e -> addItem());
+//        UPDATEButton.addActionListener(e -> updateItem());
+//        REMOVEButton.addActionListener(e -> removeItem());
+//        CLEARButton.addActionListener(e -> clearForm());
+//        REFRESHButton.addActionListener(e -> refreshForm());
+    }
+
+    //(copy paste here the needed stuff, already implemented the maitenance listener since its
+    // the only one with the same logic as Electronics)
+    // yes. ikaw fix the red ani HHAHHHAHHAHAHHA, nag red siya so ako ra gi comment out
+    // Requires maintenance is Maintenance Needed, i-fix na pls
+    // and I notice ang uban data/panels nag butang og "warranty_label" for purchaseDate_label.
+    // i-tarung iyang field names
+    // i-add sad ang iyang call method didto sa constructor for the placeholder for the panels that requires it
+
+
+    private void setupMaintenanceListener() {
+//        maintenanceNeeded.addChangeListener(e -> {
+//            if (maintenanceNeeded.isSelected()) {
+//
+//                LMD_field.setBackground(new Color(0xFFE5E5));
+//                LMD_label.setForeground(new Color(0xFF0000));
+//                LMD_label.setText("LAST MAINTENANCE DATE: (URGENT!)");
+//            } else {
+//
+//                LMD_field.setBackground(new Color(0xF5F5F5));
+//                LMD_label.setForeground(Color.BLACK);
+//                LMD_label.setText("LAST MAINTENANCE DATE:");
+//            }
+//        });
+    }
 }
