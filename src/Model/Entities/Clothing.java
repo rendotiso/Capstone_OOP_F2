@@ -40,23 +40,7 @@ public class Clothing extends Item {
     }
 
     public void setSize(String size) {
-        if (size == null) {
-            this.size = null;
-            return;
-        }
-        String normalizedSize = size.trim().toUpperCase();
-        switch (normalizedSize) {
-            case "XS":
-            case "S":
-            case "M":
-            case "L":
-            case "XL":
-            case "XXL":
-                this.size = normalizedSize;
-                break;
-            default:
-                throw new IllegalArgumentException( "Invalid size: '" + size + "'. Must be one of: XS, S, M, L, XL, XXL" );
-        }
+        this.size = size;
     }
 
     //METHODS
