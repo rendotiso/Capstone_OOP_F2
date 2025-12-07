@@ -1,32 +1,42 @@
 package UI.Panel;
 
 import Model.Data.InventoryManager;
+import Model.Entities.Tool;
+import Model.Entities.Item;
+import Model.Enums.Category;
 import UI.Utilities.ItemTable;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.io.IOException;
+import java.util.List;
 
 public class Tools extends JPanel {
     // ATTRIBUTES
     private JPanel panelist, rootPanel, tools_panel, panel, table_panel, description_panel;
-    private JTextField name_field, size_field, vendor_field, price_field, purchasedate_field, tooltype_field, material_field;
+    private JTextField name_field, size_field, vendor_field, price_field, purchased_field, tooltype_field, material_field, LMD_field;
     private JTextArea textArea1;
     private JLabel tools_label, name_label, quantity_label, location_label, vendor_label, price_label,
             purchase_label, tooltype_label, material_label, requiresmaintenance_label, size_label, description_label,
-            maintenanceInterval_label;
+            maintenanceInterval_label, LMD_label, maintenanceNeeded_label;
     private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton, REFRESHButton;
     private JComboBox<String> location_combobox;
     private JTable table1;
     private JPanel panelButton;
-    private JCheckBox requiresMaintenanceCheckBox;
-    private JPanel radiopanel1;
+    private JCheckBox requiresMaintenanceCheckBox, maintenanceNeededCheckBox;
+    private JPanel radiopanel1, maintenancePanel;
     private JScrollPane textAreaScroll;
     private JSpinner spinner1, maintenanceIntervalSpinner;
     private JScrollPane scrollPane;
+    private ItemTable itemTable;
     private final InventoryManager inventoryManager;
+    private int selectedIndex = -1;
+
+    //Placeholders texts
     private static final String DATE_PLACEHOLDER = "MM/DD/YYYY";
+    private static final String PURCHASED_PLACEHOLDER = "MM/DD/YYYY";
+    private static final String LMD_PLACEHOLDER = "MM/DD/YYYY";
 
     public Tools() {
         inventoryManager = InventoryManager.getInstance();
@@ -36,6 +46,8 @@ public class Tools extends JPanel {
         setupPlaceholders();
         setupMaintenanceListener();
         setupButtonListeners();
+        setupTable();
+        setupTableSelectionListener();
     }
 
     private void initComponents() {
@@ -47,6 +59,7 @@ public class Tools extends JPanel {
         table_panel = new JPanel();
         description_panel = new JPanel();
         panelButton = new JPanel();
+        maintenancePanel = new JPanel();
 
         // Initialize radio panel (will now hold checkbox)
         radiopanel1 = new JPanel();
@@ -56,13 +69,17 @@ public class Tools extends JPanel {
         size_field = new JTextField(8);
         vendor_field = new JTextField(8);
         price_field = new JTextField(8);
-        purchasedate_field = new JTextField(8);
+        purchased_field = new JTextField(8);
         tooltype_field = new JTextField(8);
         material_field = new JTextField(8);
+        LMD_field = new JTextField(8);
 
         textArea1 = new JTextArea(3, 15);
         textArea1.setLineWrap(true);
         textArea1.setWrapStyleWord(true);
+
+        // Initialize checkbox
+        maintenanceNeededCheckBox = new JCheckBox();
 
         // Initialize spinner for quantity with left-aligned text
         spinner1 = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
@@ -91,6 +108,8 @@ public class Tools extends JPanel {
         size_label = new JLabel("STEEL GRADE:");
         requiresmaintenance_label = new JLabel("REQUIRES MAINTENANCE:");
         maintenanceInterval_label = new JLabel("MAINTENANCE INTERVAL (DAYS):");
+        maintenanceNeeded_label = new JLabel("MAINTENANCE NEEDED:");
+        LMD_label = new JLabel("LAST MAINTENANCE DATE:");
         description_label = new JLabel("DESCRIPTION/NOTE:");
 
         // Initialize buttons
@@ -106,8 +125,14 @@ public class Tools extends JPanel {
                 "TOOL RACK"
         });
 
-        // Initialize checkbox instead of radio buttons
+        String[] columnNames = {"Name", "Quantity", "Location", "Vendor", "Price", "Details"};
+        itemTable = new ItemTable(columnNames);
+        textAreaScroll = new JScrollPane(textArea1);
+        scrollPane = new JScrollPane(table1);
+
+        // Initialize checkbox instead of radio butt    ons
         requiresMaintenanceCheckBox = new JCheckBox("Requires Maintenance");
+        maintenanceNeededCheckBox = new JCheckBox();
 
         // Initialize maintenance interval spinner
         maintenanceIntervalSpinner = new JSpinner(new SpinnerNumberModel(30, 1, 365, 1));
@@ -120,10 +145,6 @@ public class Tools extends JPanel {
             JTextField textField = ((JSpinner.DefaultEditor) intervalEditorComp).getTextField();
             textField.setHorizontalAlignment(SwingConstants.LEFT);
         }
-
-        table1 = new JTable();
-        scrollPane = new JScrollPane(table1);
-        textAreaScroll = new JScrollPane(textArea1);
 
         requiresMaintenanceCheckBox.setFocusable(false);
     }
@@ -236,8 +257,8 @@ public class Tools extends JPanel {
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;
         formGbc.weightx = 1.0;
-        purchasedate_field.setPreferredSize(new Dimension(80, 25));
-        panel.add(purchasedate_field, formGbc);
+        purchased_field.setPreferredSize(new Dimension(80, 25));
+        panel.add(purchased_field, formGbc);
 
         row++;
 
@@ -419,7 +440,7 @@ public class Tools extends JPanel {
         size_field.setBackground(bg);
         vendor_field.setBackground(bg);
         price_field.setBackground(bg);
-        purchasedate_field.setBackground(bg);
+        purchased_field.setBackground(bg);
         tooltype_field.setBackground(bg);
         material_field.setBackground(bg);
         textArea1.setBackground(bg);
@@ -456,7 +477,7 @@ public class Tools extends JPanel {
         size_field.setForeground(black);
         vendor_field.setForeground(black);
         price_field.setForeground(black);
-        purchasedate_field.setForeground(placeholderColor);
+        purchased_field.setForeground(placeholderColor);
         tooltype_field.setForeground(black);
         material_field.setForeground(black);
         textArea1.setForeground(black);
@@ -530,7 +551,7 @@ public class Tools extends JPanel {
         size_field.setFont(fieldFont);
         vendor_field.setFont(fieldFont);
         price_field.setFont(fieldFont);
-        purchasedate_field.setFont(placeholderFont);
+        purchased_field.setFont(placeholderFont);
         tooltype_field.setFont(fieldFont);
         material_field.setFont(fieldFont);
         textArea1.setFont(fieldFont);
@@ -558,25 +579,28 @@ public class Tools extends JPanel {
 
     private void setupPlaceholders() {
         // Set placeholder text for warranty field
-        purchasedate_field.setText(DATE_PLACEHOLDER);
+        purchased_field.setText(DATE_PLACEHOLDER);
+
+        // Set placeholder for LMD field
+        LMD_field.setText(LMD_PLACEHOLDER);
 
         // Add focus listener
-        purchasedate_field.addFocusListener(new FocusAdapter() {
+        purchased_field.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (purchasedate_field.getText().equals(DATE_PLACEHOLDER)) {
-                    purchasedate_field.setText("");
-                    purchasedate_field.setForeground(Color.BLACK);
-                    purchasedate_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+                if (purchased_field.getText().equals(DATE_PLACEHOLDER)) {
+                    purchased_field.setText("");
+                    purchased_field.setForeground(Color.BLACK);
+                    purchased_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
                 }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                if (purchasedate_field.getText().isEmpty()) {
-                    purchasedate_field.setText(DATE_PLACEHOLDER);
-                    purchasedate_field.setForeground(new Color(100, 100, 100, 180));
-                    purchasedate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+                if (purchased_field.getText().isEmpty()) {
+                    purchased_field.setText(DATE_PLACEHOLDER);
+                    purchased_field.setForeground(new Color(100, 100, 100, 180));
+                    purchased_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
                 }
             }
         });
@@ -589,8 +613,12 @@ public class Tools extends JPanel {
     public int getQuantityInput() {
         return (int) spinner1.getValue();
     }
-    public String getSizeInput() {
-        return size_field.getText();
+    public String getLMDInput() {
+        String text = LMD_field.getText();
+        if (text.equals(LMD_PLACEHOLDER)) {
+            return "";
+        }
+        return text;
     }
     public String getVendorInput() {
         return vendor_field.getText();
@@ -599,40 +627,72 @@ public class Tools extends JPanel {
         return price_field.getText();
     }
     public String getPurchaseDateInput() {
-        String text = purchasedate_field.getText();
-        if (text.equals(DATE_PLACEHOLDER)) {
+        String text = purchased_field.getText();
+        if (text.equals(PURCHASED_PLACEHOLDER)) {
             return "";
         }
         return text;
     }
+
     public String getToolTypeInput() {
         return tooltype_field.getText();
     }
+
+    public String getSizeInput() {
+        return size_field.getText();
+    }
+
     public String getMaterialInput() {
         return material_field.getText();
     }
+
     public String getDescriptionInput() {
         return textArea1.getText();
     }
     public String getLocationInput() {
         return (String) location_combobox.getSelectedItem();
     }
+
     public boolean getRequiresMaintenance() {
         return requiresMaintenanceCheckBox.isSelected();
     }
+
+    public boolean getMaintenanceNeeded() {
+        return maintenanceNeededCheckBox.isSelected();
+    }
+
     public int getMaintenanceInterval() {
         return (int) maintenanceIntervalSpinner.getValue();
     }
 
-    // SETTER
+    // SETTERS
     public void setNameInput(String name) {
         name_field.setText(name);
     }
     public void setQuantityInput(int quantity) {
         spinner1.setValue(quantity);
     }
-    public void setSizeInput(String size) {
-        size_field.setText(size);
+    public void setLastMaintenanceDateInput(String date) {
+        if (date == null || date.trim().isEmpty()) {
+            LMD_field.setText(LMD_PLACEHOLDER);
+            LMD_field.setForeground(new Color(100, 100, 100, 180));
+            LMD_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+        } else {
+            LMD_field.setText(date);
+            LMD_field.setForeground(Color.BLACK);
+            LMD_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        }
+    }
+    public void setPurchaseDateInput(String date) {
+        if (date == null || date.trim().isEmpty()) {
+            purchased_field.setText(PURCHASED_PLACEHOLDER);
+            purchased_field.setForeground(new Color(100, 100, 100, 180));
+            purchased_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+        } else {
+            purchased_field.setText(date);
+            purchased_field.setForeground(Color.BLACK);
+            purchased_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        }
     }
     public void setVendorInput(String vendor) {
         vendor_field.setText(vendor);
@@ -640,47 +700,308 @@ public class Tools extends JPanel {
     public void setPriceInput(String price) {
         price_field.setText(price);
     }
-    public void setPurchaseDateInput(String warranty) {
-        if (purchasedate_field == null || warranty.trim().isEmpty()) {
-            purchasedate_field.setText(DATE_PLACEHOLDER);
-            purchasedate_field.setForeground(new Color(100, 100, 100, 180));
-            purchasedate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
-        } else {
-            purchasedate_field.setText(warranty);
-            purchasedate_field.setForeground(Color.BLACK);
-            purchasedate_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        }
+
+    public void setToolTypeInput(String tooltype) {
+        tooltype_field.setText(tooltype);
     }
-    public void setToolTypeInput(String toolType) {
-        tooltype_field.setText(toolType);
-    }
-    public void setMaterialInput(String material) {
-        material_field.setText(material);
+    public void setSizeInput(String size) {
+        size_field.setText(size);
     }
     public void setDescriptionInput(String description) {
         textArea1.setText(description);
     }
+
+    public void setMaterialInput(String material) {
+        material_field.setText(material);
+    }
+
     public void setLocationInput(String location) {
         location_combobox.setSelectedItem(location);
     }
-    public void setRequiresMaintenance(boolean requires) {
-        requiresMaintenanceCheckBox.setSelected(requires);
+    public void setMaintenanceNeeded(boolean needsMaintenance) {
+        maintenanceNeededCheckBox.setSelected(needsMaintenance);
+
+        if (needsMaintenance) {
+            LMD_field.setBackground(new Color(0xFFE5E5));
+            LMD_label.setForeground(new Color(0xFF0000));
+            LMD_label.setText("LAST MAINTENANCE DATE: (URGENT!)");
+        } else {
+            LMD_field.setBackground(new Color(0xF5F5F5));
+            LMD_label.setForeground(Color.BLACK);
+            LMD_label.setText("LAST MAINTENANCE DATE:");
+        }
     }
-    public void setMaintenanceInterval(int days) {
-        maintenanceIntervalSpinner.setValue(days);
+
+    // DATA LOADING AND ACTION LISTENERS
+
+    private void loadItems() {
+        itemTable.clearTable();
+
+        // Force reload from file to get latest data
+        inventoryManager.loadFromFile();
+
+        inventoryManager.getItemsByCategory(Category.TOOLS).stream()
+                .filter(Tools.class::isInstance)
+                .map(Tools.class::cast)
+                .forEach(tools -> {
+                    itemTable.addRow(new Object[]{
+                            tools.getName(),
+                            tools.getQuantity(),
+                            tools.getLocation(),
+                            tools.getVendor(),
+                            tools.getPurchasePrice(),
+                            tools.getDescription();
+                    });
+                });
+
+        itemTable.adjustRowHeights();
+    }
+
+    private double parsePrice(String priceStr) {
+        if (priceStr == null || priceStr.trim().isEmpty()) {
+            return 0.0;
+        }
+        String cleaned = priceStr.replace("$", "").replace(",", "").trim();
+        return Double.parseDouble(cleaned);
+    }
+
+    private Tool createToolFromForm() {
+        return new Tool(
+                getNameInput(),
+                getDescriptionInput(),
+                getQuantityInput(),
+                parsePrice(getPriceInput()),
+                getPurchaseDateInput(),
+                getVendorInput(),
+                getLocationInput(),
+                getToolTypeInput(),
+                getSizeInput(),
+                getMaterialInput(),
+                getMaintenanceNeeded(),
+                getLMDInput()
+        );
+    }
+
+
+    private boolean validateForm() {
+        if (getNameInput().trim().isEmpty()) {
+            showError("Name cannot be empty!");
+            return false;
+        }
+
+        try {
+            double price = parsePrice(getPriceInput());
+            if (price <= 0) {
+                showError("Price must be greater than 0");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            showError("Price must be a valid number");
+            return false;
+        }
+
+        if (getQuantityInput() <= 0) {
+            showError("Quantity must be greater than 0");
+            return false;
+        }
+
+        if (getToolTypeInput().trim().isEmpty()) {
+            showError("Tool Type cannot be empty!");
+            return false;
+        }
+
+        if (getSizeInput().trim().isEmpty()) {
+            showError("Size cannot be empty!");
+            return false;
+        }
+
+        if (!validateDateField(getPurchaseDateInput(), "Purchase Date")) return false;
+        if (!validateDateField(getLMDInput(), "Last Maintenance Date")) return false;
+
+        return true;
+    }
+
+    private boolean validateDateField(String dateText, String fieldName) {
+        if (!dateText.isEmpty() && !dateText.matches("\\d{2}/\\d{2}/\\d{4}")) {
+            showError(fieldName + " must be in MM/DD/YYYY format");
+            return false;
+        }
+        return true;
+    }
+
+    private void showError(String message) {
+        JOptionPane.showMessageDialog(this, message, "Input Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void showSuccess(String message) {
+        JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
     }
 
     // DATA LOADING AND ACTION LISTENERS
     private void setupButtonListeners() {
-//        ADDButton.addActionListener(e -> addItem());
-//        UPDATEButton.addActionListener(e -> updateItem());
-//        REMOVEButton.addActionListener(e -> removeItem());
-//        CLEARButton.addActionListener(e -> clearForm());
-//        REFRESHButton.addActionListener(e -> refreshForm());
+        ADDButton.addActionListener(e -> addItem());
+        UPDATEButton.addActionListener(e -> updateItem());
+        REMOVEButton.addActionListener(e -> removeItem());
+        CLEARButton.addActionListener(e -> clearForm());
+        REFRESHButton.addActionListener(e -> refreshForm());
+    }
+
+    private void addItem() {
+        try {
+            if (validateForm()) {
+                Tool tool = createToolFromForm();
+                inventoryManager.addItem(tool);
+                loadItems();
+                clearForm();
+                showSuccess("tool item added successfully!");
+            }
+        } catch (IOException e) {
+            showError("Error saving item: " + e.getMessage());
+        } catch (Exception e) {
+            showError("Error: " + e.getMessage());
+        }
+    }
+
+    private void updateItem() {
+        if (selectedIndex >= 0) {
+            try {
+                if (validateForm()) {
+                    Tool tool = createToolFromForm();
+                    java.util.List<Item> allItems = inventoryManager.getAllItems();
+                    List<Item> toolsItems = inventoryManager.getItemsByCategory(Category.TOOLS);
+
+                    if (selectedIndex < toolsItems.size()) {
+                        Item originalItem = toolsItems.get(selectedIndex);
+                        int actualIndex = allItems.indexOf(originalItem);
+                        if (actualIndex != -1) {
+                            inventoryManager.updateItem(actualIndex, tool);
+                            loadItems();
+                            clearForm();
+                            selectedIndex = -1;
+                            showSuccess("tool item updated successfully!");
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                showError("Update Error: " + e.getMessage());
+            }
+        } else {
+            showError("Please select a row to update!");
+        }
+    }
+
+    private void removeItem() {
+        if (selectedIndex >= 0) {
+            try {
+                int confirm = JOptionPane.showConfirmDialog(this,
+                        "Are you sure you want to remove this tool item?",
+                        "Confirm Removal", JOptionPane.YES_NO_OPTION);
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    List<Item> toolsItems = inventoryManager.getItemsByCategory(Category.TOOLS);
+
+                    if (selectedIndex < toolsItems.size()) {
+                        Item itemToRemove = toolsItems.get(selectedIndex);
+                        inventoryManager.removeItem(itemToRemove);
+                        loadItems();
+                        clearForm();
+                        selectedIndex = -1;
+                        showSuccess("Item removed successfully!");
+                    }
+                }
+            } catch (Exception e) {
+                showError("Error removing item: " + e.getMessage());
+            }
+        } else {
+            showError("Please select a row to remove!");
+        }
+    }
+
+    private void refreshForm() {
+        loadItems();
+        clearForm();
+        selectedIndex = -1;
+    }
+
+    private void clearForm() {
+        // Clear text fields
+        name_field.setText("");
+        vendor_field.setText("");
+        price_field.setText("");
+        tooltype_field.setText("");
+        size_field.setText("");
+        textArea1.setText("");
+
+        // Reset spinner
+        spinner1.setValue(1);
+
+        // Reset combo box
+        location_combobox.setSelectedIndex(0);
+
+        // Reset checkbox
+        maintenanceNeededCheckBox.setSelected(false);
+
+        // Reset date fields to placeholders
+        setFieldToPlaceholder(LMD_field, LMD_PLACEHOLDER);
+        setFieldToPlaceholder(purchased_field, PURCHASED_PLACEHOLDER);
+        setFieldToPlaceholder(purchased_field, DATE_PLACEHOLDER);
+
+        // Clear table selection
+        itemTable.clearSelection();
+    }
+
+    private void setFieldToPlaceholder(JTextField field, String placeholder) {
+        field.setText(placeholder);
+        field.setForeground(new Color(100, 100, 100, 180));
+        field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+    }
+
+    private void setupTableSelectionListener() {
+        itemTable.getTable().getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = itemTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    selectedIndex = selectedRow;
+                    populateFormFromSelectedRow(selectedRow);
+                }
+            }
+        });
+    }
+
+    private void setupTable() {
+        itemTable.setColumnNames(new String[]{"Name", "Qty", "Location", "Vendor", "Price", "Details"});
+        loadItems();
+    }
+
+    private void populateFormFromSelectedRow(int selectedRow) {
+        try {
+            List<Item> toolsItems = inventoryManager.getItemsByCategory(Category.TOOLS);
+
+            if (selectedRow < toolsItems.size()) {
+                Tool tool = (Tool) toolsItems.get(selectedRow);
+                populateForm(tool);
+            }
+        } catch (Exception e) {
+            showError("Error loading item data: " + e.getMessage());
+        }
+    }
+
+    private void populateForm(Tool tool) {
+        setNameInput(tool.getName());
+        setQuantityInput(tool.getQuantity());
+        setVendorInput(tool.getVendor());
+        setPriceInput(String.valueOf(tool.getPurchasePrice()));
+        setPurchaseDateInput(tool.getPurchaseDate());
+        setToolTypeInput(tool.getToolType());
+        setSizeInput(tool.getSize());
+        setDescriptionInput(tool.getDescription());
+        setLocationInput(tool.getLocation());
+        setMaintenanceNeeded(tool.getMaintenanceNeeded());
+        setLMDInput(tool.getLMD());
     }
 
     //(copy paste here the needed stuff, already implemented the maitenance listener since its
-    // the only one with the same logic as Electronics)
+    // the only one with the same logic as tools)
     // yes. ikaw fix the red ani HHAHHHAHHAHAHHA, nag red siya so ako ra gi comment out
     // Requires maintenance is Maintenance Needed, i-fix na pls
     // and I notice ang uban data/panels nag butang og "warranty_label" for purchaseDate_label.
@@ -689,18 +1010,33 @@ public class Tools extends JPanel {
 
 
     private void setupMaintenanceListener() {
-//        maintenanceNeeded.addChangeListener(e -> {
-//            if (maintenanceNeeded.isSelected()) {
-//
-//                LMD_field.setBackground(new Color(0xFFE5E5));
-//                LMD_label.setForeground(new Color(0xFF0000));
-//                LMD_label.setText("LAST MAINTENANCE DATE: (URGENT!)");
-//            } else {
-//
-//                LMD_field.setBackground(new Color(0xF5F5F5));
-//                LMD_label.setForeground(Color.BLACK);
-//                LMD_label.setText("LAST MAINTENANCE DATE:");
-//            }
-//        });
+        maintenanceNeededCheckBox.addChangeListener(e -> {
+            if (maintenanceNeededCheckBox.isSelected()) {
+
+                LMD_field.setBackground(new Color(0xFFE5E5));
+                LMD_label.setForeground(new Color(0xFF0000));
+                LMD_label.setText("LAST MAINTENANCE DATE: (URGENT!)");
+                maintenanceNeeded_label.setForeground(new Color(0xFF0000));
+            } else {
+
+                LMD_field.setBackground(new Color(0xF5F5F5));
+                LMD_label.setForeground(Color.BLACK);
+                LMD_label.setText("LAST MAINTENANCE DATE:");
+                maintenanceNeeded_label.setForeground(Color.BLACK);
+            }
+        });
+
+        requiresMaintenanceCheckBox.addActionListener(e -> {
+            boolean requiresMaintenance = requiresMaintenanceCheckBox.isSelected();
+            maintenanceIntervalSpinner.setEnabled(requiresMaintenance);
+            LMD_field.setEnabled(requiresMaintenance);
+            maintenanceNeededCheckBox.setEnabled(requiresMaintenance);
+
+            if (!requiresMaintenance) {
+                maintenanceIntervalSpinner.setValue(30);
+                setLastMaintenanceDateInput("");
+                maintenanceNeededCheckBox.setSelected(false);
+            }
+        });
     }
 }
