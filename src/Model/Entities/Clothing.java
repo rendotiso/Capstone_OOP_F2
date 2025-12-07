@@ -9,7 +9,7 @@ public class Clothing extends Item {
     private String size;
 
     public Clothing(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, String location, String condition, String fabricType, String size){
-        super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.valueOf("Clothing"), location);
+        super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.CLOTHING, location);
           setCondition(condition);
           setFabricType(fabricType);
           setSize(size);
