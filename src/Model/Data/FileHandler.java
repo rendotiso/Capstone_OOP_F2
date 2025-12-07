@@ -9,10 +9,7 @@ import java.util.List;
 
 public class FileHandler {
     private static String filePath = ".inventory.csv";
-
-    public FileHandler(String filePath){
-        FileHandler.filePath = filePath;
-    }
+    
     // save data
     public void saveData(List<Item> items) throws IOException {
         if (items == null) throw new IllegalArgumentException("Item List is empty.");
