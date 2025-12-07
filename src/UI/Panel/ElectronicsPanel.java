@@ -14,7 +14,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 
-public class Electronics extends JPanel {
+public class ElectronicsPanel extends JPanel {
 
     // ATTRIBUTES
     private JPanel panelist, rootPanel, Electronics_panel, panel, table_panel, description_panel;
@@ -38,7 +38,7 @@ public class Electronics extends JPanel {
     private static final String WARRANTY_PLACEHOLDER  = "MM/DD/YYYY";
     private static final String LMD_PLACEHOLDER  = "MM/DD/YYYY";
 
-    public Electronics() {
+    public ElectronicsPanel() {
         inventoryManager = InventoryManager.getInstance();
         initComponents();
         setupLayout();
@@ -132,7 +132,6 @@ public class Electronics extends JPanel {
         textAreaScroll = new JScrollPane(textArea1);
         String[] columnNames = {"Name", "Quantity", "Location", "Vendor", "Price", "Details"};
         itemTable = new ItemTable(columnNames);
-        // Removed: scrollPane = new JScrollPane(itemTable.getTable());
     }
 
     private void setupLayout() {

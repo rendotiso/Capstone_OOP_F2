@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
-public class Food extends JPanel{
+public class FoodPanel extends JPanel{
 
     // ATTRIBUTES
     private JPanel panelist,  rootPanel, food_panel, panel, table_panel, description_panel;
@@ -42,7 +42,7 @@ public class Food extends JPanel{
     private static final String PURCHASE_DATE_PLACEHOLDER = "MM/DD/YYYY";
     private static final String EXPIRY_DATE_PLACEHOLDER = "MM/DD/YYYY";
 
-    public Food() {
+    public FoodPanel() {
         inventoryManager = InventoryManager.getInstance();
         initComponents();
         setupLayout();

@@ -1,84 +1,76 @@
 package UI.Panel;
 
 import Model.Data.InventoryManager;
-import Model.Entities.Tool;
+import Model.Entities.Clothing;
 import Model.Entities.Item;
 import Model.Enums.Category;
 import UI.Utilities.ItemTable;
-import javax.swing.*;
-import java.awt.*;
+
+import javax.swing.table.DefaultTableModel;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
 
-public class Tools extends JPanel {
+public class ClothingPanel extends JPanel {
+
     // ATTRIBUTES
-    private JPanel panelist, rootPanel, tools_panel, panel, table_panel, description_panel;
-    private JTextField name_field, steelgrade_field, vendor_field, price_field, purchased_field, tooltype_field, material_field, LastMaintenanceDate_field;
+    private JPanel panelist, rootPanel, Clothes_panel, panel, table_panel, description_panel;
+    private JTextField name_field, vendor_field, price_field, condition_field, fabrictype_field, purchaseDate_field;
     private JTextArea textArea1;
-    private JLabel tools_label, name_label, quantity_label, location_label, vendor_label, price_label,
-            purchase_label, tooltype_label, material_label, steelgrade_label, description_label,
-            maintenanceIntervalDateDays_label, LastMaintenanceDate_label, maintenanceNeeded_label;
+    private JLabel Clothes_label, name_label, quantity_label, location_label, vendor_label, price_label,
+            condition_label, fabrictype_label, size_label, description_label, purchaseDate_label;
     private JButton ADDButton, CLEARButton, UPDATEButton, REMOVEButton, REFRESHButton;
-    private JComboBox<String> location_combobox;
-    private JPanel panelButton;
-    private JCheckBox maintenanceNeededCheckBox;
-    private JPanel radiopanel1, maintenancePanel;
-    private JScrollPane textAreaScroll;
-    private JSpinner spinner1, maintenanceIntervalDateDays;
+    private JComboBox<String> location_combobox, size_combobox;
     private ItemTable itemTable;
+    private JPanel panelButton;
+    private JScrollPane textAreaScroll;
+    private JSpinner spinner1;
     private final InventoryManager inventoryManager;
     private int selectedIndex = -1;
 
-    //Placeholders texts
-    private static final String DATE_PLACEHOLDER = "MM/DD/YYYY";
-    private static final String PURCHASED_PLACEHOLDER = "MM/DD/YYYY";
-    private static final String LastMaintenanceDate_PLACEHOLDER = "MM/DD/YYYY";
+    // Placeholder texts
+    private static final String DATE_PLACEHOLDER  = "MM/DD/YYYY";
 
-    public Tools() {
+    public ClothingPanel() {
         inventoryManager = InventoryManager.getInstance();
         initComponents();
         setupLayout();
         setupAppearance();
-        setupPlaceholders();
-        setupMaintenanceListener();
         setupButtonListeners();
         setupTableSelectionListener();
+        loadItems();
+        setupPlaceholders();
     }
 
     private void initComponents() {
         // Initialize panels
         panelist = new JPanel();
         rootPanel = new JPanel();
-        tools_panel = new JPanel();
+        Clothes_panel = new JPanel();
         panel = new JPanel();
         table_panel = new JPanel();
         description_panel = new JPanel();
         panelButton = new JPanel();
-        maintenancePanel = new JPanel();
-
-        // Initialize radio panel (will now hold checkbox)
-        radiopanel1 = new JPanel();
 
         // Initialize form fields
         name_field = new JTextField(8);
-        steelgrade_field = new JTextField(8);
         vendor_field = new JTextField(8);
         price_field = new JTextField(8);
-        purchased_field = new JTextField(8);
-        tooltype_field = new JTextField(8);
-        material_field = new JTextField(8);
-        LastMaintenanceDate_field = new JTextField(8);
+        purchaseDate_field = new JTextField(8);
+        condition_field = new JTextField(8);
+        fabrictype_field = new JTextField(8);
 
         textArea1 = new JTextArea(3, 15);
         textArea1.setLineWrap(true);
         textArea1.setWrapStyleWord(true);
-
-        // Initialize checkbox
-        maintenanceNeededCheckBox = new JCheckBox();
+        textAreaScroll = new JScrollPane(textArea1);
 
         // Initialize spinner for quantity with left-aligned text
         spinner1 = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
@@ -95,19 +87,16 @@ public class Tools extends JPanel {
         }
 
         // Initialize labels
-        tools_label = new JLabel("TOOLS");
+        Clothes_label = new JLabel("CLOTHING");
         name_label = new JLabel("NAME:");
         quantity_label = new JLabel("QUANTITY:");
         location_label = new JLabel("LOCATION:");
         vendor_label = new JLabel("VENDOR:");
         price_label = new JLabel("PRICE:");
-        purchase_label = new JLabel("PURCHASED DATE:");
-        tooltype_label = new JLabel("TOOL TYPE:");
-        material_label = new JLabel("MATERIAL:");
-        steelgrade_label = new JLabel("STEEL GRADE:");
-        maintenanceNeeded_label = new JLabel("MAINTENANCE NEEDED?");
-        maintenanceIntervalDateDays_label = new JLabel("MAINTENANCE INTERVAL (DAYS):");
-        LastMaintenanceDate_label = new JLabel("LAST MAINTENANCE DATE:");
+        purchaseDate_label = new JLabel("PURCHASE DATE:");
+        condition_label = new JLabel("CONDITION:");
+        fabrictype_label = new JLabel("FABRIC TYPE:");
+        size_label = new JLabel("SIZE:");
         description_label = new JLabel("DESCRIPTION/NOTE:");
 
         // Initialize buttons
@@ -119,53 +108,41 @@ public class Tools extends JPanel {
 
         // Initialize combo boxes
         location_combobox = new JComboBox<>(new String[]{
-                "GARAGE", "BASEMENT", "STORAGE ROOM", "TOOLBOX", "UTILITY ROOM",
-                "TOOL RACK"
+                "STORAGE BOX", "WARDROBE", "UNDERBED STORAGE", "CLOSET",
+                "DRAWER CLOSET", "HANGING RACK"
         });
 
+        size_combobox = new JComboBox<>(new String[]{
+                "XS", "S", "M", "L", "XL", "XXL"
+        });
+
+        textAreaScroll = new JScrollPane(textArea1);
         String[] columnNames = {"Name", "Quantity", "Location", "Vendor", "Price", "Details"};
         itemTable = new ItemTable(columnNames);
-        textAreaScroll = new JScrollPane(textArea1);
-
-        maintenanceNeededCheckBox = new JCheckBox();
-
-        // Initialize maintenance interval spinner
-        maintenanceIntervalDateDays = new JSpinner(new SpinnerNumberModel(30, 1, 365, 1));
-        JSpinner.NumberEditor intervalEditor = new JSpinner.NumberEditor(maintenanceIntervalDateDays, "#");
-        maintenanceIntervalDateDays.setEditor(intervalEditor);
-
-        // Force left alignment
-        JComponent intervalEditorComp = maintenanceIntervalDateDays.getEditor();
-        if (intervalEditorComp instanceof JSpinner.DefaultEditor) {
-            JTextField textField = ((JSpinner.DefaultEditor) intervalEditorComp).getTextField();
-            textField.setHorizontalAlignment(SwingConstants.LEFT);
-        }
-
-        maintenanceNeededCheckBox.setFocusable(false);
     }
 
     private void setupLayout() {
-        // Main panel setup
+        // Main panel setup - similar to Food class
         setLayout(new BorderLayout());
         panelist.setLayout(new BorderLayout());
 
-        // Root panel setup (2 rows, 2 columns layout)
+        // Root panel setup (2 rows, 2 columns layout) - similar to Food class
         rootPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
 
-        // TOOLS title panel (top-left, spans 2 columns)
-        tools_panel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        tools_panel.add(tools_label);
+        // TOOLS title panel (top-left, spans 2 columns) - similar to Food class
+        Clothes_panel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        Clothes_panel.add(Clothes_label);
 
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        rootPanel.add(tools_panel, gbc);
+        rootPanel.add(Clothes_panel, gbc);
 
-        // Form panel (left side)
+        // Form panel (left side) - similar height to Food class
         panel.setLayout(new GridBagLayout());
         GridBagConstraints formGbc = new GridBagConstraints();
         formGbc.insets = new Insets(5, 5, 5, 5);
@@ -173,7 +150,7 @@ public class Tools extends JPanel {
 
         int row = 0;
 
-        // Row 0: Name
+        // Row 0: Name - similar field sizes
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
@@ -187,7 +164,7 @@ public class Tools extends JPanel {
 
         row++;
 
-        // Row 1: Quantity (Spinner)
+        // Row 1: Quantity (Spinner) - same as Food class
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
@@ -201,7 +178,7 @@ public class Tools extends JPanel {
 
         row++;
 
-        // Row 2: Location
+        // Row 2: Location - same as Food class
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
@@ -215,7 +192,7 @@ public class Tools extends JPanel {
 
         row++;
 
-        // Row 3: Vendor
+        // Row 3: Vendor - same as Food class
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
@@ -229,7 +206,7 @@ public class Tools extends JPanel {
 
         row++;
 
-        // Row 4: Price
+        // Row 4: Price - same as Food class
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
@@ -243,98 +220,63 @@ public class Tools extends JPanel {
 
         row++;
 
-        // Row 5: Purchase Date
+        // Row 5: Purchase Date - same as Food class
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
-        panel.add(purchase_label, formGbc);
+        panel.add(purchaseDate_label, formGbc);
 
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;
         formGbc.weightx = 1.0;
-        purchased_field.setPreferredSize(new Dimension(80, 25));
-        panel.add(purchased_field, formGbc);
+        purchaseDate_field.setPreferredSize(new Dimension(80, 25));
+        panel.add(purchaseDate_field, formGbc);
 
         row++;
 
-        // Row 6: Tool Type
+        // Row 6: Condition - same as Food class
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
-        panel.add(tooltype_label, formGbc);
+        panel.add(condition_label, formGbc);
 
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;
         formGbc.weightx = 1.0;
-        tooltype_field.setPreferredSize(new Dimension(80, 25));
-        panel.add(tooltype_field, formGbc);
+        condition_field.setPreferredSize(new Dimension(80, 25));
+        panel.add(condition_field, formGbc);
 
         row++;
 
-        // Row 7: Material
+        // Row 7: Fabric Type
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
-        panel.add(material_label, formGbc);
+        panel.add(fabrictype_label, formGbc);
 
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;
         formGbc.weightx = 1.0;
-        material_field.setPreferredSize(new Dimension(80, 25));
-        panel.add(material_field, formGbc);
+        fabrictype_field.setPreferredSize(new Dimension(80, 25));
+        panel.add(fabrictype_field, formGbc);
 
         row++;
 
-        // Row 8: SIZE
+        // Row 8: Size - MOVED HERE (below material)
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
-        panel.add(steelgrade_label, formGbc);
+        panel.add(size_label, formGbc);
 
         formGbc.gridx = 1; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.HORIZONTAL;
         formGbc.weightx = 1.0;
-        steelgrade_field.setPreferredSize(new Dimension(80, 25));
-        panel.add(steelgrade_field, formGbc);
+        size_combobox.setPreferredSize(new Dimension(80, 25));
+        panel.add(size_combobox, formGbc);
 
         row++;
 
-        // Row 9: Requires Maintenance (with checkbox)
-        formGbc.gridx = 0; formGbc.gridy = row;
-        formGbc.fill = GridBagConstraints.NONE;
-        formGbc.weightx = 0;
-        formGbc.anchor = GridBagConstraints.WEST;
-        panel.add(maintenanceNeeded_label, formGbc);
-
-        formGbc.gridx = 1; formGbc.gridy = row;
-        formGbc.fill = GridBagConstraints.HORIZONTAL;
-        formGbc.weightx = 1.0;
-        formGbc.anchor = GridBagConstraints.WEST;
-
-        // Add checkbox instead of radio buttons
-        radiopanel1.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        radiopanel1.add(maintenanceNeededCheckBox);
-        panel.add(radiopanel1, formGbc);
-
-        row++;
-
-        // Row 10: Maintenance Interval (new row)
-        formGbc.gridx = 0; formGbc.gridy = row;
-        formGbc.fill = GridBagConstraints.NONE;
-        formGbc.weightx = 0;
-        formGbc.anchor = GridBagConstraints.WEST;
-        panel.add(maintenanceIntervalDateDays_label, formGbc);
-
-        formGbc.gridx = 1; formGbc.gridy = row;
-        formGbc.fill = GridBagConstraints.HORIZONTAL;
-        formGbc.weightx = 1.0;
-        formGbc.anchor = GridBagConstraints.WEST;
-        maintenanceIntervalDateDays.setPreferredSize(new Dimension(80, 25));
-        panel.add(maintenanceIntervalDateDays, formGbc);
-
-        row++;
-
-        // Row 11: Description/Note
+        // Row 9: Description/Note - similar layout to Food class
         description_panel.setLayout(new GridBagLayout());
         GridBagConstraints descGbc = new GridBagConstraints();
         descGbc.insets = new Insets(5, 5, 5, 5);
@@ -345,7 +287,7 @@ public class Tools extends JPanel {
         descGbc.fill = GridBagConstraints.HORIZONTAL;
         description_panel.add(description_label, descGbc);
 
-        // Text area
+        // Text area - similar size to Food class
         descGbc.gridx = 0; descGbc.gridy = 1;
         descGbc.gridwidth = 1;
         descGbc.fill = GridBagConstraints.BOTH;
@@ -353,7 +295,7 @@ public class Tools extends JPanel {
         textAreaScroll.setPreferredSize(new Dimension(200, 80));
         description_panel.add(textAreaScroll, descGbc);
 
-        // Buttons panel
+        // Buttons panel - same as Food class
         descGbc.gridx = 0; descGbc.gridy = 2;
         descGbc.gridwidth = 1;
         descGbc.fill = GridBagConstraints.NONE;
@@ -368,14 +310,14 @@ public class Tools extends JPanel {
         panelButton.add(REFRESHButton);
         description_panel.add(panelButton, descGbc);
 
-        // Add description panel to main form panel
+        // Add description panel to main form panel - same as Food class
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.gridwidth = 2;
         formGbc.fill = GridBagConstraints.BOTH;
         formGbc.weighty = 1.0;
         panel.add(description_panel, formGbc);
 
-        // Add form panel to root panel (left side)
+        // Add form panel to root panel (left side) - same proportions as Food class
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
@@ -384,68 +326,65 @@ public class Tools extends JPanel {
         gbc.fill = GridBagConstraints.BOTH;
         rootPanel.add(panel, gbc);
 
-        // Table panel (right side)
+        // Table panel (right side) - same as Food class
         table_panel.setLayout(new BorderLayout());
         table_panel.add(itemTable, BorderLayout.CENTER);
 
-        // Add table panel to root panel (right side)
+        // Add table panel to root panel (right side) - same proportions as Food class
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.weightx = 0.6;
         gbc.fill = GridBagConstraints.BOTH;
         rootPanel.add(table_panel, gbc);
 
-        // Add root panel to panelist
+        // Add root panel to panelist - same as Food class
         panelist.add(rootPanel, BorderLayout.CENTER);
 
-        // Add panelist to main panel
+        // Add panelist to main panel - same as Food class
         add(panelist, BorderLayout.CENTER);
     }
 
     private void setupAppearance() {
-        // Set background colors
+        // Set background colors - same as Food class
         Color header = new Color(0x4682B4);
         Color black = new Color(-16777216);
         Color bg = new Color(0xF5F5F5);
         Color placeholderColor = new Color(100, 100, 100, 180);
         Color buttonColor = new Color(70, 130, 180);
 
-        // Set panels opaque
+        // Set panels opaque - same as Food class
         panelist.setOpaque(true);
         rootPanel.setOpaque(true);
-        tools_panel.setOpaque(true);
+        Clothes_panel.setOpaque(true);
         panel.setOpaque(true);
         table_panel.setOpaque(true);
         description_panel.setOpaque(true);
         panelButton.setOpaque(true);
-        radiopanel1.setOpaque(true);
 
-        // Set panel backgrounds
+        // Set panel backgrounds - same as Food class
         panelist.setBackground(bg);
         rootPanel.setBackground(bg);
-        tools_panel.setBackground(header);
+        Clothes_panel.setBackground(header);
         panel.setBackground(bg);
         panelButton.setBackground(bg);
         table_panel.setBackground(bg);
         description_panel.setBackground(bg);
-        radiopanel1.setBackground(bg);
 
-        // Set text field backgrounds
+        // Set text field backgrounds - same as Food class
         name_field.setBackground(bg);
-        steelgrade_field.setBackground(bg);
         vendor_field.setBackground(bg);
         price_field.setBackground(bg);
-        purchased_field.setBackground(bg);
-        tooltype_field.setBackground(bg);
-        material_field.setBackground(bg);
+        purchaseDate_field.setBackground(bg);
+        condition_field.setBackground(bg);
+        fabrictype_field.setBackground(bg);
+        size_combobox.setBackground(bg);
         textArea1.setBackground(bg);
         location_combobox.setBackground(bg);
 
-        // Set spinner background
+        // Set spinner background - same as Food class
         spinner1.setBackground(bg);
-        maintenanceIntervalDateDays.setBackground(bg);
 
-        // Customize the spinner editor
+        // Customize spinner text field - same as Food class
         JComponent editorComp = spinner1.getEditor();
         if (editorComp instanceof JSpinner.DefaultEditor) {
             JTextField textField = ((JSpinner.DefaultEditor) editorComp).getTextField();
@@ -454,49 +393,31 @@ public class Tools extends JPanel {
             textField.setHorizontalAlignment(SwingConstants.LEFT);
         }
 
-        // Customize maintenance interval spinner text field
-        JComponent intervalEditorComp = maintenanceIntervalDateDays.getEditor();
-        if (intervalEditorComp instanceof JSpinner.DefaultEditor) {
-            JTextField textField = ((JSpinner.DefaultEditor) intervalEditorComp).getTextField();
-            textField.setBackground(bg);
-            textField.setForeground(black);
-            textField.setHorizontalAlignment(SwingConstants.LEFT);
-        }
-
-        // Set checkbox background
-        maintenanceNeededCheckBox.setBackground(bg);
-        maintenanceNeededCheckBox.setOpaque(true);
-
-        // Set foreground colors
+        // Set foreground colors - same as Food class
         name_field.setForeground(black);
-        steelgrade_field.setForeground(black);
         vendor_field.setForeground(black);
         price_field.setForeground(black);
-        purchased_field.setForeground(placeholderColor);
-        tooltype_field.setForeground(black);
-        material_field.setForeground(black);
+        purchaseDate_field.setForeground(black);
+        condition_field.setForeground(placeholderColor);
+        fabrictype_field.setForeground(black);
+        size_combobox.setForeground(black);
         textArea1.setForeground(black);
         location_combobox.setForeground(black);
 
-        // Set checkbox text color
-        maintenanceNeededCheckBox.setForeground(black);
-
-        // Set label colors
-        tools_label.setForeground(Color.WHITE);
+        // Set label colors - same as Food class
+        Clothes_label.setForeground(Color.WHITE);
         name_label.setForeground(black);
         quantity_label.setForeground(black);
         location_label.setForeground(black);
         vendor_label.setForeground(black);
         price_label.setForeground(black);
-        purchase_label.setForeground(black);
-        tooltype_label.setForeground(black);
-        material_label.setForeground(black);
-        steelgrade_label.setForeground(black);
-        maintenanceNeeded_label.setForeground(black);
-        maintenanceIntervalDateDays_label.setForeground(black);
+        purchaseDate_label.setForeground(black);
+        condition_label.setForeground(black);
+        fabrictype_label.setForeground(black);
+        size_label.setForeground(black);
         description_label.setForeground(black);
 
-        // Set button colors
+        // Set button colors - same as Food class
         ADDButton.setBackground(buttonColor);
         CLEARButton.setBackground(buttonColor);
         UPDATEButton.setBackground(buttonColor);
@@ -520,170 +441,123 @@ public class Tools extends JPanel {
         REMOVEButton.setFocusable(false);
         CLEARButton.setFocusable(false);
         REFRESHButton.setFocusable(false);
-        // Set fonts
+
+        // Set fonts - same as Food class
         Font labelFont = new Font("Segoe UI", Font.BOLD, 14);
         Font fieldFont = new Font("Segoe UI", Font.PLAIN, 14);
         Font titleFont = new Font("Segoe UI", Font.BOLD, 18);
-        Font checkboxFont = new Font("Segoe UI", Font.PLAIN, 14);
         Font buttonFont = new Font("Segoe UI", Font.BOLD, 12);
         Font placeholderFont = new Font("Segoe UI", Font.ITALIC, 13);
 
-        tools_label.setFont(titleFont);
+        Clothes_label.setFont(titleFont);
         name_label.setFont(labelFont);
         quantity_label.setFont(labelFont);
         location_label.setFont(labelFont);
         vendor_label.setFont(labelFont);
         price_label.setFont(labelFont);
-        purchase_label.setFont(labelFont);
-        tooltype_label.setFont(labelFont);
-        material_label.setFont(labelFont);
-        steelgrade_label.setFont(labelFont);
-        maintenanceNeeded_label.setFont(labelFont);
-        maintenanceIntervalDateDays_label.setFont(labelFont);
+        purchaseDate_label.setFont(labelFont);
+        condition_label.setFont(labelFont);
+        fabrictype_label.setFont(labelFont);
+        size_label.setFont(labelFont);
         description_label.setFont(labelFont);
 
         name_field.setFont(fieldFont);
-        steelgrade_field.setFont(fieldFont);
         vendor_field.setFont(fieldFont);
         price_field.setFont(fieldFont);
-        purchased_field.setFont(placeholderFont);
-        tooltype_field.setFont(fieldFont);
-        material_field.setFont(fieldFont);
+        purchaseDate_field.setFont(fieldFont);
+        condition_field.setFont(placeholderFont);
+        fabrictype_field.setFont(fieldFont);
+        size_combobox.setFont(fieldFont);
         textArea1.setFont(fieldFont);
         location_combobox.setFont(fieldFont);
 
-        // Set spinner font
+        // Set spinner font - same as Food class
         spinner1.setFont(fieldFont);
-        maintenanceIntervalDateDays.setFont(fieldFont);
 
-        // Set checkbox font
-        maintenanceNeededCheckBox.setFont(checkboxFont);
-
-        // Set button fonts
+        // Set button fonts - same as Food class
         ADDButton.setFont(buttonFont);
         CLEARButton.setFont(buttonFont);
         UPDATEButton.setFont(buttonFont);
         REMOVEButton.setFont(buttonFont);
+        REFRESHButton.setFont(buttonFont);
 
-        ADDButton.setFocusable(false);
-        CLEARButton.setFocusable(false);
-        UPDATEButton.setFocusable(false);
-        REMOVEButton.setFocusable(false);
-        REFRESHButton.setFocusable(false);
     }
-
     private void setupPlaceholders() {
-        // Set placeholder text for warranty field
-        purchased_field.setText(DATE_PLACEHOLDER);
-
-        // Set placeholder for LastMaintenanceDate field
-        LastMaintenanceDate_field.setText(LastMaintenanceDate_PLACEHOLDER);
-
-        // Add focus listener
-        purchased_field.addFocusListener(new FocusAdapter() {
+        purchaseDate_field.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (purchased_field.getText().equals(DATE_PLACEHOLDER)) {
-                    purchased_field.setText("");
-                    purchased_field.setForeground(Color.BLACK);
-                    purchased_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+                if (purchaseDate_field.getText().equals(DATE_PLACEHOLDER)) {
+                    purchaseDate_field.setText("");
+                    purchaseDate_field.setForeground(Color.BLACK);
+                    purchaseDate_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
                 }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                if (purchased_field.getText().isEmpty()) {
-                    purchased_field.setText(DATE_PLACEHOLDER);
-                    purchased_field.setForeground(new Color(100, 100, 100, 180));
-                    purchased_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+                if (purchaseDate_field.getText().isEmpty()) { // Fixed: use purchaseDate_field
+                    purchaseDate_field.setText(DATE_PLACEHOLDER);
+                    purchaseDate_field.setForeground(new Color(100, 100, 100, 180));
+                    purchaseDate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
                 }
             }
         });
     }
 
-    //GETTERS
+        //GETTERS
     public String getNameInput() {
         return name_field.getText();
     }
+
     public int getQuantityInput() {
         return (int) spinner1.getValue();
     }
-    public String getLastMaintenanceDateInput() {
-        String text = LastMaintenanceDate_field.getText();
-        if (text.equals(LastMaintenanceDate_PLACEHOLDER)) {
-            return "";
-        }
-        return text;
-    }
+
     public String getVendorInput() {
         return vendor_field.getText();
     }
+
     public String getPriceInput() {
         return price_field.getText();
     }
+
     public String getPurchaseDateInput() {
-        String text = purchased_field.getText();
-        if (text.equals(PURCHASED_PLACEHOLDER)) {
+        String text = purchaseDate_field.getText();
+        if (text.equals(DATE_PLACEHOLDER)) {
             return "";
         }
         return text;
-    }
-
-    public String getToolTypeInput() {
-        return tooltype_field.getText();
-    }
-
-    public String getSteelGradeInput() {
-        return steelgrade_field.getText();
-    }
-
-    public String getMaterialInput() {
-        return material_field.getText();
     }
 
     public String getDescriptionInput() {
         return textArea1.getText();
     }
+
     public String getLocationInput() {
         return (String) location_combobox.getSelectedItem();
     }
 
-    public boolean getMaintenanceNeeded() {
-        return maintenanceNeededCheckBox.isSelected();
+    public String getConditionInput() {
+        return condition_field.getText();
     }
 
-    public int getMaintenanceIntervalDateDays() {
-        return (int) maintenanceIntervalDateDays.getValue();
+    public String getFabricTypeInput() {
+        return fabrictype_field.getText();
     }
 
-    // SETTERS
+    public String getSizeInput() {
+        return (String) size_combobox.getSelectedItem();
+    }
+
+    //SETTERS
     public void setNameInput(String name) {
         name_field.setText(name);
     }
     public void setQuantityInput(int quantity) {
         spinner1.setValue(quantity);
     }
-    public void setLastMaintenanceDateInput(String date) {
-        if (date == null || date.trim().isEmpty()) {
-            LastMaintenanceDate_field.setText(LastMaintenanceDate_PLACEHOLDER);
-            LastMaintenanceDate_field.setForeground(new Color(100, 100, 100, 180));
-            LastMaintenanceDate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
-        } else {
-            LastMaintenanceDate_field.setText(date);
-            LastMaintenanceDate_field.setForeground(Color.BLACK);
-            LastMaintenanceDate_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        }
-    }
-    public void setPurchaseDateInput(String date) {
-        if (date == null || date.trim().isEmpty()) {
-            purchased_field.setText(PURCHASED_PLACEHOLDER);
-            purchased_field.setForeground(new Color(100, 100, 100, 180));
-            purchased_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
-        } else {
-            purchased_field.setText(date);
-            purchased_field.setForeground(Color.BLACK);
-            purchased_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        }
+    public void setSizeInput(String size) {
+        size_combobox.setSelectedItem(size);
     }
     public void setVendorInput(String vendor) {
         vendor_field.setText(vendor);
@@ -691,43 +565,31 @@ public class Tools extends JPanel {
     public void setPriceInput(String price) {
         price_field.setText(price);
     }
-
-    public void setToolTypeInput(String tooltype) {
-        tooltype_field.setText(tooltype);
+    public void setPurchaseDateInput(String date) {
+        if (date == null || date.trim().isEmpty()) {
+            purchaseDate_field.setText(DATE_PLACEHOLDER);
+            purchaseDate_field.setForeground(new Color(100, 100, 100, 180));
+            purchaseDate_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+        } else {
+            purchaseDate_field.setText(date);
+            purchaseDate_field.setForeground(Color.BLACK);
+            purchaseDate_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        }
     }
-    public void setSteelGradeInput(String size) {
-        steelgrade_field.setText(size);
+    public void setConditionInput(String condition) {
+        condition_field.setText(condition);
+    }
+    public void setFabrictypeInput(String toolType) {
+        fabrictype_field.setText(toolType);
     }
     public void setDescriptionInput(String description) {
         textArea1.setText(description);
     }
-
-    public void setMaterialInput(String material) {
-        material_field.setText(material);
-    }
-
     public void setLocationInput(String location) {
         location_combobox.setSelectedItem(location);
     }
-    public void setMaintenanceNeeded(boolean needsMaintenance) {
-        maintenanceNeededCheckBox.setSelected(needsMaintenance);
 
-        if (needsMaintenance) {
-            LastMaintenanceDate_field.setBackground(new Color(0xFFE5E5));
-            LastMaintenanceDate_label.setForeground(new Color(0xFF0000));
-            LastMaintenanceDate_label.setText("LAST MAINTENANCE DATE: (URGENT!)");
-        } else {
-            LastMaintenanceDate_field.setBackground(new Color(0xF5F5F5));
-            LastMaintenanceDate_label.setForeground(Color.BLACK);
-            LastMaintenanceDate_label.setText("LAST MAINTENANCE DATE:");
-        }
-    }
-    
-    public void setmaintenanceIntervalDateDays(JSpinner maintenanceIntervalDateDays){
-        this.maintenanceIntervalDateDays = maintenanceIntervalDateDays;
-    }
-
-    // DATA LOADING AND ACTION LISTENERS
+    // DATA LOADING AND ACTION LISTENERS BELOW
 
     private void loadItems() {
         itemTable.clearTable();
@@ -735,17 +597,16 @@ public class Tools extends JPanel {
         // Force reload from file to get latest data
         inventoryManager.loadFromFile();
 
-        inventoryManager.getItemsByCategory(Category.TOOLS).stream()
-                .filter(Tool.class::isInstance)
-                .map(Tool.class::cast)
-                .forEach(tools -> {
+        inventoryManager.getItemsByCategory(Category.CLOTHING).stream()
+                .filter(Model.Entities.Clothing.class::isInstance)
+                .map(Model.Entities.Clothing.class::cast)
+                .forEach(clothing -> {
                     itemTable.addRow(new Object[]{
-                            tools.getName(),
-                            tools.getQuantity(),
-                            tools.getLocation(),
-                            tools.getVendor(),
-                            tools.getPurchasePrice(),
-                            tools.getDescription()
+                            clothing.getName(),
+                            clothing.getQuantity(),
+                            clothing.getLocation(),
+                            clothing.getVendor(),
+                            clothing.descriptionDetails()
                     });
                 });
 
@@ -760,24 +621,20 @@ public class Tools extends JPanel {
         return Double.parseDouble(cleaned);
     }
 
-    private Tool createToolFromForm() {
-        return new Tool(
+    private Model.Entities.Clothing createClothingFromForm() {
+        return new Model.Entities.Clothing(
                 getNameInput(),
                 getDescriptionInput(),
                 getQuantityInput(),
                 parsePrice(getPriceInput()),
-                getPurchaseDateInput(),
                 getVendorInput(),
                 getLocationInput(),
-                getToolTypeInput(),
-                getSteelGradeInput(),
-                getMaterialInput(),
-                getMaintenanceNeeded(),
-                getLastMaintenanceDateInput(),
-                getMaintenanceIntervalDateDays() // THE FIX FOR THIS: MAKE INTERNVAL DAYS GETTER AND SETTER METHODS HERE
+                getConditionInput(),
+                getFabricTypeInput(),
+                getSizeInput(),
+                getPurchaseDateInput()
         );
     }
-
 
     private boolean validateForm() {
         if (getNameInput().trim().isEmpty()) {
@@ -801,21 +658,26 @@ public class Tools extends JPanel {
             return false;
         }
 
-        if (getToolTypeInput().trim().isEmpty()) {
-            showError("Tool Type cannot be empty!");
+        if (getConditionInput().trim().isEmpty()) {
+            showError("Condition cannot be empty!");
             return false;
         }
 
-        if (getSteelGradeInput().trim().isEmpty()) {
-            showError("Size cannot be empty!");
+        if (getFabricTypeInput().trim().isEmpty()) {
+            showError("Fabric Type cannot be empty!");
+            return false;
+        }
+
+        if (getSizeInput().trim().isEmpty()) {
+            showError("Size Type cannot be empty!");
             return false;
         }
 
         if (!validateDateField(getPurchaseDateInput(), "Purchase Date")) return false;
-        if (!validateDateField(getLastMaintenanceDateInput(), "Last Maintenance Date")) return false;
 
         return true;
     }
+
 
     private boolean isFutureDate(String dateStr) {
         try {
@@ -844,8 +706,8 @@ public class Tools extends JPanel {
         JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    // DATA LOADING AND ACTION LISTENERS
-    private void setupButtonListeners() {
+    // ============ EVENT HANDLERS ============
+    public void setupButtonListeners(){
         ADDButton.addActionListener(e -> addItem());
         UPDATEButton.addActionListener(e -> updateItem());
         REMOVEButton.addActionListener(e -> removeItem());
@@ -856,11 +718,11 @@ public class Tools extends JPanel {
     private void addItem() {
         try {
             if (validateForm()) {
-                Tool tool = createToolFromForm();
-                inventoryManager.addItem(tool);
+                Model.Entities.Clothing clothing = createClothingFromForm();
+                inventoryManager.addItem(clothing);
                 loadItems();
                 clearForm();
-                showSuccess("tool item added successfully!");
+                showSuccess("Clothing item added successfully!");
             }
         } catch (IOException e) {
             showError("Error saving item: " + e.getMessage());
@@ -873,19 +735,19 @@ public class Tools extends JPanel {
         if (selectedIndex >= 0) {
             try {
                 if (validateForm()) {
-                    Tool tool = createToolFromForm();
+                    Clothing clothing = createClothingFromForm();
                     java.util.List<Item> allItems = inventoryManager.getAllItems();
-                    List<Item> toolsItems = inventoryManager.getItemsByCategory(Category.TOOLS);
+                    List<Item> clothingItems = inventoryManager.getItemsByCategory(Category.CLOTHING);
 
-                    if (selectedIndex < toolsItems.size()) {
-                        Item originalItem = toolsItems.get(selectedIndex);
+                    if (selectedIndex < clothingItems.size()) {
+                        Item originalItem = clothingItems.get(selectedIndex);
                         int actualIndex = allItems.indexOf(originalItem);
                         if (actualIndex != -1) {
-                            inventoryManager.updateItem(actualIndex, tool);
+                            inventoryManager.updateItem(actualIndex, clothing);
                             loadItems();
                             clearForm();
                             selectedIndex = -1;
-                            showSuccess("tool item updated successfully!");
+                            showSuccess("Clothing item updated successfully!");
                         }
                     }
                 }
@@ -901,14 +763,14 @@ public class Tools extends JPanel {
         if (selectedIndex >= 0) {
             try {
                 int confirm = JOptionPane.showConfirmDialog(this,
-                        "Are you sure you want to remove this tool item?",
+                        "Are you sure you want to remove this clothing item?",
                         "Confirm Removal", JOptionPane.YES_NO_OPTION);
 
                 if (confirm == JOptionPane.YES_OPTION) {
-                    List<Item> toolsItems = inventoryManager.getItemsByCategory(Category.TOOLS);
+                    List<Item> clothingItems = inventoryManager.getItemsByCategory(Category.CLOTHING);
 
-                    if (selectedIndex < toolsItems.size()) {
-                        Item itemToRemove = toolsItems.get(selectedIndex);
+                    if (selectedIndex < clothingItems.size()) {
+                        Item itemToRemove = clothingItems.get(selectedIndex);
                         inventoryManager.removeItem(itemToRemove);
                         loadItems();
                         clearForm();
@@ -935,23 +797,15 @@ public class Tools extends JPanel {
         name_field.setText("");
         vendor_field.setText("");
         price_field.setText("");
-        tooltype_field.setText("");
-        steelgrade_field.setText("");
+        condition_field.setText("");
+        fabrictype_field.setText("");
         textArea1.setText("");
 
         // Reset spinner
         spinner1.setValue(1);
 
-        // Reset combo box
-        location_combobox.setSelectedIndex(0);
-
-        // Reset checkbox
-        maintenanceNeededCheckBox.setSelected(false);
-
         // Reset date fields to placeholders
-        setFieldToPlaceholder(LastMaintenanceDate_field, LastMaintenanceDate_PLACEHOLDER);
-        setFieldToPlaceholder(purchased_field, PURCHASED_PLACEHOLDER);
-        setFieldToPlaceholder(purchased_field, DATE_PLACEHOLDER);
+        setFieldToPlaceholder(purchaseDate_field, DATE_PLACEHOLDER);
 
         // Clear table selection
         itemTable.clearSelection();
@@ -977,55 +831,27 @@ public class Tools extends JPanel {
 
     private void populateFormFromSelectedRow(int selectedRow) {
         try {
-            List<Item> toolsItems = inventoryManager.getItemsByCategory(Category.TOOLS);
+            List<Item> clothingItems = inventoryManager.getItemsByCategory(Category.CLOTHING);
 
-            if (selectedRow < toolsItems.size()) {
-                Tool tool = (Tool) toolsItems.get(selectedRow);
-                populateForm(tool);
+            if (selectedRow < clothingItems.size()) {
+                Model.Entities.Clothing clothing = (Clothing) clothingItems.get(selectedRow);
+                populateForm(clothing);
             }
         } catch (Exception e) {
             showError("Error loading item data: " + e.getMessage());
         }
     }
 
-    private void populateForm(Tool tool) {
-        setNameInput(tool.getName());
-        setQuantityInput(tool.getQuantity());
-        setVendorInput(tool.getVendor());
-        setPriceInput(String.valueOf(tool.getPurchasePrice()));
-        setPurchaseDateInput(tool.getPurchaseDate());
-        setToolTypeInput(tool.getToolType());
-        setSteelGradeInput(tool.getSteelGrade());  // DONT FORGET TO CHANGE THE SIZEINPUT TO BE STEELGRADEINPUT
-        setDescriptionInput(tool.getDescription());
-        setLocationInput(tool.getLocation());
-        setMaintenanceNeeded(tool.getMaintenanceNeeded());
-        setLastMaintenanceDateInput(tool.getLastMaintenanceDate());
-    }
-
-    //(copy paste here the needed stuff, already implemented the maitenance listener since its
-    // the only one with the same logic as tools)
-    // yes. ikaw fix the red ani HHAHHHAHHAHAHHA, nag red siya so ako ra gi comment out
-    // Requires maintenance is Maintenance Needed, i-fix na pls
-    // and I notice ang uban data/panels nag butang og "warranty_label" for purchaseDate_label.
-    // i-tarung iyang field names
-    // i-add sad ang iyang call method didto sa constructor for the placeholder for the panels that requires it
-
-
-    private void setupMaintenanceListener() {
-        maintenanceNeededCheckBox.addChangeListener(e -> {
-            if (maintenanceNeededCheckBox.isSelected()) {
-
-                LastMaintenanceDate_field.setBackground(new Color(0xFFE5E5));
-                LastMaintenanceDate_label.setForeground(new Color(0xFF0000));
-                LastMaintenanceDate_label.setText("LAST MAINTENANCE DATE: (URGENT!)");
-                maintenanceNeeded_label.setForeground(new Color(0xFF0000));
-            } else {
-
-                LastMaintenanceDate_field.setBackground(new Color(0xF5F5F5));
-                LastMaintenanceDate_label.setForeground(Color.BLACK);
-                LastMaintenanceDate_label.setText("LAST MAINTENANCE DATE:");
-                maintenanceNeeded_label.setForeground(Color.BLACK);
-            }
-        });
+    private void populateForm(Model.Entities.Clothing clothing) {
+        setNameInput(clothing.getName());
+        setQuantityInput(clothing.getQuantity());
+        setVendorInput(clothing.getVendor());
+        setPriceInput(String.valueOf(clothing.getPurchasePrice()));
+        setPurchaseDateInput(clothing.getPurchaseDate());
+        setConditionInput(clothing.getCondition());
+        setFabrictypeInput(clothing.getFabricType());
+        setSizeInput(String.valueOf(clothing.getSize()));
+        setDescriptionInput(clothing.getDescription());
+        setLocationInput(String.valueOf(clothing.getLocation()));
     }
 }
