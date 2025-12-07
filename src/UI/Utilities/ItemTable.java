@@ -1,6 +1,7 @@
 package UI.Utilities;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
@@ -39,14 +40,13 @@ public class ItemTable extends JScrollPane {
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         table.getTableHeader().setReorderingAllowed(false);
         table.setFillsViewportHeight(true);
-        
+
         setViewportView(table);
         setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     }
 
     private void setupTableAppearance() {
-
         table.setRowHeight(30); // Initial row height
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -65,32 +65,88 @@ public class ItemTable extends JScrollPane {
 
         // Set column widths
         TableColumnModel columnModel = table.getColumnModel();
-        columnModel.getColumn(0).setPreferredWidth(120); // Name
-        columnModel.getColumn(1).setPreferredWidth(50);  // Qty
-        columnModel.getColumn(2).setPreferredWidth(100); // Location
-        columnModel.getColumn(3).setPreferredWidth(120); // Vendor
-        columnModel.getColumn(4).setPreferredWidth(80);  // Price
-        columnModel.getColumn(5).setPreferredWidth(300); // Details
+        columnModel.getColumn(0).setPreferredWidth(95); // Name
+        columnModel.getColumn(1).setPreferredWidth(70);  // Qty
+        columnModel.getColumn(2).setPreferredWidth(90); // Location
+        columnModel.getColumn(3).setPreferredWidth(90); // Vendor
+        columnModel.getColumn(4).setPreferredWidth(60);  // Price
+        columnModel.getColumn(5).setPreferredWidth(202); // Details
     }
 
     private void setupTableRenderers() {
-
-        table.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+        // Custom renderer for numeric columns (centered)
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
-                                                           boolean isSelected, boolean hasFocus,
-                                                           int row, int column) {
-                Component component = super.getTableCellRendererComponent(table, value,
-                        isSelected, hasFocus, row, column);
-                if (value instanceof Number) {
-                    ((JLabel) component).setHorizontalAlignment(SwingConstants.CENTER);
-                } else {
-                    ((JLabel) component).setHorizontalAlignment(SwingConstants.LEFT);
+                                                           boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+                // Center alignment for all cells in this renderer
+                ((JLabel) c).setHorizontalAlignment(SwingConstants.CENTER);
+                ((JLabel) c).setVerticalAlignment(SwingConstants.TOP);
+
+                // Set padding
+                setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+
+                // Format numeric values
+                if (value instanceof Double) {
+                    // Format price with 2 decimal places
+                    setText(String.format("$%.2f", (Double) value));
+                } else if (value instanceof Integer || value instanceof Long) {
+                    setText(value.toString());
                 }
 
-                return component;
+                return c;
             }
-        });
+        };
+
+        // Custom renderer for text columns with word wrapping
+        DefaultTableCellRenderer wrapRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                                                           boolean isSelected, boolean hasFocus, int row, int column) {
+
+                JTextArea textArea = new JTextArea();
+                textArea.setLineWrap(true);
+                textArea.setWrapStyleWord(true);
+                textArea.setFont(table.getFont());
+                textArea.setOpaque(true);
+
+                if (isSelected) {
+                    textArea.setForeground(table.getSelectionForeground());
+                    textArea.setBackground(table.getSelectionBackground());
+                } else {
+                    textArea.setForeground(table.getForeground());
+                    textArea.setBackground(table.getBackground());
+                }
+
+                if (value != null) {
+                    textArea.setText(value.toString());
+                }
+
+                // Set padding
+                textArea.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+
+                return textArea;
+            }
+        };
+
+        // Apply renderers to appropriate columns
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            String colName = table.getColumnName(i);
+
+            // Apply center renderer to numeric columns
+            if (colName.equalsIgnoreCase("Qty") ||
+                    colName.equalsIgnoreCase("Quantity") ||
+                    colName.equalsIgnoreCase("No.") ||
+                    colName.equalsIgnoreCase("Number") ||
+                    colName.equalsIgnoreCase("Price")) {
+                table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+            } else {
+                // Apply wrap renderer to text columns
+                table.getColumnModel().getColumn(i).setCellRenderer(wrapRenderer);
+            }
+        }
 
         table.addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
@@ -102,30 +158,35 @@ public class ItemTable extends JScrollPane {
 
     public void adjustRowHeights() {
         for (int row = 0; row < table.getRowCount(); row++) {
-            int maxHeight = 30;
+            int maxHeight = 30; // Minimum height
 
             for (int col = 0; col < table.getColumnCount(); col++) {
                 Object cellValue = table.getValueAt(row, col);
                 if (cellValue != null) {
                     String cellText = cellValue.toString();
                     if (!cellText.isEmpty()) {
-
+                        // Create a temporary text area to calculate height
                         JTextArea tempTextArea = new JTextArea(cellText);
                         tempTextArea.setLineWrap(true);
                         tempTextArea.setWrapStyleWord(true);
                         tempTextArea.setFont(table.getFont());
+                        tempTextArea.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
                         int columnWidth = table.getColumnModel().getColumn(col).getWidth();
-                        tempTextArea.setSize(columnWidth - 10, Integer.MAX_VALUE); // Subtract padding
+                        tempTextArea.setSize(columnWidth - 8, Integer.MAX_VALUE);
 
-                        int textHeight = tempTextArea.getPreferredSize().height + 8; // Add padding
+                        int textHeight = tempTextArea.getPreferredSize().height;
                         maxHeight = Math.max(maxHeight, textHeight);
                     }
                 }
             }
 
-            table.setRowHeight(row, Math.min(maxHeight, 200));
+            // Set the row height (with a maximum limit)
+            table.setRowHeight(row, Math.min(maxHeight, 300));
         }
+
+        // Force the table to update
+        table.repaint();
     }
 
     public void setColumnWidths(int... widths) {
@@ -134,6 +195,11 @@ public class ItemTable extends JScrollPane {
             columnModel.getColumn(i).setPreferredWidth(widths[i]);
             columnModel.getColumn(i).setMinWidth(widths[i] / 2);
         }
+
+        // Adjust row heights after changing column widths
+        SwingUtilities.invokeLater(() -> {
+            adjustRowHeights();
+        });
     }
 
     public void setDefaultColumnWidths() {
@@ -154,7 +220,9 @@ public class ItemTable extends JScrollPane {
 
     public void addRow(Object[] rowData) {
         tableModel.addRow(rowData);
-        adjustRowHeights();
+        SwingUtilities.invokeLater(() -> {
+            adjustRowHeights();
+        });
     }
 
     public void setData(Object[][] data) {
