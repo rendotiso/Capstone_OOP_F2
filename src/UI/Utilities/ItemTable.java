@@ -21,9 +21,10 @@ public class ItemTable extends JScrollPane {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
                 // Return proper class for each column
-                if (columnNames[columnIndex].equalsIgnoreCase("Qty")) {
+                String colName = getColumnName(columnIndex);
+                if (colName.equalsIgnoreCase("Qty") || colName.equalsIgnoreCase("Quantity")) {
                     return Integer.class;
-                } else if (columnNames[columnIndex].equalsIgnoreCase("Price")) {
+                } else if (colName.equalsIgnoreCase("Price")) {
                     return Double.class;
                 }
                 return String.class;
@@ -63,36 +64,57 @@ public class ItemTable extends JScrollPane {
         table.setShowGrid(true);
         table.setIntercellSpacing(new Dimension(1, 1));
 
-        // Set column widths
+        // Set column widths - ADJUSTED FOR COMPACT LAYOUT
         TableColumnModel columnModel = table.getColumnModel();
-        columnModel.getColumn(0).setPreferredWidth(95); // Name
-        columnModel.getColumn(1).setPreferredWidth(70);  // Qty
-        columnModel.getColumn(2).setPreferredWidth(90); // Location
-        columnModel.getColumn(3).setPreferredWidth(90); // Vendor
-        columnModel.getColumn(4).setPreferredWidth(60);  // Price
-        columnModel.getColumn(5).setPreferredWidth(202); // Details
+        if (table.getColumnCount() >= 6) {
+            columnModel.getColumn(0).setPreferredWidth(90);
+            columnModel.getColumn(1).setPreferredWidth(50);
+            columnModel.getColumn(2).setPreferredWidth(80);
+            columnModel.getColumn(3).setPreferredWidth(80);
+            columnModel.getColumn(4).setPreferredWidth(60);
+            columnModel.getColumn(5).setPreferredWidth(240);
+        }
     }
 
     private void setupTableRenderers() {
-        // Custom renderer for numeric columns (centered)
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
-                                                           boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                                                           boolean isSelected, boolean hasFocus,
+                                                           int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value,
+                        isSelected, hasFocus, row, column);
 
-                // Center alignment for all cells in this renderer
                 ((JLabel) c).setHorizontalAlignment(SwingConstants.CENTER);
-                ((JLabel) c).setVerticalAlignment(SwingConstants.TOP);
+                ((JLabel) c).setVerticalAlignment(SwingConstants.CENTER);
 
                 // Set padding
-                setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+                setBorder(BorderFactory.createEmptyBorder(4, 2, 4, 2));
 
-                // Format numeric values
                 if (value instanceof Double) {
-                    // Format price with 2 decimal places
                     setText(String.format("$%.2f", (Double) value));
                 } else if (value instanceof Integer || value instanceof Long) {
+                    setText(value.toString());
+                }
+
+                return c;
+            }
+        };
+
+        DefaultTableCellRenderer qtyRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                                                           boolean isSelected, boolean hasFocus,
+                                                           int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value,
+                        isSelected, hasFocus, row, column);
+
+                ((JLabel) c).setHorizontalAlignment(SwingConstants.CENTER);
+                ((JLabel) c).setVerticalAlignment(SwingConstants.CENTER);
+
+                setBorder(BorderFactory.createEmptyBorder(4, 1, 4, 1));
+
+                if (value != null) {
                     setText(value.toString());
                 }
 
@@ -104,8 +126,8 @@ public class ItemTable extends JScrollPane {
         DefaultTableCellRenderer wrapRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
-                                                           boolean isSelected, boolean hasFocus, int row, int column) {
-
+                                                           boolean isSelected, boolean hasFocus,
+                                                           int row, int column) {
                 JTextArea textArea = new JTextArea();
                 textArea.setLineWrap(true);
                 textArea.setWrapStyleWord(true);
@@ -135,15 +157,14 @@ public class ItemTable extends JScrollPane {
         for (int i = 0; i < table.getColumnCount(); i++) {
             String colName = table.getColumnName(i);
 
-            // Apply center renderer to numeric columns
-            if (colName.equalsIgnoreCase("Qty") ||
-                    colName.equalsIgnoreCase("Quantity") ||
-                    colName.equalsIgnoreCase("No.") ||
-                    colName.equalsIgnoreCase("Number") ||
-                    colName.equalsIgnoreCase("Price")) {
+            if (colName.equalsIgnoreCase("Qty") || colName.equalsIgnoreCase("Quantity")) {
+                table.getColumnModel().getColumn(i).setCellRenderer(qtyRenderer);
+            }
+            // Apply center renderer to Price column
+            else if (colName.equalsIgnoreCase("Price")) {
                 table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
             } else {
-                // Apply wrap renderer to text columns
+                // Apply wrap renderer to text columns (Name, Location, Vendor, Details)
                 table.getColumnModel().getColumn(i).setCellRenderer(wrapRenderer);
             }
         }
@@ -161,6 +182,12 @@ public class ItemTable extends JScrollPane {
             int maxHeight = 30; // Minimum height
 
             for (int col = 0; col < table.getColumnCount(); col++) {
+                // Skip Qty column - it doesn't need height adjustment
+                String colName = table.getColumnName(col);
+                if (colName.equalsIgnoreCase("Qty") || colName.equalsIgnoreCase("Quantity")) {
+                    continue;
+                }
+
                 Object cellValue = table.getValueAt(row, col);
                 if (cellValue != null) {
                     String cellText = cellValue.toString();
@@ -196,14 +223,7 @@ public class ItemTable extends JScrollPane {
             columnModel.getColumn(i).setMinWidth(widths[i] / 2);
         }
 
-        // Adjust row heights after changing column widths
-        SwingUtilities.invokeLater(() -> {
-            adjustRowHeights();
-        });
-    }
-
-    public void setDefaultColumnWidths() {
-        setColumnWidths(150, 60, 120, 150, 80, 250);
+        SwingUtilities.invokeLater(this::adjustRowHeights);
     }
 
     public JTable getTable() {
@@ -218,7 +238,6 @@ public class ItemTable extends JScrollPane {
         tableModel.setRowCount(0);
     }
 
-    // In your ItemTable class:
     public void clearSelection() {
         if (table != null) {
             table.clearSelection();
@@ -227,37 +246,11 @@ public class ItemTable extends JScrollPane {
 
     public void addRow(Object[] rowData) {
         tableModel.addRow(rowData);
-        SwingUtilities.invokeLater(() -> {
-            adjustRowHeights();
-        });
-    }
-
-    public void setData(Object[][] data) {
-        clearTable();
-        for (Object[] row : data) {
-            addRow(row);
-        }
-    }
-
-    public void removeRow(int row) {
-        if (row >= 0 && row < tableModel.getRowCount()) {
-            tableModel.removeRow(row);
-        }
+        SwingUtilities.invokeLater(this::adjustRowHeights);
     }
 
     public int getSelectedRow() {
         return table.getSelectedRow();
     }
 
-    public Object getValueAt(int row, int column) {
-        return tableModel.getValueAt(row, column);
-    }
-
-    public void setSelectionListener(java.awt.event.MouseListener listener) {
-        table.addMouseListener(listener);
-    }
-
-    public void setColumnNames(String[] columnNames) {
-        tableModel.setColumnIdentifiers(columnNames);
-    }
 }

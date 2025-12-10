@@ -11,8 +11,6 @@ public class Electronic extends Item implements Maintainable {
     private String warrantyPeriod;
     private String brand;
     private String model;
-
-    //maintenance attributes
     private boolean maintenanceNeeded;
     private String lastMaintenanceDate;
 
@@ -44,7 +42,7 @@ public class Electronic extends Item implements Maintainable {
 
     //SETTERS
     public void setWarrantyPeriod(String warrantyPeriod) {
-        this.warrantyPeriod = warrantyPeriod != null ? warrantyPeriod.trim() : "";
+        this.warrantyPeriod = warrantyPeriod;
     }
     public void setBrand(String brand) {
         this.brand = brand;
@@ -55,7 +53,6 @@ public class Electronic extends Item implements Maintainable {
     public void setLastMaintenanceDate(String lastMaintenanceDate) {
         this.lastMaintenanceDate = lastMaintenanceDate;
     }
-
 
     //METHODS
     @Override
@@ -77,6 +74,7 @@ public class Electronic extends Item implements Maintainable {
             return 0;
         }
     }
+
     @Override
     public boolean needsMaintenance(){
         return getDaysUntilMaintenanceDue() <= 0;
@@ -87,7 +85,8 @@ public class Electronic extends Item implements Maintainable {
         if(needsMaintenance()) maintain = "Yes!";
         else maintain = "No";
         return super.descriptionDetails() + String.format("Brand: %s\nModel: %s\n" +
-            "Maintenance Needed: %s \nDays Until Maintenance: %d", brand, model, maintain, getDaysUntilMaintenanceDue()); }
+            "Maintenance Needed: %s \nDays Until Maintenance: %d", brand, model, maintain, getDaysUntilMaintenanceDue());
+    }
 
     @Override
     public double calculateValue() {

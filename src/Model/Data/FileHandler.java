@@ -3,15 +3,13 @@ package Model.Data;
 import Model.Enums.Category;
 import Model.Entities.*;
 import java.io.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileHandler {
     private static String filePath = ".inventory.txt";
 
-    // save data
-    public void saveData(List<Item> items) throws IOException {
+    public void saveData(List<Item> items){
         if (items == null) throw new IllegalArgumentException("Item List is empty.");
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
@@ -30,21 +28,16 @@ public class FileHandler {
         }
     }
 
-    //load data
     public List<Item> loadData() throws IOException {
 
         List<Item> items = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            // Skip the header row
             reader.readLine();
-
             String line;
             while ((line = reader.readLine()) != null) {
-                // Skip empty lines
                 if (line.trim().isEmpty()) {
                     continue;
                 }
-
                 try {
                     Item item = convertToItem(line);
                     items.add(item);
@@ -84,7 +77,7 @@ public class FileHandler {
                     tool.getMaintenanceIntervalDays();
             case Miscellaneous miscellaneous -> base + "," + miscellaneous.getItemType() + "," +
                     miscellaneous.getUsage() + "," +
-                    miscellaneous.getIsCondition();
+                    miscellaneous.getCondition();
             default -> base;
         };
     }
@@ -111,11 +104,11 @@ public class FileHandler {
                     String fabric = items[10];
                     return new Clothing(name, description, quantity, price, purchaseDate, vendor, location, size, condition, fabric);
                 case ELECTRONICS:
-                    String warranty = items[8];      // warrantyPeriod
-                    String brand = items[9];         // brand
-                    String model = items[10];        // model
-                    maintenanceNeeded = Boolean.parseBoolean(items[11]); // maintenanceNeeded
-                    lastMaintenanceDate = items[12]; // lastMaintenanceDate
+                    String warranty = items[8];
+                    String brand = items[9];
+                    String model = items[10];
+                    maintenanceNeeded = Boolean.parseBoolean(items[11]);
+                    lastMaintenanceDate = items[12];
                     return new Electronic(name, description, quantity, price, purchaseDate, vendor, location,
                             warranty, brand, model, maintenanceNeeded, lastMaintenanceDate);
                 case FOOD:
@@ -134,8 +127,8 @@ public class FileHandler {
                 case MISCELLANEOUS:
                     String itemType = items[8];
                     String usage = items[9];
-                    boolean isCondition = Boolean.parseBoolean(items[10]);
-                    return new Miscellaneous(name, description, quantity, price, purchaseDate, vendor, location, itemType, usage, isCondition);
+                    String Condition = items[10];
+                    return new Miscellaneous(name, description, quantity, price, purchaseDate, vendor, location, itemType, usage, Condition);
             }
         } catch (Exception e) {
             System.err.println("Error parsing line: " + curr);

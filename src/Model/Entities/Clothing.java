@@ -27,12 +27,8 @@ public class Clothing extends Item {
     }
 
     //SETTERS
-
     public void setCondition(String condition) {
-        if (condition == null || condition.trim().isEmpty()) {
-            throw new IllegalArgumentException("Condition cannot be empty");
-        }
-        this.condition = condition.trim();
+        this.condition = condition;
     }
 
     public void setFabricType(String fabricType) {

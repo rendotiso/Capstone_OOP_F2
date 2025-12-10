@@ -26,7 +26,7 @@ public class Tool extends Item implements Maintainable {
         this.toolType = toolType;
         this.steelGrade = steelGrade;
         this.material = material;
-        this.maintenanceNeeded = true;
+        this.maintenanceNeeded = maintenanceNeeded;
         this.LastMaintenanceDate = LastMaintenanceDate;
         this.maintenanceIntervalDays = maintenanceIntervalDays;
     }
@@ -53,7 +53,7 @@ public class Tool extends Item implements Maintainable {
     public void setToolType(String toolType) {
         this.toolType = toolType;
     }
-    public void setSteelGrade(String size) {this.steelGrade = steelGrade;}
+    public void setSteelGrade(String steelGrade) {this.steelGrade = steelGrade;}
     public void setMaterial(String material) {
         this.material = material;
     }

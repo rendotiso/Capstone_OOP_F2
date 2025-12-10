@@ -2,8 +2,6 @@ package Model.Entities;
 
 import Model.Enums.Category;
 
-import java.util.Objects;
-
 public abstract class Item {
     private String name;
     private String description;
@@ -76,8 +74,9 @@ public abstract class Item {
         if(purchaseDate == null || purchaseDate.trim().isEmpty()){
             purchaseDate = "Unknown";
         }
-        return String.format("%s\nPurchase Date: %s\n", description, purchaseDate);
+        return String.format("%s\n---------------------------------------------\nPurchase Date: %s\n", description, purchaseDate);
     }
+
     //ABSTRACT METHODS
     public abstract double calculateValue();
 

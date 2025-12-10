@@ -98,32 +98,27 @@ public class AllItemsPanel extends JPanel {
     }
 
     private void setupListeners() {
-        clearButton.addActionListener(e -> {
+        clearButton.addActionListener(_ -> {
             searchField.setText("");
-            loadItems(); // Load all items when clearing search
+            loadItems();
         });
-
-        searchButton.addActionListener(e -> searchFunction());
         clearButton.setFocusable(false);
         searchButton.setFocusable(false);
         refreshButton.setFocusable(false);
         deleteButton.setFocusable(false);
 
-        // Add functional listeners - similar to Electronics
-        refreshButton.addActionListener(e -> refreshFunction());
-        deleteButton.addActionListener(e -> deleteFunction());
-
-        // Add Enter key listener to search field
-        searchField.addActionListener(e -> searchFunction());
+        searchButton.addActionListener(_ -> searchFunction());
+        refreshButton.addActionListener(_ -> refreshFunction());
+        deleteButton.addActionListener(_ -> deleteFunction());
+        searchField.addActionListener(_ -> searchFunction());
     }
 
-    // Setup table selection listener like in Electronics
     private void setupTableSelectionListener() {
         itemTable.getTable().getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 int selectedRow = itemTable.getSelectedRow();
                 if (selectedRow != -1) {
-                    selectedIndex = selectedRow; // Store the selected index
+                    selectedIndex = selectedRow;
                 }
             }
         });
@@ -145,12 +140,11 @@ public class AllItemsPanel extends JPanel {
         }
     }
 
-    // Refresh function similar to Electronics
     private void refreshFunction() {
         loadItems();
         searchField.setText("");
-        selectedIndex = -1; // Reset selection like in Electronics
-        itemTable.clearSelection(); // Clear table selection
+        selectedIndex = -1;
+        itemTable.clearSelection();
 
         JOptionPane.showMessageDialog(this,
                 "Table refreshed successfully.",
@@ -158,21 +152,16 @@ public class AllItemsPanel extends JPanel {
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
-    // Delete function similar to Electronics
     private void deleteFunction() {
         if (selectedIndex >= 0) {
             try {
-                // Get all items
                 List<Item> allItems = inventoryManager.getAllItems();
-
-                // Get the selected item from the table
                 DefaultTableModel model = itemTable.getTableModel();
                 if (selectedIndex < model.getRowCount()) {
                     int displayItemNo = (Integer) model.getValueAt(selectedIndex, 0);
-                    int itemIndex = displayItemNo - 1; // Convert display number to actual index
+                    int itemIndex = displayItemNo - 1;
                     String itemName = (String) model.getValueAt(selectedIndex, 2);
 
-                    // Confirm deletion - similar to Electronics
                     int confirm = JOptionPane.showConfirmDialog(this,
                             "Are you sure you want to delete item: " + itemName + "?",
                             "Confirm Delete",
@@ -184,9 +173,8 @@ public class AllItemsPanel extends JPanel {
                             Item itemToDelete = allItems.get(itemIndex);
                             inventoryManager.removeItem(itemToDelete);
 
-                            // Refresh the table - similar to Electronics
                             loadItems();
-                            selectedIndex = -1; // Reset selection
+                            selectedIndex = -1;
 
                             JOptionPane.showMessageDialog(this,
                                     "Item deleted successfully.",
@@ -209,14 +197,6 @@ public class AllItemsPanel extends JPanel {
         }
     }
 
-    private void updateItemNumbers() {
-        DefaultTableModel model = itemTable.getTableModel();
-        for (int i = 0; i < model.getRowCount(); i++) {
-            model.setValueAt(i + 1, i, 0);
-        }
-    }
-
-    // Load items method similar to Electronics
     private void loadItems() {
         itemTable.clearTable();
 
@@ -248,8 +228,8 @@ public class AllItemsPanel extends JPanel {
         }
 
         itemTable.adjustRowHeights();
-        selectedIndex = -1; // Reset selection when updating table
-        itemTable.clearSelection(); // Clear table selection
+        selectedIndex = -1;
+        itemTable.clearSelection();
     }
 
     private Object[] createTableRow(Item item, int itemNo) {
@@ -267,7 +247,7 @@ public class AllItemsPanel extends JPanel {
     private void setupTableAppearance() {
         JTable table = itemTable.getTable();
 
-        table.setRowHeight(30); // Initial row height
+        table.setRowHeight(30);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -319,9 +299,8 @@ public class AllItemsPanel extends JPanel {
                     return comp;
                 }
                 else if (column == 3) {
-                    Component comp = centerRenderer.getTableCellRendererComponent(
+                    return centerRenderer.getTableCellRendererComponent(
                             table, value, isSelected, hasFocus, row, column);
-                    return comp;
                 }
                 else if (column == 4) {
                     Component comp = defaultRenderer.getTableCellRendererComponent(
@@ -330,26 +309,24 @@ public class AllItemsPanel extends JPanel {
                     return comp;
                 }
                 else if (column == 5) {
-                    if (value instanceof Double) {
-                        priceRenderer.setText(String.format("$%.2f", (Double) value));
-                    } else if (value instanceof Number) {
-                        priceRenderer.setText(String.format("$%.2f", ((Number) value).doubleValue()));
-                    } else if (value instanceof String) {
-                        try {
-                            double price = Double.parseDouble((String) value);
-                            priceRenderer.setText(String.format("$%.2f", price));
-                        } catch (NumberFormatException e) {
-                            priceRenderer.setText(value.toString());
+                    switch (value) {
+                        case Double v -> priceRenderer.setText(String.format("$%.2f", v));
+                        case Number number -> priceRenderer.setText(String.format("$%.2f", number.doubleValue()));
+                        case String s -> {
+                            try {
+                                double price = Double.parseDouble(s);
+                                priceRenderer.setText(String.format("$%.2f", price));
+                            } catch (NumberFormatException e) {
+                                priceRenderer.setText(value.toString());
+                            }
                         }
-                    } else {
-                        priceRenderer.setText(value != null ? value.toString() : "");
+                        default -> priceRenderer.setText(value.toString());
                     }
 
-                    Component comp = priceRenderer.getTableCellRendererComponent(
+                    return priceRenderer.getTableCellRendererComponent(
                             table, value, isSelected, hasFocus, row, column);
-                    return comp;
                 }
-                // Column 6: Details - Text area for wrapping
+
                 else if (column == 6) {
                     JTextArea textArea = new JTextArea();
                     textArea.setText(value != null ? value.toString() : "");
@@ -368,7 +345,6 @@ public class AllItemsPanel extends JPanel {
 
                     textArea.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
-                    // Adjust row height based on text area content
                     int lineCount = textArea.getLineCount();
                     if (lineCount > 1) {
                         table.setRowHeight(row, Math.max(30, 25 * lineCount));
@@ -377,7 +353,6 @@ public class AllItemsPanel extends JPanel {
                     return textArea;
                 }
                 else {
-                    // Default renderer for any other columns
                     Component comp = defaultRenderer.getTableCellRendererComponent(
                             table, value, isSelected, hasFocus, row, column);
                     ((JLabel) comp).setHorizontalAlignment(SwingConstants.LEFT);
@@ -386,26 +361,21 @@ public class AllItemsPanel extends JPanel {
             }
         });
 
-        // Column indices: 0:No., 1:Category, 2:Name, 3:Quantity, 4:Location, 5:Price, 6:Details
         TableColumnModel columnModel = table.getColumnModel();
-        columnModel.getColumn(0).setPreferredWidth(50);   // No. - smaller for just numbers
-        columnModel.getColumn(1).setPreferredWidth(120);  // Category
-        columnModel.getColumn(2).setPreferredWidth(150);  // Name
-        columnModel.getColumn(3).setPreferredWidth(80);   // Quantity - narrower for numbers
-        columnModel.getColumn(4).setPreferredWidth(130);  // Location
-        columnModel.getColumn(5).setPreferredWidth(80);   // Price
-        columnModel.getColumn(6).setPreferredWidth(467);  // Details
+        columnModel.getColumn(0).setPreferredWidth(50);
+        columnModel.getColumn(1).setPreferredWidth(120);
+        columnModel.getColumn(2).setPreferredWidth(150);
+        columnModel.getColumn(3).setPreferredWidth(80);
+        columnModel.getColumn(4).setPreferredWidth(130);
+        columnModel.getColumn(5).setPreferredWidth(80);
+        columnModel.getColumn(6).setPreferredWidth(467);
 
-        // Add alternating row colors
         table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
                                                            boolean isSelected, boolean hasFocus, int row, int column) {
-
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
                 if (!isSelected) {
-                    // Light blue for even rows, white for odd rows
                     c.setBackground(row % 2 == 0 ? new Color(240, 248, 255) : Color.WHITE);
                 }
 

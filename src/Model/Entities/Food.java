@@ -7,12 +7,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 public class Food extends Item{
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
-    private static final int EXPIRING_SOON_DAYS = 7;
-
     private String expiryDate;
     private boolean isCanned;
     private boolean isPerishable;
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+    private static final int EXPIRING_SOON_DAYS = 7;
 
     public Food(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, String location, String expiryDate, boolean isCanned, boolean isPerishable){
         super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.FOOD, location);
@@ -70,7 +69,7 @@ public class Food extends Item{
 
     public int getDaysUntilExpiry(){
         LocalDate expiry = getExpiryLocalDate();
-        if (expiry == null) return Integer.MAX_VALUE; 
+        if (expiry == null) return Integer.MAX_VALUE;
 
         long days = ChronoUnit.DAYS.between(LocalDate.now(), expiry);
 
@@ -81,15 +80,14 @@ public class Food extends Item{
     public String descriptionDetails(){
         String itemType = (getIsPerishable() ? "Perishable" : "Non-Perishable") + (getIsCanned() ? " (Canned)" : "");
         String status = isExpired() ? "EXPIRED" : (isExpiringSoon() ? "Expiring Soon" : "OK");
-        return super.descriptionDetails() +
-                String.format("Type: %s\nExpiry Date: %s\nStatus: %s (%d days left)",
+        if(getDaysUntilExpiry() > 0 ) return super.descriptionDetails() +  String.format("Type: %s\nExpiry Date: %s\nStatus: %s (%d days left)",
                         itemType, expiryDate, status, getDaysUntilExpiry());
+        return super.descriptionDetails() +  String.format("Type: %s\nExpiry Date: %s\nStatus: %s ",
+                itemType, expiryDate, status);
     }
 
     @Override
     public double calculateValue(){
         return getPurchasePrice() * getQuantity();
     }
-
 }
-

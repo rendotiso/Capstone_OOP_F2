@@ -3,15 +3,13 @@ package UI;
 import UI.Panel.*;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Dashboard extends JFrame {
-    // attributes
     private JButton homeButton, toolsButton, electronicsButton,
             miscellaneousButton, clothingButton, foodButton,
             helpButton, exitButton;
     private JPanel Panel, cardlayout;
+    private JLabel organizerLabel;
     private CardLayout cardLayoutManager;
 
     public Dashboard() {
@@ -25,6 +23,7 @@ public class Dashboard extends JFrame {
         setupCardLayout();
         addPanels();
         setupListeners();
+        loadAndSetIcon();
         setVisible(true);
     }
 
@@ -32,8 +31,6 @@ public class Dashboard extends JFrame {
         cardLayoutManager = new CardLayout();
         cardlayout.setLayout(cardLayoutManager);
     }
-
-    //SETTERS FOR NAME MUST IMPLEMENT
 
     private void addPanels() {
         AllItemsPanel viewAllPanel = new AllItemsPanel();
@@ -51,24 +48,39 @@ public class Dashboard extends JFrame {
         cardlayout.add(miscPanel, "MISCELLANEOUS");
         cardLayoutManager.show(cardlayout, "VIEW_ALL");
     }
+
+    private void loadAndSetIcon() {
+        ImageIcon loadedIcon;
+        java.net.URL imageUrl = getClass().getResource("Model/Images/Organizer.png");
+        System.out.println("Loading from classpath: " + imageUrl);
+
+        if (imageUrl != null) {
+            loadedIcon = new ImageIcon(imageUrl);
+            System.out.println("Icon loaded: " + loadedIcon.getIconWidth() + "x" + loadedIcon.getIconHeight());
+            organizerLabel.setIcon(loadedIcon);
+            organizerLabel.setText("");
+        } else {
+            System.out.println("ERROR: Image URL is null!");
+        }
+    }
+
     private void setupListeners() {
-        homeButton.addActionListener(e -> cardLayoutManager.show(cardlayout, "VIEW_ALL"));
+        homeButton.addActionListener(_ -> cardLayoutManager.show(cardlayout, "VIEW_ALL"));
         homeButton.setFocusable(false);
-        clothingButton.addActionListener(e -> cardLayoutManager.show(cardlayout, "CLOTHING"));
+        clothingButton.addActionListener(_ -> cardLayoutManager.show(cardlayout, "CLOTHING"));
         clothingButton.setFocusable(false);
-        electronicsButton.addActionListener(e -> cardLayoutManager.show(cardlayout, "ELECTRONICS"));
+        electronicsButton.addActionListener(_ -> cardLayoutManager.show(cardlayout, "ELECTRONICS"));
         electronicsButton.setFocusable(false);
-        foodButton.addActionListener(e -> cardLayoutManager.show(cardlayout, "FOOD"));
+        foodButton.addActionListener(_ -> cardLayoutManager.show(cardlayout, "FOOD"));
         foodButton.setFocusable(false);
-        toolsButton.addActionListener(e -> cardLayoutManager.show(cardlayout, "TOOLS"));
+        toolsButton.addActionListener(_ -> cardLayoutManager.show(cardlayout, "TOOLS"));
         toolsButton.setFocusable(false);
-        miscellaneousButton.addActionListener(e -> cardLayoutManager.show(cardlayout, "MISCELLANEOUS"));
+        miscellaneousButton.addActionListener(_ -> cardLayoutManager.show(cardlayout, "MISCELLANEOUS"));
         miscellaneousButton.setFocusable(false);
 
-        // bottom buttons
-        helpButton.addActionListener(e -> showHelp());
+        helpButton.addActionListener(_ -> showHelp());
         helpButton.setFocusable(false);
-        exitButton.addActionListener(e->System.exit(0));
+        exitButton.addActionListener(_ ->System.exit(0));
         exitButton.setFocusable(false);
     }
 
