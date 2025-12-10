@@ -37,7 +37,6 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
     }
 
     private void initClothingComponents() {
-        // Initialize clothing-specific components
         condition_field = new JTextField(8);
         fabrictype_field = new JTextField(8);
 
@@ -51,18 +50,31 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
     }
 
     private void setupClothingLayout() {
-        panel.setLayout(new GridBagLayout());
-        GridBagConstraints formGbc = new GridBagConstraints();
-        formGbc.insets = new Insets(5, 5, 5, 5);
-        formGbc.anchor = GridBagConstraints.WEST;
+        // Don't override the panel layout - it's already set in PanelAppearance
+        // Instead, we need to add our clothing-specific fields to the existing layout
 
-        int row = setupFormLayout(panel, formGbc);
+        // Get the constraints for adding to the panel
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(3, 4, 3, 4);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
 
-        addFormRow(panel, formGbc, condition_label, condition_field, row++);
-        addFormRow(panel, formGbc, fabrictype_label, fabrictype_field, row++);
-        addFormRow(panel, formGbc, size_label, size_combobox, row++);
+        // Add clothing fields after the base form fields
+        // We'll assume there are 6 base fields (0-5), so start at row 6
+        int startRow = 6;
 
-        setupDescriptionPanel(row, formGbc);
+        addFormRow(panel, gbc, condition_label, condition_field, startRow++);
+        addFormRow(panel, gbc, fabrictype_label, fabrictype_field, startRow++);
+        addFormRow(panel, gbc, size_label, size_combobox, startRow++);
+
+        // Update the description panel position
+        gbc.gridx = 0;
+        gbc.gridy = startRow;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weighty = 0.6;
+        panel.add(description_panel, gbc);
     }
 
     private void setupClothingAppearance() {
@@ -91,6 +103,10 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
         condition_field.setFont(fieldFont);
         fabrictype_field.setFont(fieldFont);
         size_combobox.setFont(fieldFont);
+
+        condition_field.setPreferredSize(new Dimension(110, 26));
+        fabrictype_field.setPreferredSize(new Dimension(110, 26));
+        size_combobox.setPreferredSize(new Dimension(110, 26));
     }
 
     //GETTERS
@@ -132,11 +148,12 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
 
         for (Item item : inventoryManager.getItemsByCategory(Category.CLOTHING)) {
             if (item instanceof Clothing clothing) {
+                // FIXED: Match ItemTable column order
                 itemTable.addRow(new Object[]{
                         clothing.getName(),
                         clothing.getQuantity(),
                         clothing.getLocation(),
-                        clothing.getPurchaseDate(),
+                        clothing.getVendor(),
                         clothing.getPurchasePrice(),
                         clothing.descriptionDetails()
                 });
@@ -179,11 +196,15 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
             return 0.0;
         }
         String cleaned = priceStr.replace("$", "").replace(",", "").trim();
-        return Double.parseDouble(cleaned);
+        try {
+            return Double.parseDouble(cleaned);
+        } catch (NumberFormatException e) {
+            return 0.0;
+        }
     }
 
-    private Model.Entities.Clothing createClothingFromForm() {
-        return new Model.Entities.Clothing(
+    private Clothing createClothingFromForm() {
+        return new Clothing(
                 getNameInput(),
                 getDescriptionInput(),
                 getQuantityInput(),
@@ -229,8 +250,8 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
             return false;
         }
 
-        if (getSizeInput().trim().isEmpty()) {
-            showError("Size Type cannot be empty!");
+        if (getSizeInput() == null || getSizeInput().trim().isEmpty()) {
+            showError("Size cannot be empty!");
             return false;
         }
 
@@ -239,7 +260,7 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
 
     private boolean validateDateField(String dateText) {
         if (!dateText.isEmpty() && !dateText.matches("\\d{2}/\\d{2}/\\d{4}")) {
-            showError("Purchase Date" + " must be in MM/DD/YYYY format");
+            showError("Purchase Date must be in MM/DD/YYYY format");
             return false;
         }
         return true;
@@ -249,14 +270,12 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
     private void addItem() {
         try {
             if (validateForm()) {
-                Model.Entities.Clothing clothing = createClothingFromForm();
+                Clothing clothing = createClothingFromForm();
                 inventoryManager.addItem(clothing);
                 loadItems();
                 clearForm();
                 showSuccess("Clothing item added successfully!");
             }
-        } catch (IOException e) {
-            showError("Error saving item: " + e.getMessage());
         } catch (Exception e) {
             showError("Error: " + e.getMessage());
         }
@@ -322,7 +341,7 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
             List<Item> clothingItems = inventoryManager.getItemsByCategory(Category.CLOTHING);
 
             if (selectedRow < clothingItems.size()) {
-                Model.Entities.Clothing clothing = (Clothing) clothingItems.get(selectedRow);
+                Clothing clothing = (Clothing) clothingItems.get(selectedRow);
                 populateForm(clothing);
             }
         } catch (Exception e) {
@@ -330,11 +349,11 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
         }
     }
 
-    private void populateForm(Model.Entities.Clothing clothing) {
+    private void populateForm(Clothing clothing) {
         setNameInput(clothing.getName());
         setQuantityInput(clothing.getQuantity());
         setVendorInput(clothing.getVendor());
-        setPriceInput(String.valueOf(clothing.getPurchasePrice()));
+        setPriceInput(String.format("$%,.2f", clothing.getPurchasePrice())); // Format price
         setPurchaseDateInput(clothing.getPurchaseDate());
         setConditionInput(clothing.getCondition());
         setFabrictypeInput(clothing.getFabricType());

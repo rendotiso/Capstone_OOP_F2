@@ -50,17 +50,15 @@ public class Dashboard extends JFrame {
     }
 
     private void loadAndSetIcon() {
-        ImageIcon loadedIcon;
-        java.net.URL imageUrl = getClass().getResource("Model/Images/Organizer.png");
-        System.out.println("Loading from classpath: " + imageUrl);
-
-        if (imageUrl != null) {
+        try{
+            ImageIcon loadedIcon;
+            java.net.URL imageUrl = getClass().getResource("Model/Images/Organizer.png");
+            assert imageUrl != null;
             loadedIcon = new ImageIcon(imageUrl);
-            System.out.println("Icon loaded: " + loadedIcon.getIconWidth() + "x" + loadedIcon.getIconHeight());
             organizerLabel.setIcon(loadedIcon);
             organizerLabel.setText("");
-        } else {
-            System.out.println("ERROR: Image URL is null!");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 

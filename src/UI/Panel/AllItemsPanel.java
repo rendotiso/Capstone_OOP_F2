@@ -71,7 +71,7 @@ public class AllItemsPanel extends JPanel {
         totalDisplay.setBackground(Color.WHITE);
 
         JLabel totalText = new JLabel("TOTAL: ");
-        totalText.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        totalText.setFont(new Font("Segoe UI", Font.BOLD, 14));
         totalText.setForeground(new Color(70, 130, 180));
 
         totalValueLabel = new JLabel("$0.00");
@@ -112,7 +112,7 @@ public class AllItemsPanel extends JPanel {
         double total = 0.0;
 
         for (Item item : allItems) {
-            total += item.getPurchasePrice() * item.getQuantity();
+            total += item.calculateValue();
         }
 
         return total;

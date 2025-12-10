@@ -29,8 +29,8 @@ public class FileHandler {
     }
 
     public List<Item> loadData() throws IOException {
-
         List<Item> items = new ArrayList<>();
+
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             reader.readLine();
             String line;
