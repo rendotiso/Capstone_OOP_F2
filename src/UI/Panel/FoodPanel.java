@@ -18,7 +18,7 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
     private JTextField expiryDate_field;
     private JLabel expiryDate_label, perish_label, canned_label;
     private JPanel perishPanel, cannedPanel;
-    private JCheckBox perishYes, perishNo, cannedYes, cannedNo;
+    private JCheckBox perishCheckBox, cannedCheckBox;
     private final InventoryManager inventoryManager;
     private static final String EXPIRY_DATE_PLACEHOLDER = "MM/DD/YYYY";
     private static final String[] FOOD_LOCATIONS = {
@@ -49,33 +49,22 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
     private void initFoodComponents() {
         expiryDate_field = new JTextField(8);
         expiryDate_label = new JLabel("EXPIRY DATE:");
-        perish_label = new JLabel("PERISHABLE?");
-        canned_label = new JLabel("CANNED GOOD?");
+        perish_label = new JLabel("PERISHABLE:");
+        canned_label = new JLabel("CANNED GOOD:");
 
         perishPanel = new JPanel();
-        perishYes = new JCheckBox("YES");
-        perishNo = new JCheckBox("NO");
-        ButtonGroup perishGroup = new ButtonGroup();
-        perishGroup.add(perishYes);
-        perishGroup.add(perishNo);
-        perishNo.setSelected(true);
+        perishCheckBox = new JCheckBox();
 
         cannedPanel = new JPanel();
-        cannedYes = new JCheckBox("YES");
-        cannedNo = new JCheckBox("NO");
-        ButtonGroup cannedGroup = new ButtonGroup();
-        cannedGroup.add(cannedYes);
-        cannedGroup.add(cannedNo);
-        cannedNo.setSelected(true);
+        cannedCheckBox = new JCheckBox();
+
         location_combobox.removeAllItems();
         for (String location : FOOD_LOCATIONS) {
             location_combobox.addItem(location);
         }
 
-        perishYes.setFocusable(false);
-        perishNo.setFocusable(false);
-        cannedYes.setFocusable(false);
-        cannedNo.setFocusable(false);
+        perishCheckBox.setFocusable(false);
+        cannedCheckBox.setFocusable(false);
     }
 
     private void setupFoodLayout() {
@@ -87,14 +76,14 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
         int row = setupFormLayout(panel, formGbc);
 
         addFormRow(panel, formGbc, expiryDate_label, expiryDate_field, row++);
-        addRadioButtonRow(panel, formGbc, perish_label, perishPanel, perishYes, perishNo, row++);
-        addRadioButtonRow(panel, formGbc, canned_label, cannedPanel, cannedYes, cannedNo, row++);
+        addCheckBoxRow(panel, formGbc, perish_label, perishPanel, perishCheckBox, row++);
+        addCheckBoxRow(panel, formGbc, canned_label, cannedPanel, cannedCheckBox, row++);
 
         setupDescriptionPanel(row, formGbc);
     }
 
-    private void addRadioButtonRow(JPanel panel, GridBagConstraints formGbc, JLabel label,
-                                   JPanel radioPanel, JCheckBox yesButton, JCheckBox noButton, int row) {
+    private void addCheckBoxRow(JPanel panel, GridBagConstraints formGbc, JLabel label,
+                                JPanel checkBoxPanel, JCheckBox checkBox, int row) {
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
@@ -106,10 +95,9 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
         formGbc.weightx = 1.0;
         formGbc.anchor = GridBagConstraints.WEST;
 
-        radioPanel.setLayout(new GridLayout(1, 2, 20, 0));
-        radioPanel.add(yesButton);
-        radioPanel.add(noButton);
-        panel.add(radioPanel, formGbc);
+        checkBoxPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        checkBoxPanel.add(checkBox);
+        panel.add(checkBoxPanel, formGbc);
     }
 
     private void setupFoodAppearance() {
@@ -119,16 +107,12 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
         expiryDate_field.setBackground(bg);
         perishPanel.setBackground(bg);
         cannedPanel.setBackground(bg);
-        perishYes.setBackground(bg);
-        perishNo.setBackground(bg);
-        cannedYes.setBackground(bg);
-        cannedNo.setBackground(bg);
+        perishCheckBox.setBackground(bg);
+        cannedCheckBox.setBackground(bg);
 
         expiryDate_field.setForeground(black);
-        perishYes.setForeground(black);
-        perishNo.setForeground(black);
-        cannedYes.setForeground(black);
-        cannedNo.setForeground(black);
+        perishCheckBox.setForeground(black);
+        cannedCheckBox.setForeground(black);
 
         expiryDate_label.setForeground(black);
         perish_label.setForeground(black);
@@ -136,17 +120,15 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
 
         Font labelFont = new Font("Segoe UI", Font.BOLD, 14);
         Font fieldFont = new Font("Segoe UI", Font.PLAIN, 14);
-        Font radioFont = new Font("Segoe UI", Font.BOLD, 12);
+        Font checkboxFont = new Font("Segoe UI", Font.BOLD, 12);
 
         expiryDate_label.setFont(labelFont);
         perish_label.setFont(labelFont);
         canned_label.setFont(labelFont);
 
         expiryDate_field.setFont(fieldFont);
-        perishYes.setFont(radioFont);
-        perishNo.setFont(radioFont);
-        cannedYes.setFont(radioFont);
-        cannedNo.setFont(radioFont);
+        perishCheckBox.setFont(checkboxFont);
+        cannedCheckBox.setFont(checkboxFont);
     }
 
     private void setupExpiryPlaceholder() {
@@ -185,11 +167,11 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
     }
 
     public boolean isPerishable() {
-        return perishYes.isSelected();
+        return perishCheckBox.isSelected();
     }
 
     public boolean isCannedGood() {
-        return cannedYes.isSelected();
+        return cannedCheckBox.isSelected();
     }
 
     // SETTERS
@@ -206,19 +188,11 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
     }
 
     public void setPerishable(boolean isPerishable) {
-        if (isPerishable) {
-            perishYes.setSelected(true);
-        } else {
-            perishNo.setSelected(true);
-        }
+        perishCheckBox.setSelected(isPerishable);
     }
 
     public void setCannedGood(boolean isCannedGood) {
-        if (isCannedGood) {
-            cannedYes.setSelected(true);
-        } else {
-            cannedNo.setSelected(true);
-        }
+        cannedCheckBox.setSelected(isCannedGood);
     }
 
     // METHODS
@@ -333,7 +307,6 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
         if (validateDateField(getPurchaseDateInput(), "Purchase Date")) return false;
         if (validateDateField(getExpiryDateInput(), "Expiry Date")) return false;
 
-        // Check if expiry date is in the past
         if (isExpired(getExpiryDateInput())) {
             showError("Warning: This item has already expired!");
             int confirm = JOptionPane.showConfirmDialog(this,
@@ -366,7 +339,7 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
 
     private boolean isExpired(String dateStr) {
         if (dateStr == null || dateStr.trim().isEmpty()) {
-            return false; // No expiry date means not expired
+            return false;
         }
 
         try {
@@ -374,8 +347,6 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
             LocalDate today = LocalDate.now();
             return expiryDate.isBefore(today);
         } catch (DateTimeParseException e) {
-            // If we can't parse it, assume it's not expired
-            // The validation should have caught invalid dates already
             return false;
         }
     }
