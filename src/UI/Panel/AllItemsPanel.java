@@ -58,10 +58,10 @@ public class AllItemsPanel extends JPanel {
     private JPanel createTotalPanel() {
         JPanel totalPanel = new JPanel(new BorderLayout());
         totalPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        totalPanel.setBackground(new Color(245, 245, 245));
+        totalPanel.setBackground(new Color(238, 238, 238));
 
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        rightPanel.setBackground(new Color(245, 245, 245));
+        rightPanel.setBackground(new Color(238, 238, 238));
 
         JPanel totalDisplay = new JPanel(new BorderLayout(10, 0));
         totalDisplay.setBorder(BorderFactory.createCompoundBorder(
