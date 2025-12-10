@@ -188,12 +188,12 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
                 getDescriptionInput(),
                 getQuantityInput(),
                 parsePrice(getPriceInput()),
+                getPurchaseDateInput(),
                 getVendorInput(),
                 getLocationInput(),
                 getConditionInput(),
                 getFabricTypeInput(),
-                getSizeInput(),
-                getPurchaseDateInput()
+                getSizeInput()
         );
     }
 

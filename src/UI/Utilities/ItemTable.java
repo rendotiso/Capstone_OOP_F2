@@ -44,7 +44,7 @@ public class ItemTable extends JScrollPane {
         table.setFillsViewportHeight(true);
 
         setViewportView(table);
-        setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     }
 
@@ -68,12 +68,12 @@ public class ItemTable extends JScrollPane {
         // Set column widths - ADJUSTED FOR COMPACT LAYOUT
         TableColumnModel columnModel = table.getColumnModel();
         if (table.getColumnCount() >= 6) {
-            columnModel.getColumn(0).setPreferredWidth(90);
+            columnModel.getColumn(0).setPreferredWidth(80);
             columnModel.getColumn(1).setPreferredWidth(50);
             columnModel.getColumn(2).setPreferredWidth(95);
             columnModel.getColumn(3).setPreferredWidth(90);
             columnModel.getColumn(4).setPreferredWidth(70);
-            columnModel.getColumn(5).setPreferredWidth(155);
+            columnModel.getColumn(5).setPreferredWidth(157);
         }
     }
 
@@ -212,7 +212,9 @@ public class ItemTable extends JScrollPane {
             } else if (colName.equalsIgnoreCase("Qty") ||
                     colName.equalsIgnoreCase("Quantity") ||
                     colName.equalsIgnoreCase("No.") ||
-                    colName.equalsIgnoreCase("Number")) {
+                    colName.equalsIgnoreCase("Number") ||
+                    colName.equalsIgnoreCase("PDate") ||
+                    colName.equalsIgnoreCase("Purchase Date")) {
                 // Quantity/Number columns - perfect centering (JLabel)
                 table.getColumnModel().getColumn(i).setCellRenderer(numberRenderer);
             } else {

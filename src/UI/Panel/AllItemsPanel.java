@@ -368,7 +368,7 @@ public class AllItemsPanel extends JPanel {
         columnModel.getColumn(3).setPreferredWidth(80);
         columnModel.getColumn(4).setPreferredWidth(130);
         columnModel.getColumn(5).setPreferredWidth(120);
-        columnModel.getColumn(6).setPreferredWidth(427);
+        columnModel.getColumn(6).setPreferredWidth(413);
 
         table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
