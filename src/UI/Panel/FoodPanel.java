@@ -49,8 +49,8 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
     private void initFoodComponents() {
         expiryDate_field = new JTextField(8);
         expiryDate_label = new JLabel("EXPIRY DATE:");
-        perish_label = new JLabel("PERISHABLE:");
-        canned_label = new JLabel("CANNED GOOD:");
+        perish_label = new JLabel("PERISHABLE?");
+        canned_label = new JLabel("CANNED GOOD?");
 
         perishPanel = new JPanel();
         perishCheckBox = new JCheckBox();
