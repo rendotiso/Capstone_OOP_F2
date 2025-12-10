@@ -18,7 +18,7 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
     private JTextField expiryDate_field;
     private JLabel expiryDate_label, perish_label, canned_label;
     private JPanel perishPanel, cannedPanel;
-    private JRadioButton perishYes, perishNo, cannedYes, cannedNo;
+    private JCheckBox perishYes, perishNo, cannedYes, cannedNo;
     private final InventoryManager inventoryManager;
     private static final String EXPIRY_DATE_PLACEHOLDER = "MM/DD/YYYY";
     private static final String[] FOOD_LOCATIONS = {
@@ -53,16 +53,16 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
         canned_label = new JLabel("CANNED GOOD?");
 
         perishPanel = new JPanel();
-        perishYes = new JRadioButton("YES");
-        perishNo = new JRadioButton("NO");
+        perishYes = new JCheckBox("YES");
+        perishNo = new JCheckBox("NO");
         ButtonGroup perishGroup = new ButtonGroup();
         perishGroup.add(perishYes);
         perishGroup.add(perishNo);
         perishNo.setSelected(true);
 
         cannedPanel = new JPanel();
-        cannedYes = new JRadioButton("YES");
-        cannedNo = new JRadioButton("NO");
+        cannedYes = new JCheckBox("YES");
+        cannedNo = new JCheckBox("NO");
         ButtonGroup cannedGroup = new ButtonGroup();
         cannedGroup.add(cannedYes);
         cannedGroup.add(cannedNo);
@@ -94,7 +94,7 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
     }
 
     private void addRadioButtonRow(JPanel panel, GridBagConstraints formGbc, JLabel label,
-                                   JPanel radioPanel, JRadioButton yesButton, JRadioButton noButton, int row) {
+                                   JPanel radioPanel, JCheckBox yesButton, JCheckBox noButton, int row) {
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.fill = GridBagConstraints.NONE;
         formGbc.weightx = 0;
