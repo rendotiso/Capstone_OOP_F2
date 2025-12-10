@@ -440,21 +440,21 @@ public class AllItemsPanel extends JPanel {
 
                     return textArea;
                 }else if (column == 7) {
-                    if (value instanceof Double) {
-                        double v = (Double) value;
-                        priceRenderer.setText(String.format("$%,.2f", v));
-                    } else if (value instanceof Number) {
-                        double v = ((Number) value).doubleValue();
-                        priceRenderer.setText(String.format("$%,.2f", v));
-                    } else if (value instanceof String) {
-                        try {
-                            double val = Double.parseDouble((String) value);
-                            priceRenderer.setText(String.format("$%,.2f", val));
-                        } catch (NumberFormatException e) {
-                            priceRenderer.setText(value.toString());
+                    switch (value) {
+                        case Double v -> priceRenderer.setText(String.format("$%,.2f", v));
+                        case Number number -> {
+                            double v = number.doubleValue();
+                            priceRenderer.setText(String.format("$%,.2f", v));
                         }
-                    } else {
-                        priceRenderer.setText(value != null ? value.toString() : "$0.00");
+                        case String s -> {
+                            try {
+                                double val = Double.parseDouble(s);
+                                priceRenderer.setText(String.format("$%,.2f", val));
+                            } catch (NumberFormatException e) {
+                                priceRenderer.setText(value.toString());
+                            }
+                        }
+                        default -> priceRenderer.setText(value.toString());
                     }
 
                     return priceRenderer.getTableCellRendererComponent(
