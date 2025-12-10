@@ -73,7 +73,7 @@ public class ItemTable extends JScrollPane {
             columnModel.getColumn(2).setPreferredWidth(95);
             columnModel.getColumn(3).setPreferredWidth(90);
             columnModel.getColumn(4).setPreferredWidth(70);
-            columnModel.getColumn(5).setPreferredWidth(157);
+            columnModel.getColumn(5).setPreferredWidth(158);
         }
     }
 
