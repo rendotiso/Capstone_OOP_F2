@@ -2,6 +2,8 @@ package UI.Panel;
 
 import UI.Utilities.ItemTable;
 import Model.Data.InventoryManager;
+
+import java.text.NumberFormat;
 import java.util.List;
 import Model.Entities.Item;
 import javax.swing.*;
@@ -10,13 +12,15 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
+import java.util.Locale;
 
 public class AllItemsPanel extends JPanel {
     private JTextField searchField;
     private JButton searchButton, clearButton, refreshButton, deleteButton;
     private final ItemTable itemTable;
     private final InventoryManager inventoryManager;
-    private int selectedIndex = -1; // Track selected row like in Electronics
+    private int selectedIndex = -1;
+    private JLabel totalValueLabel;
 
     public AllItemsPanel() {
         inventoryManager = InventoryManager.getInstance();
@@ -24,12 +28,17 @@ public class AllItemsPanel extends JPanel {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        String[] columnNames = {"No.", "Category", "Name", "Quantity", "Location", "Price", "Details"};
+        String[] columnNames = {"No.", "Category", "Name", "Quantity", "Location", "Price", "Details", "Value"};
         itemTable = new ItemTable(columnNames);
-        itemTable.setColumnWidths(50, 100, 150, 60, 100, 80, 250);
+        itemTable.setColumnWidths(50, 100, 150, 60, 100, 80, 170, 80);
         JPanel searchPanel = createSearchPanel();
         add(searchPanel, BorderLayout.NORTH);
         add(itemTable, BorderLayout.CENTER);
+
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(itemTable, BorderLayout.CENTER);
+        centerPanel.add(createTotalPanel(), BorderLayout.SOUTH);
+        add(centerPanel, BorderLayout.CENTER);
 
         // Styling
         searchPanel.setBackground(new Color(70, 130, 180));
@@ -43,6 +52,70 @@ public class AllItemsPanel extends JPanel {
         setupListeners();
         setupTableSelectionListener(); // Add table selection listener
         loadItems();
+        updateTotalValue();
+    }
+
+    private JPanel createTotalPanel() {
+        JPanel totalPanel = new JPanel(new BorderLayout());
+        totalPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        totalPanel.setBackground(new Color(245, 245, 245));
+
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        rightPanel.setBackground(new Color(245, 245, 245));
+
+        JPanel totalDisplay = new JPanel(new BorderLayout(10, 0));
+        totalDisplay.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.LIGHT_GRAY),
+                BorderFactory.createEmptyBorder(8, 15, 8, 15)
+        ));
+        totalDisplay.setBackground(Color.WHITE);
+
+        JLabel totalText = new JLabel("TOTAL: ");
+        totalText.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        totalText.setForeground(new Color(70, 130, 180));
+
+        totalValueLabel = new JLabel("$0.00");
+        totalValueLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        totalValueLabel.setForeground(new Color(0, 100, 0));
+
+        totalValueLabel.putClientProperty("html.disable", Boolean.TRUE);
+
+        totalDisplay.add(totalText, BorderLayout.WEST);
+        totalDisplay.add(totalValueLabel, BorderLayout.CENTER);
+
+        rightPanel.add(totalDisplay);
+        totalPanel.add(rightPanel, BorderLayout.EAST);
+
+        return totalPanel;
+    }
+
+    private void updateTotalValue() {
+        double currentTotal = calculateTotalValue();
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
+        String formattedValue = currencyFormat.format(currentTotal);
+        totalValueLabel.setText(formattedValue);
+
+        if (currentTotal > 10000) {
+            totalValueLabel.setForeground(new Color(0, 128, 0));
+        } else if (currentTotal > 1000) {
+            totalValueLabel.setForeground(new Color(0, 100, 0));
+        } else {
+            totalValueLabel.setForeground(new Color(139, 0, 0));
+        }
+
+        totalValueLabel.getParent().revalidate();
+        totalValueLabel.getParent().repaint();
+    }
+
+    private double calculateTotalValue() {
+        List<Item> allItems = inventoryManager.getAllItems();
+        double total = 0.0;
+
+        for (Item item : allItems) {
+            total += item.getPurchasePrice() * item.getQuantity();
+        }
+
+        return total;
     }
 
     private JPanel createSearchPanel() {
@@ -133,6 +206,14 @@ public class AllItemsPanel extends JPanel {
                         "No Results", JOptionPane.INFORMATION_MESSAGE);
             }
             updateTableWithItems(filteredItems);
+
+            double filteredTotal = filteredItems.stream()
+                    .mapToDouble(item -> item.getPurchasePrice() * item.getQuantity())
+                    .sum();
+
+            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
+            totalValueLabel.setText(currencyFormat.format(filteredTotal));
+            totalValueLabel.setForeground(new Color(70, 130, 180));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error searching items: " + e.getMessage(),
                     "Search Error", JOptionPane.ERROR_MESSAGE);
@@ -203,6 +284,8 @@ public class AllItemsPanel extends JPanel {
         List<Item> allItems = inventoryManager.getAllItems();
         int itemNo = 1;
         for (Item item : allItems) {
+            double itemValue = item.getPurchasePrice() * item.getQuantity();
+
             Object[] rowData = new Object[]{
                     itemNo++,
                     item.getCategory() != null ? item.getCategory().toString() : "",
@@ -210,12 +293,14 @@ public class AllItemsPanel extends JPanel {
                     item.getQuantity(),
                     item.getLocation(),
                     item.getPurchasePrice(),
-                    item.descriptionDetails()
+                    item.descriptionDetails(),
+                    itemValue
             };
             itemTable.addRow(rowData);
         }
 
         itemTable.adjustRowHeights();
+        updateTotalValue();
     }
 
     private void updateTableWithItems(List<Item> items) {
@@ -233,6 +318,8 @@ public class AllItemsPanel extends JPanel {
     }
 
     private Object[] createTableRow(Item item, int itemNo) {
+        double itemValue = item.getPurchasePrice() * item.getQuantity();
+
         return new Object[]{
                 itemNo,
                 item.getCategory() != null ? item.getCategory().toString() : "",
@@ -240,7 +327,8 @@ public class AllItemsPanel extends JPanel {
                 item.getQuantity(),
                 item.getLocation(),
                 item.getPurchasePrice(),
-                item.descriptionDetails()
+                item.descriptionDetails(),
+                itemValue
         };
     }
 
@@ -351,6 +439,26 @@ public class AllItemsPanel extends JPanel {
                     }
 
                     return textArea;
+                }else if (column == 7) {
+                    if (value instanceof Double) {
+                        double v = (Double) value;
+                        priceRenderer.setText(String.format("$%,.2f", v));
+                    } else if (value instanceof Number) {
+                        double v = ((Number) value).doubleValue();
+                        priceRenderer.setText(String.format("$%,.2f", v));
+                    } else if (value instanceof String) {
+                        try {
+                            double val = Double.parseDouble((String) value);
+                            priceRenderer.setText(String.format("$%,.2f", val));
+                        } catch (NumberFormatException e) {
+                            priceRenderer.setText(value.toString());
+                        }
+                    } else {
+                        priceRenderer.setText(value != null ? value.toString() : "$0.00");
+                    }
+
+                    return priceRenderer.getTableCellRendererComponent(
+                            table, value, isSelected, hasFocus, row, column);
                 }
                 else {
                     Component comp = defaultRenderer.getTableCellRendererComponent(
@@ -368,7 +476,8 @@ public class AllItemsPanel extends JPanel {
         columnModel.getColumn(3).setPreferredWidth(80);
         columnModel.getColumn(4).setPreferredWidth(130);
         columnModel.getColumn(5).setPreferredWidth(120);
-        columnModel.getColumn(6).setPreferredWidth(413);
+        columnModel.getColumn(6).setPreferredWidth(313);
+        columnModel.getColumn(7).setPreferredWidth(100);
 
         table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
