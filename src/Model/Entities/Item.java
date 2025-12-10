@@ -74,7 +74,7 @@ public abstract class Item {
         if(purchaseDate == null || purchaseDate.trim().isEmpty()){
             purchaseDate = "Unknown";
         }
-        return String.format("%s\n---------------------------------------------\nPurchase Date: %s\n", description, purchaseDate);
+        return String.format("%s\n------------------------\nVendor: %s\n", description, vendor);
     }
 
     //ABSTRACT METHODS

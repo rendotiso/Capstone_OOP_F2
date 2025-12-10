@@ -8,13 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// This Class handles the CRUD operations ; ensure usage of Exception Handling
 public class InventoryManager {
     private static InventoryManager instance;
     private List<Item> items;
     private final FileHandler fileHandler;
 
-    // Make constructor private for singleton pattern
+
     private InventoryManager() {
         items = new ArrayList<>();
         fileHandler = new FileHandler();
@@ -56,13 +55,13 @@ public class InventoryManager {
             throw new IllegalArgumentException("Updated item cannot be null");
         }
         if (index >= 0 && index < items.size()) {
-            items.set(index, item);  // This REPLACES the item at that index
+            items.set(index, item);
             savetoFile();
         }
     }
 
     public List<Item> getAllItems() {
-        return new ArrayList<>(items); // Return a copy to prevent external modification
+        return new ArrayList<>(items);
     }
 
     public List<Item> getItemsByCategory(Category category) {
@@ -85,6 +84,7 @@ public class InventoryManager {
                 item.getPurchaseDate().toLowerCase().contains(term) ||
                 item.getCategory().toString().toLowerCase().contains(term);
     }
+
     //HELPER
     private void savetoFile() {
         try {
@@ -119,8 +119,4 @@ public class InventoryManager {
         return filteredItems;
     }
 
-    // Optional: Method to clear the singleton instance (useful for testing)
-    public static void resetInstance() {
-        instance = null;
-    }
 }
