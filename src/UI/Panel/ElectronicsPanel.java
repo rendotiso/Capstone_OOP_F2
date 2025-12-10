@@ -182,7 +182,7 @@ public class ElectronicsPanel extends PanelMaintainableAppearance implements Pan
                         electronic.getName(),
                         electronic.getQuantity(),
                         electronic.getLocation(),
-                        electronic.getVendor(),
+                        electronic.getPurchaseDate(),
                         electronic.getPurchasePrice(),
                         electronic.descriptionDetails()
                 });

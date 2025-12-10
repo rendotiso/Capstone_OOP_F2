@@ -3,13 +3,14 @@ package UI.Utilities;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 
 public class ItemTable extends JScrollPane {
     private final JTable table;
     private final DefaultTableModel tableModel;
-    private static final String[] DEFAULT_COLUMN_NAMES = {"Name", "Qty", "Location", "Vendor", "Price", "Details"};
+    private static final String[] DEFAULT_COLUMN_NAMES = {"Name", "Qty", "Location", "PDate", "Price", "Details"};
 
     public ItemTable() {
         this(DEFAULT_COLUMN_NAMES);
@@ -69,15 +70,72 @@ public class ItemTable extends JScrollPane {
         if (table.getColumnCount() >= 6) {
             columnModel.getColumn(0).setPreferredWidth(90);
             columnModel.getColumn(1).setPreferredWidth(50);
-            columnModel.getColumn(2).setPreferredWidth(80);
-            columnModel.getColumn(3).setPreferredWidth(80);
-            columnModel.getColumn(4).setPreferredWidth(60);
-            columnModel.getColumn(5).setPreferredWidth(240);
+            columnModel.getColumn(2).setPreferredWidth(95);
+            columnModel.getColumn(3).setPreferredWidth(90);
+            columnModel.getColumn(4).setPreferredWidth(70);
+            columnModel.getColumn(5).setPreferredWidth(155);
         }
     }
 
     private void setupTableRenderers() {
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer() {
+        // 1. Renderer for Price column ONLY - with word wrapping
+        TableCellRenderer priceRenderer = new TableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                                                           boolean isSelected, boolean hasFocus,
+                                                           int row, int column) {
+
+                JTextArea textArea = new JTextArea();
+                textArea.setLineWrap(true);           // Word wrapping for Price
+                textArea.setWrapStyleWord(true);      // Wrap at word boundaries
+                textArea.setFont(table.getFont());
+                textArea.setOpaque(true);
+                textArea.setAlignmentX(Component.CENTER_ALIGNMENT); // Try to center
+
+                if (isSelected) {
+                    textArea.setForeground(table.getSelectionForeground());
+                    textArea.setBackground(table.getSelectionBackground());
+                } else {
+                    textArea.setForeground(table.getForeground());
+                    textArea.setBackground(table.getBackground());
+                }
+
+                // Format price with commas and 2 decimal places
+                if (value instanceof Double) {
+                    textArea.setText(String.format("$%,.2f", (Double) value));
+                } else if (value != null) {
+                    textArea.setText(value.toString());
+                } else {
+                    textArea.setText("");
+                }
+
+                textArea.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+
+                // Wrap in panel for better centering attempt
+                JPanel panel = new JPanel(new BorderLayout());
+                panel.setOpaque(true);
+                if (isSelected) {
+                    panel.setBackground(table.getSelectionBackground());
+                } else {
+                    panel.setBackground(table.getBackground());
+                }
+                panel.add(textArea, BorderLayout.CENTER);
+
+                // Adjust row height (though Price rarely needs it)
+                int cWidth = table.getColumnModel().getColumn(column).getWidth();
+                textArea.setSize(new Dimension(cWidth, Integer.MAX_VALUE));
+                int prefH = textArea.getPreferredSize().height;
+
+                if (table.getRowHeight(row) < prefH) {
+                    table.setRowHeight(row, prefH);
+                }
+
+                return panel;
+            }
+        };
+
+// 2. Renderer for Quantity/Number columns - JLabel for perfect centering
+        DefaultTableCellRenderer numberRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
                                                            boolean isSelected, boolean hasFocus,
@@ -86,14 +144,15 @@ public class ItemTable extends JScrollPane {
                         isSelected, hasFocus, row, column);
 
                 ((JLabel) c).setHorizontalAlignment(SwingConstants.CENTER);
-                ((JLabel) c).setVerticalAlignment(SwingConstants.CENTER);
+                ((JLabel) c).setVerticalAlignment(SwingConstants.TOP);
 
                 // Set padding
-                setBorder(BorderFactory.createEmptyBorder(4, 2, 4, 2));
+                setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
-                if (value instanceof Double) {
-                    setText(String.format("$%.2f", (Double) value));
-                } else if (value instanceof Integer || value instanceof Long) {
+                // Format with commas for large numbers
+                if (value instanceof Integer || value instanceof Long) {
+                    setText(String.format("%,d", ((Number) value).intValue()));
+                } else if (value != null) {
                     setText(value.toString());
                 }
 
@@ -101,36 +160,16 @@ public class ItemTable extends JScrollPane {
             }
         };
 
-        DefaultTableCellRenderer qtyRenderer = new DefaultTableCellRenderer() {
+// 3. Renderer for text columns - word wrapping
+        TableCellRenderer textRenderer = new TableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
                                                            boolean isSelected, boolean hasFocus,
                                                            int row, int column) {
-                Component c = super.getTableCellRendererComponent(table, value,
-                        isSelected, hasFocus, row, column);
 
-                ((JLabel) c).setHorizontalAlignment(SwingConstants.CENTER);
-                ((JLabel) c).setVerticalAlignment(SwingConstants.CENTER);
-
-                setBorder(BorderFactory.createEmptyBorder(4, 1, 4, 1));
-
-                if (value != null) {
-                    setText(value.toString());
-                }
-
-                return c;
-            }
-        };
-
-        // Custom renderer for text columns with word wrapping
-        DefaultTableCellRenderer wrapRenderer = new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                                                           boolean isSelected, boolean hasFocus,
-                                                           int row, int column) {
                 JTextArea textArea = new JTextArea();
-                textArea.setLineWrap(true);
-                textArea.setWrapStyleWord(true);
+                textArea.setLineWrap(true);           // Word wrapping
+                textArea.setWrapStyleWord(true);      // Wrap at word boundaries
                 textArea.setFont(table.getFont());
                 textArea.setOpaque(true);
 
@@ -144,28 +183,41 @@ public class ItemTable extends JScrollPane {
 
                 if (value != null) {
                     textArea.setText(value.toString());
+                } else {
+                    textArea.setText("");
                 }
 
-                // Set padding
                 textArea.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+
+                // Adjust row height for wrapped text
+                int cWidth = table.getColumnModel().getColumn(column).getWidth();
+                textArea.setSize(new Dimension(cWidth, Integer.MAX_VALUE));
+                int prefH = textArea.getPreferredSize().height;
+
+                if (table.getRowHeight(row) < prefH) {
+                    table.setRowHeight(row, prefH);
+                }
 
                 return textArea;
             }
         };
 
-        // Apply renderers to appropriate columns
+// Apply renderers
         for (int i = 0; i < table.getColumnCount(); i++) {
             String colName = table.getColumnName(i);
 
-            if (colName.equalsIgnoreCase("Qty") || colName.equalsIgnoreCase("Quantity")) {
-                table.getColumnModel().getColumn(i).setCellRenderer(qtyRenderer);
-            }
-            // Apply center renderer to Price column
-            else if (colName.equalsIgnoreCase("Price")) {
-                table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+            if (colName.equalsIgnoreCase("Price") || colName.equalsIgnoreCase("Pri")) {
+                // Price column - word wrapping with centering attempt
+                table.getColumnModel().getColumn(i).setCellRenderer(priceRenderer);
+            } else if (colName.equalsIgnoreCase("Qty") ||
+                    colName.equalsIgnoreCase("Quantity") ||
+                    colName.equalsIgnoreCase("No.") ||
+                    colName.equalsIgnoreCase("Number")) {
+                // Quantity/Number columns - perfect centering (JLabel)
+                table.getColumnModel().getColumn(i).setCellRenderer(numberRenderer);
             } else {
-                // Apply wrap renderer to text columns (Name, Location, Vendor, Details)
-                table.getColumnModel().getColumn(i).setCellRenderer(wrapRenderer);
+                // Text columns (Name, Location, Vendor, Details) - word wrapping
+                table.getColumnModel().getColumn(i).setCellRenderer(textRenderer);
             }
         }
 

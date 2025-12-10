@@ -216,7 +216,7 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
                         food.getName(),
                         food.getQuantity(),
                         food.getLocation(),
-                        food.getVendor(),
+                        food.getPurchaseDate(),
                         food.getPurchasePrice(),
                         food.descriptionDetails()
                 });

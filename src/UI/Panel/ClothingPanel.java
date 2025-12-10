@@ -128,7 +128,6 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
     @Override
     public void loadItems() {
         itemTable.clearTable();
-
         inventoryManager.loadFromFile();
 
         for (Item item : inventoryManager.getItemsByCategory(Category.CLOTHING)) {
@@ -137,7 +136,7 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
                         clothing.getName(),
                         clothing.getQuantity(),
                         clothing.getLocation(),
-                        clothing.getVendor(),
+                        clothing.getPurchaseDate(),
                         clothing.getPurchasePrice(),
                         clothing.descriptionDetails()
                 });

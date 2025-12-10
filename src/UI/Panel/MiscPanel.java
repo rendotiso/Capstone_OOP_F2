@@ -185,7 +185,7 @@ public class MiscPanel extends PanelAppearance implements PanelActionListeners {
                         misc.getName(),
                         misc.getQuantity(),
                         misc.getLocation(),
-                        misc.getVendor(),
+                        misc.getPurchaseDate(),
                         misc.getPurchasePrice(),
                         misc.descriptionDetails()
                 });

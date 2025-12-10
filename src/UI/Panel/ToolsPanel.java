@@ -126,9 +126,9 @@ public class ToolsPanel extends PanelMaintainableAppearance implements PanelActi
                         tool.getName(),
                         tool.getQuantity(),
                         tool.getLocation(),
-                        tool.getVendor(),
+                        tool.getPurchaseDate(),
                         tool.getPurchasePrice(),
-                        tool.getDescription()
+                        tool.descriptionDetails()
                 });
             }
         }

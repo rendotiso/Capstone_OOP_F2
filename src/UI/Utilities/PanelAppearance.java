@@ -80,7 +80,7 @@ public class PanelAppearance extends JPanel {
         textAreaScroll = new JScrollPane(description_textarea);
 
         // Initialize item table
-        String[] columnNames = {"Name", "Quantity", "Location", "Vendor", "Price", "Details"};
+        String[] columnNames = {"Name", "Qty", "Location", "PDate", "Price", "Details"};
         itemTable = new ItemTable(columnNames);
     }
 
