@@ -12,7 +12,8 @@ Can't remember or locate your household item? Organizer is here to help. Our sle
 
 # Installation Guide
 Prerequisites
-*   Check your current version by running: `java -version`
+*   This program runs on Java 21 and you must have this installed in your device
+*   If unaware what your java version is, check your current version by running: `java -version`
 *   [Download Java 21 Here](https://www.oracle.com/java/technologies/downloads/)
 
 Option 1: Running the JAR (Recommended)
@@ -20,7 +21,7 @@ Option 1: Running the JAR (Recommended)
 2.  Download the latest release file: `Organizer.jar`.
 3.  Double-click the file, or open your terminal in the downloads folder and run:  
     ```bash
-    java -jar Organizer.java
+    java -jar Organizer.jar
     ```
 Option 2: Building from Source
 1.  Clone the Repository:
