@@ -46,7 +46,7 @@ public class MiscPanel extends PanelAppearance implements PanelActionListeners {
         usage_field = new JTextField(8);
 
         itemType_label = new JLabel("ITEM TYPE:");
-        usage_label = new JLabel("PURPOSE:");
+        usage_label = new JLabel("USAGE:");
         condition_label = new JLabel("CONDITION:");
 
         conditionPanel = new JPanel();
