@@ -8,7 +8,7 @@ import UI.Utilities.PanelAppearance;
 import UI.Utilities.PanelActionListeners;
 import javax.swing.*;
 import java.awt.*;
-//import java.io.IOException;
+import java.io.IOException;
 import java.util.List;
 
 public class ClothingPanel extends PanelAppearance implements PanelActionListeners {

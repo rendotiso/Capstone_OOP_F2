@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileHandler {
-    private static final String filePath = ".inventory.txt";
+    private static String filePath = ".inventory.txt";
 
     public void saveData(List<Item> items){
         if (items == null) throw new IllegalArgumentException("Item List is empty.");
@@ -27,22 +27,23 @@ public class FileHandler {
             System.err.println("Failed to save data " + e.getMessage());
         }
     }
+
     public List<Item> loadData() throws IOException {
         List<Item> items = new ArrayList<>();
 
-        File file = new File(filePath);
-        if (!file.exists()) return items;
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            reader.readLine(); // Skip Header
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            reader.readLine();
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.trim().isEmpty()) {
                     continue;
                 }
-                Item item = convertToItem(line);
-                if (item != null) {
+                try {
+                    Item item = convertToItem(line);
                     items.add(item);
+                } catch (IllegalArgumentException e) {
+                    System.err.println("Error parsing line: " + line);
+                    e.printStackTrace();
                 }
             }
         }
@@ -68,8 +69,8 @@ public class FileHandler {
                     electronic.getMaintenanceNeeded() + "," +
                     electronic.getLastMaintenanceDate() + "," +
                     electronic.getMaintenanceIntervalDays();
-            case Food food -> base + "," + food.getExpiryDate() +
-                    "," + food.getIsPerishable();
+            case Food food -> base + "," + food.getExpiryDate() + "," +
+                    food.getDietaryInfo() + "," + food.getIsPerishable();
             case Tool tool -> base + "," + tool.getToolType() + "," +
                     tool.getSteelGrade() + "," + tool.getMaterial() + "," +
                     tool.getMaintenanceNeeded() + "," +
@@ -94,9 +95,6 @@ public class FileHandler {
             String purchaseDate = items[5];
             String vendor = items[6];
             String location = items[7];
-            boolean maintenanceNeeded;
-            String lastMaintenanceDate;
-            int maintenanceintervaldays;
 
             switch (category) {
                 case CLOTHING:
@@ -108,23 +106,38 @@ public class FileHandler {
                     String warranty = items[8];
                     String brand = items[9];
                     String model = items[10];
-                    maintenanceNeeded = Boolean.parseBoolean(items[11]);
-                    lastMaintenanceDate = items[12];
-                    maintenanceintervaldays = Integer.parseInt(items[13]);
+                    boolean maintenanceNeeded = Boolean.parseBoolean(items[11]);
+                    // Handle old data that might not have lastMaintenanceDate
+                    String lastMaintenanceDate = (items.length > 12 && !items[12].isEmpty()) ? items[12] : "";
+                    // Handle old data that might not have maintenanceIntervalDays
+                    int maintenanceIntervalDays = (items.length > 13 && !items[13].isEmpty()) ? Integer.parseInt(items[13]) : 0;
                     return new Electronic(name, description, quantity, price, purchaseDate, vendor, location,
-                            warranty, brand, model, maintenanceNeeded, lastMaintenanceDate,maintenanceintervaldays);
+                            warranty, brand, model, maintenanceNeeded, lastMaintenanceDate, maintenanceIntervalDays);
                 case FOOD:
                     String expiry = items[8];
-                    boolean isPerishable = Boolean.parseBoolean(items[9]);
-                    return new Food(name, description, quantity, price, purchaseDate, vendor, location, expiry, isPerishable);
+                    // Check if the data is old format (isCanned boolean) or new format (dietaryInfo string)
+                    String dietaryInfo;
+                    if (items.length > 9) {
+                        // Try to parse as boolean (old format), if fails use as string (new format)
+                        try {
+                            boolean isCanned = Boolean.parseBoolean(items[9]);
+                            dietaryInfo = isCanned ? "Canned" : "N/A";
+                        } catch (Exception e) {
+                            dietaryInfo = items[9];
+                        }
+                    } else {
+                        dietaryInfo = "N/A";
+                    }
+                    boolean isPerishable = (items.length > 10) ? Boolean.parseBoolean(items[10]) : false;
+                    return new Food(name, description, quantity, price, purchaseDate, vendor, location, expiry, dietaryInfo, isPerishable);
                 case TOOLS:
                     String toolType = items[8];
                     String steelGrade = items[9];
                     String material = items[10];
-                    maintenanceNeeded  = Boolean.parseBoolean(items[11]);
-                    lastMaintenanceDate = items[12];
-                    maintenanceintervaldays = Integer.parseInt(items[13]);
-                    return new Tool(name, description, quantity, price, purchaseDate, vendor, location, toolType, steelGrade, material, maintenanceNeeded,lastMaintenanceDate,maintenanceintervaldays);
+                    boolean maintenanceNeededTool = Boolean.parseBoolean(items[11]);
+                    String lastMaintenanceDateTool = items[12];
+                    int maintenanceIntervalDaysTool = Integer.parseInt(items[13]);
+                    return new Tool(name, description, quantity, price, purchaseDate, vendor, location, toolType, steelGrade, material, maintenanceNeededTool, lastMaintenanceDateTool, maintenanceIntervalDaysTool);
                 case MISCELLANEOUS:
                     String itemType = items[8];
                     String usage = items[9];
@@ -133,6 +146,7 @@ public class FileHandler {
             }
         } catch (Exception e) {
             System.err.println("Error parsing line: " + curr);
+            e.printStackTrace();
         }
         return null;
     }

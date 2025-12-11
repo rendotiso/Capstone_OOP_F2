@@ -14,8 +14,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ElectronicsPanel extends PanelAppearance implements PanelActionListeners {
-    private JTextField warranty_field, model_field, brand_field, lmd_field;
-    private JLabel warranty_label, model_label, brand_label, lmd_label, maintenance_label;
+    private JTextField warranty_field, model_field, brand_field, lmd_field, maintenanceInterval_field;
+    private JLabel warranty_label, model_label, brand_label, lmd_label, maintenance_label, maintenanceInterval_label;
     private JPanel maintenancePanel;
     private JRadioButton yesRadio, noRadio;
     private final InventoryManager inventoryManager;
@@ -49,12 +49,14 @@ public class ElectronicsPanel extends PanelAppearance implements PanelActionList
         model_field = new JTextField(8);
         brand_field = new JTextField(8);
         lmd_field = new JTextField(8);
+        maintenanceInterval_field = new JTextField(8);
 
         warranty_label = new JLabel("WARRANTY DATE:");
         model_label = new JLabel("MODEL:");
         brand_label = new JLabel("BRAND:");
         lmd_label = new JLabel("LAST MAINTENANCE:");
         maintenance_label = new JLabel("NEEDS MAINTENANCE:");
+        maintenanceInterval_label = new JLabel("INTERVAL (DAYS):");
 
         maintenancePanel = new JPanel();
         yesRadio = new JRadioButton("YES");
@@ -85,6 +87,7 @@ public class ElectronicsPanel extends PanelAppearance implements PanelActionList
         addFormRow(panel, formGbc, model_label, model_field, row++);
         addFormRow(panel, formGbc, brand_label, brand_field, row++);
         addFormRow(panel, formGbc, lmd_label, lmd_field, row++);
+        addFormRow(panel, formGbc, maintenanceInterval_label, maintenanceInterval_field, row++);
         addRadioButtonRow(panel, formGbc, maintenance_label, maintenancePanel, yesRadio, noRadio, row++);
 
         setupDescriptionPanel(row, formGbc);
@@ -117,6 +120,7 @@ public class ElectronicsPanel extends PanelAppearance implements PanelActionList
         model_field.setBackground(bg);
         brand_field.setBackground(bg);
         lmd_field.setBackground(bg);
+        maintenanceInterval_field.setBackground(bg);
         maintenancePanel.setBackground(bg);
         yesRadio.setBackground(bg);
         noRadio.setBackground(bg);
@@ -125,6 +129,7 @@ public class ElectronicsPanel extends PanelAppearance implements PanelActionList
         model_field.setForeground(black);
         brand_field.setForeground(black);
         lmd_field.setForeground(black);
+        maintenanceInterval_field.setForeground(black);
         yesRadio.setForeground(black);
         noRadio.setForeground(black);
 
@@ -133,6 +138,7 @@ public class ElectronicsPanel extends PanelAppearance implements PanelActionList
         brand_label.setForeground(black);
         lmd_label.setForeground(black);
         maintenance_label.setForeground(black);
+        maintenanceInterval_label.setForeground(black);
 
         Font labelFont = new Font("Segoe UI", Font.BOLD, 14);
         Font fieldFont = new Font("Segoe UI", Font.PLAIN, 14);
@@ -143,11 +149,13 @@ public class ElectronicsPanel extends PanelAppearance implements PanelActionList
         brand_label.setFont(labelFont);
         lmd_label.setFont(labelFont);
         maintenance_label.setFont(labelFont);
+        maintenanceInterval_label.setFont(labelFont);
 
         warranty_field.setFont(fieldFont);
         model_field.setFont(fieldFont);
         brand_field.setFont(fieldFont);
         lmd_field.setFont(fieldFont);
+        maintenanceInterval_field.setFont(fieldFont);
         yesRadio.setFont(radioFont);
         noRadio.setFont(radioFont);
     }
@@ -227,6 +235,17 @@ public class ElectronicsPanel extends PanelAppearance implements PanelActionList
         return text;
     }
 
+    public int getMaintenanceIntervalDays() {
+        try {
+            if (maintenanceInterval_field.getText().trim().isEmpty()) {
+                return 0;
+            }
+            return Integer.parseInt(maintenanceInterval_field.getText().trim());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
     public boolean getMaintenanceNeeded() {
         return yesRadio.isSelected();
     }
@@ -262,6 +281,10 @@ public class ElectronicsPanel extends PanelAppearance implements PanelActionList
             lmd_field.setForeground(Color.BLACK);
             lmd_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         }
+    }
+
+    public void setMaintenanceIntervalDays(int days) {
+        maintenanceInterval_field.setText(String.valueOf(days));
     }
 
     public void setMaintenanceNeeded(boolean needsMaintenance) {
@@ -329,6 +352,7 @@ public class ElectronicsPanel extends PanelAppearance implements PanelActionList
         setModelInput("");
         setBrandInput("");
         setLMDInput("");
+        setMaintenanceIntervalDays(0);
         setMaintenanceNeeded(false);
     }
 
@@ -396,6 +420,17 @@ public class ElectronicsPanel extends PanelAppearance implements PanelActionList
 
         if (isFutureDate(getLMDInput())) {
             showError("Last Maintenance Date cannot be a future date");
+            return false;
+        }
+
+        try {
+            int interval = getMaintenanceIntervalDays();
+            if (interval < 0) {
+                showError("Maintenance Interval cannot be negative");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            showError("Maintenance Interval must be a valid number");
             return false;
         }
 
@@ -524,5 +559,6 @@ public class ElectronicsPanel extends PanelAppearance implements PanelActionList
         setLocationInput(electronic.getLocation());
         setMaintenanceNeeded(electronic.getMaintenanceNeeded());
         setLMDInput(electronic.getLastMaintenanceDate());
+        setMaintenanceIntervalDays(electronic.getMaintenanceIntervalDays());
     }
 }
