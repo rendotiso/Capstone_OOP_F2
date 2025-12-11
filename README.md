@@ -13,7 +13,7 @@ Can't remember or locate your household item? Organizer is here to help. Our sle
 # Installation Guide
 Prerequisites
 *   This program runs on Java 21 and you must have this installed in your device
-*   If unaware what your java version is, check your current version by running: `java -version`
+*   If unaware on what your current java version is, check by running on terminal/command prompt: `java -version`
 *   [Download Java 21 Here](https://www.oracle.com/java/technologies/downloads/)
 
 Option 1: Running the JAR (Recommended)
