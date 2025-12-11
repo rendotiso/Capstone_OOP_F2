@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
+@SuppressWarnings("ALL")
 public class FoodPanel extends PanelAppearance implements PanelActionListeners {
     private JTextField expiryDate_field;
     private JComboBox<String> dietaryInfo_combobox;

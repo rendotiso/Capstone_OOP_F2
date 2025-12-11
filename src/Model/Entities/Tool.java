@@ -9,12 +9,9 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 
 public class Tool extends Item implements Maintainable {
-    //attributes
     private String toolType;
     private String material;
     private String steelGrade;
-
-    //maintenance attributes
     private boolean maintenanceNeeded;
     private String lastMaintenanceDate;
     private int maintenanceIntervalDays;
@@ -32,51 +29,42 @@ public class Tool extends Item implements Maintainable {
     }
 
     //GETTERS
-    public String getToolType() {
-        return toolType;
-    }
-    public String getMaterial() {
-        return material;
-    }
-    public String getSteelGrade(){ return steelGrade;}
-    public boolean getMaintenanceNeeded() {
-        return maintenanceNeeded;
-    }
-    public String getLastMaintenanceDate() {
-        return lastMaintenanceDate;
-    }
-    public int getMaintenanceIntervalDays() {
-        return maintenanceIntervalDays;
-    }
+    public String getToolType() { return toolType; }
+    public String getMaterial() { return material; }
+    public String getSteelGrade() { return steelGrade; }
+    public boolean getMaintenanceNeeded() { return maintenanceNeeded; }
+    public String getLastMaintenanceDate() { return lastMaintenanceDate; }
+    public int getMaintenanceIntervalDays() { return maintenanceIntervalDays; }
 
     //SETTERS
-    public void setToolType(String toolType) {
-        this.toolType = toolType;
-    }
-    public void setSteelGrade(String steelGrade) {this.steelGrade = steelGrade;}
-    public void setMaterial(String material) {
-        this.material = material;
-    }
-    public void setMaintenanceNeeded(boolean maintenanceNeeded) {
-        this.maintenanceNeeded = maintenanceNeeded;
-    }
-    public void setLastMaintenanceDate(String lastMaintenanceDate) {
-        this.lastMaintenanceDate = lastMaintenanceDate;
-    }
-    public void setMaintenanceIntervalDays(int maintenanceIntervalDays) {
-        this.maintenanceIntervalDays = maintenanceIntervalDays;
-    }
+    public void setToolType(String toolType) { this.toolType = toolType; }
+    public void setSteelGrade(String steelGrade) { this.steelGrade = steelGrade; }
+    public void setMaterial(String material) { this.material = material; }
+    public void setMaintenanceNeeded(boolean maintenanceNeeded) { this.maintenanceNeeded = maintenanceNeeded; }
+    public void setLastMaintenanceDate(String lastMaintenanceDate) { this.lastMaintenanceDate = lastMaintenanceDate; }
+    public void setMaintenanceIntervalDays(int maintenanceIntervalDays) { this.maintenanceIntervalDays = maintenanceIntervalDays; }
 
     //METHODS
     @Override
     public boolean needsMaintenance() {
+        if (maintenanceNeeded) {
+            return true;
+        }
+        if (maintenanceIntervalDays <= 0) {
+            return false;
+        }
         return getDaysUntilMaintenanceDue() <= 0;
     }
+
     @Override
     public int getDaysUntilMaintenanceDue() {
-        if (lastMaintenanceDate == null || lastMaintenanceDate.isEmpty()) {
+        if (maintenanceIntervalDays <= 0) {
+            return Integer.MAX_VALUE;
+        }
+        if (lastMaintenanceDate == null || lastMaintenanceDate.trim().isEmpty()) {
             return 0;
         }
+
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
             LocalDate lastMaintenance = LocalDate.parse(lastMaintenanceDate, formatter);
@@ -90,25 +78,42 @@ public class Tool extends Item implements Maintainable {
             return 0;
         }
     }
+
     @Override
     public String descriptionDetails() {
-        String maintenanceStatus = needsMaintenance() ? "MAINTENANCE REQUIRED" : "Good Condition";
+        String statusMessage;
+        int daysRemaining = getDaysUntilMaintenanceDue();
+        if (maintenanceNeeded) {
+            statusMessage = "UUrgent! Maintenance Needed!";
+        }
+        else if (maintenanceIntervalDays > 0) {
+            if (daysRemaining < 0) {
+                statusMessage = "OVERDUE (" + Math.abs(daysRemaining) + " days late)";
+            } else if (daysRemaining == 0) {
+                statusMessage = "DUE TODAY";
+            } else {
+                statusMessage = "Good (" + daysRemaining + " days remaining)";
+            }
+        }
+        else {
+            statusMessage = "No Schedule Set";
+        }
+
         return String.format("""
                         %s\
                         Type: %s
                         Steel Grade: %s
                         Material: %s
-                        Maintenance Status: %s (%d days remaining)""",
+                        Status: %s""",
                 super.descriptionDetails(),
                 toolType,
                 steelGrade,
                 material,
-                maintenanceStatus,
-                getDaysUntilMaintenanceDue());
+                statusMessage);
     }
+
     @Override
     public double calculateValue() {
         return getPurchasePrice() * getQuantity();
     }
-
 }

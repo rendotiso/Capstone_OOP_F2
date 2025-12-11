@@ -46,7 +46,7 @@ public class MiscPanel extends PanelAppearance implements PanelActionListeners {
         usage_field = new JTextField(8);
 
         itemType_label = new JLabel("ITEM TYPE:");
-        usage_label = new JLabel("USAGE:");
+        usage_label = new JLabel("PURPOSE:");
         condition_label = new JLabel("CONDITION:");
 
         conditionPanel = new JPanel();
@@ -67,7 +67,6 @@ public class MiscPanel extends PanelAppearance implements PanelActionListeners {
     }
 
     private void setupMiscLayout() {
-        // Set up misc-specific layout
         panel.setLayout(new GridBagLayout());
         GridBagConstraints formGbc = new GridBagConstraints();
         formGbc.insets = new Insets(5, 5, 5, 5);
@@ -270,11 +269,6 @@ public class MiscPanel extends PanelAppearance implements PanelActionListeners {
 
         if (getItemTypeInput().trim().isEmpty()) {
             showError("Item Type cannot be empty!");
-            return false;
-        }
-
-        if (getUsageInput().trim().isEmpty()) {
-            showError("Usage cannot be empty!");
             return false;
         }
 

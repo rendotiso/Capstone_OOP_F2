@@ -11,6 +11,8 @@ public class Electronic extends Item implements Maintainable {
     private String warrantyPeriod;
     private String brand;
     private String model;
+
+    // Maintenance attributes
     private boolean maintenanceNeeded;
     private String lastMaintenanceDate;
     private int maintenanceIntervalDays;
@@ -26,54 +28,40 @@ public class Electronic extends Item implements Maintainable {
     }
 
     //GETTERS
-    public String getWarrantyPeriod() {
-        return warrantyPeriod;
-    }
-    public String getBrand() {
-        return brand;
-    }
-    public String getModel() {
-        return model;
-    }
-    public boolean getMaintenanceNeeded() {
-        return maintenanceNeeded;
-    }
-    public String getLastMaintenanceDate() {
-        return lastMaintenanceDate;
-    }
-    public int getMaintenanceIntervalDays(){
-        return maintenanceIntervalDays;
-    }
+    public String getWarrantyPeriod() { return warrantyPeriod; }
+    public String getBrand() { return brand; }
+    public String getModel() { return model; }
+    public boolean getMaintenanceNeeded() { return maintenanceNeeded; }
+    public String getLastMaintenanceDate() { return lastMaintenanceDate; }
+    public int getMaintenanceIntervalDays(){ return maintenanceIntervalDays; }
 
     //SETTERS
-    public void setWarrantyPeriod(String warrantyPeriod) {
-        this.warrantyPeriod = warrantyPeriod;
-    }
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-    public void setModel(String model) {
-        this.model = model;
-    }
-    public void setLastMaintenanceDate(String lastMaintenanceDate) {
-        this.lastMaintenanceDate = lastMaintenanceDate;
-    }
+    public void setWarrantyPeriod(String warrantyPeriod) { this.warrantyPeriod = warrantyPeriod; }
+    public void setBrand(String brand) { this.brand = brand; }
+    public void setModel(String model) { this.model = model; }
+    public void setLastMaintenanceDate(String lastMaintenanceDate) { this.lastMaintenanceDate = lastMaintenanceDate; }
     public void setMaintenanceNeeded(boolean maintenanceNeeded){ this.maintenanceNeeded = maintenanceNeeded;}
-    public void setMaintenanceIntervalDays(int maintenanceIntervalDays) {
-        this.maintenanceIntervalDays = maintenanceIntervalDays;
-    }
+    public void setMaintenanceIntervalDays(int maintenanceIntervalDays) { this.maintenanceIntervalDays = maintenanceIntervalDays; }
 
     //METHODS
     @Override
     public boolean needsMaintenance() {
-        // Same logic as Tool class - check if days until maintenance is due
+        if (maintenanceNeeded) {
+            return true;
+        }
+        if (maintenanceIntervalDays <= 0) {
+            return false;
+        }
         return getDaysUntilMaintenanceDue() <= 0;
     }
 
     @Override
     public int getDaysUntilMaintenanceDue() {
-        if (lastMaintenanceDate == null || lastMaintenanceDate.isEmpty()) {
-            return 0; // Treat as immediately due
+        if (maintenanceIntervalDays <= 0) {
+            return Integer.MAX_VALUE;
+        }
+        if (lastMaintenanceDate == null || lastMaintenanceDate.trim().isEmpty()) {
+            return 0;
         }
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
@@ -88,20 +76,38 @@ public class Electronic extends Item implements Maintainable {
             return 0;
         }
     }
+
     @Override
     public String descriptionDetails() {
-        String maintenanceStatus = needsMaintenance() ? "MAINTENANCE REQUIRED" : "Good Condition";
+        String statusMessage;
+        int daysRemaining = getDaysUntilMaintenanceDue();
+        if (maintenanceNeeded) {
+            statusMessage = "Urgent! Maintenance Needed!";
+        }
+        else if (maintenanceIntervalDays > 0) {
+            if (daysRemaining < 0) {
+                statusMessage = "OVERDUE (" + Math.abs(daysRemaining) + " days late)";
+            } else if (daysRemaining == 0) {
+                statusMessage = "DUE TODAY";
+            } else {
+                statusMessage = "Good (" + daysRemaining + " days remaining)";
+            }
+        }
+        else {
+            statusMessage = "No Schedule Set";
+        }
 
         return String.format("""
                         %s\
                         Brand: %s
                         Model: %s
-                        Maintenance Status: %s (%d days remaining)""",
+                        Warranty: %s
+                        Status: %s""",
                 super.descriptionDetails(),
                 brand,
                 model,
-                maintenanceStatus,
-                getDaysUntilMaintenanceDue());
+                warrantyPeriod,
+                statusMessage);
     }
 
     @Override

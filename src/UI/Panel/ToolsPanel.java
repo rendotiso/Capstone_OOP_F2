@@ -4,22 +4,17 @@ import Model.Data.InventoryManager;
 import Model.Entities.Tool;
 import Model.Entities.Item;
 import Model.Enums.Category;
-import UI.Utilities.PanelAppearance;
+import UI.Utilities.PanelMaintainableAppearance;
 import UI.Utilities.PanelActionListeners;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class ToolsPanel extends PanelAppearance implements PanelActionListeners {
-    private JTextField steelgrade_field, tooltype_field, material_field, lmd_field, maintenanceInterval_field;
-    private JLabel steelgrade_label, tooltype_label, material_label, lmd_label, maintenanceInterval_label, maintenance_label;
-    private JPanel maintenancePanel;
-    private JRadioButton yesRadio, noRadio;
+public class ToolsPanel extends PanelMaintainableAppearance implements PanelActionListeners {
+    private JTextField steelgrade_field, tooltype_field, material_field;
+    private JLabel steelgrade_label, tooltip_label, material_label;
     private final InventoryManager inventoryManager;
-    private static final String WARRANTY_PLACEHOLDER = "MM/DD/YYYY";
     private static final String[] TOOLS_LOCATIONS = {
             "TOOLSHED", "WORKSHOP", "GARAGE", "UTILITY ROOM",
             "STORAGE SHED", "BASEMENT", "CRAFT ROOM"
@@ -30,49 +25,26 @@ public class ToolsPanel extends PanelAppearance implements PanelActionListeners 
         initToolsComponents();
         setupToolsLayout();
         setupToolsAppearance();
-        setupToolsPlaceholders();
+        setupMaintenanceListener();
         setupButtonListeners();
         setupTableSelectionListener();
         loadItems();
         setTitle("TOOLS");
-
-        addComponentListener(new java.awt.event.ComponentAdapter() {
-            @Override
-            public void componentShown(java.awt.event.ComponentEvent e) {
-                SwingUtilities.invokeLater(() -> itemTable.adjustRowHeights());
-            }
-        });
     }
 
     private void initToolsComponents() {
         steelgrade_field = new JTextField(8);
         tooltype_field = new JTextField(8);
         material_field = new JTextField(8);
-        lmd_field = new JTextField(8);
-        maintenanceInterval_field = new JTextField(8);
 
         steelgrade_label = new JLabel("STEEL GRADE:");
-        tooltype_label = new JLabel("TOOL TYPE:");
+        tooltip_label = new JLabel("TOOL TYPE:");
         material_label = new JLabel("MATERIAL:");
-        lmd_label = new JLabel("LAST MAINTENANCE:");
-        maintenanceInterval_label = new JLabel("INTERVAL (DAYS):");
-        maintenance_label = new JLabel("NEEDS MAINTENANCE:");
-
-        maintenancePanel = new JPanel();
-        yesRadio = new JRadioButton("YES");
-        noRadio = new JRadioButton("NO");
-        ButtonGroup maintenanceGroup = new ButtonGroup();
-        maintenanceGroup.add(yesRadio);
-        maintenanceGroup.add(noRadio);
-        noRadio.setSelected(true);
 
         location_combobox.removeAllItems();
         for (String location : TOOLS_LOCATIONS) {
             location_combobox.addItem(location);
         }
-
-        yesRadio.setFocusable(false);
-        noRadio.setFocusable(false);
     }
 
     private void setupToolsLayout() {
@@ -83,33 +55,13 @@ public class ToolsPanel extends PanelAppearance implements PanelActionListeners 
 
         int row = setupFormLayout(panel, formGbc);
 
-        addFormRow(panel, formGbc, tooltype_label, tooltype_field, row++);
+        addFormRow(panel, formGbc, tooltip_label, tooltype_field, row++);
         addFormRow(panel, formGbc, material_label, material_field, row++);
         addFormRow(panel, formGbc, steelgrade_label, steelgrade_field, row++);
-        addFormRow(panel, formGbc, lmd_label, lmd_field, row++);
-        addFormRow(panel, formGbc, maintenanceInterval_label, maintenanceInterval_field, row++);
-        addRadioButtonRow(panel, formGbc, maintenance_label, maintenancePanel, yesRadio, noRadio, row++);
+
+        row = setupMaintainableFormLayout(panel, formGbc, row);
 
         setupDescriptionPanel(row, formGbc);
-    }
-
-    private void addRadioButtonRow(JPanel panel, GridBagConstraints formGbc, JLabel label,
-                                   JPanel radioPanel, JRadioButton option1, JRadioButton option2, int row) {
-        formGbc.gridx = 0; formGbc.gridy = row;
-        formGbc.fill = GridBagConstraints.NONE;
-        formGbc.weightx = 0;
-        formGbc.anchor = GridBagConstraints.WEST;
-        panel.add(label, formGbc);
-
-        formGbc.gridx = 1; formGbc.gridy = row;
-        formGbc.fill = GridBagConstraints.HORIZONTAL;
-        formGbc.weightx = 1.0;
-        formGbc.anchor = GridBagConstraints.WEST;
-
-        radioPanel.setLayout(new GridLayout(1, 2, 20, 0));
-        radioPanel.add(option1);
-        radioPanel.add(option2);
-        panel.add(radioPanel, formGbc);
     }
 
     private void setupToolsAppearance() {
@@ -119,146 +71,50 @@ public class ToolsPanel extends PanelAppearance implements PanelActionListeners 
         steelgrade_field.setBackground(bg);
         tooltype_field.setBackground(bg);
         material_field.setBackground(bg);
-        lmd_field.setBackground(bg);
-        maintenanceInterval_field.setBackground(bg);
-        maintenancePanel.setBackground(bg);
-        yesRadio.setBackground(bg);
-        noRadio.setBackground(bg);
 
         steelgrade_field.setForeground(black);
         tooltype_field.setForeground(black);
         material_field.setForeground(black);
-        lmd_field.setForeground(black);
-        maintenanceInterval_field.setForeground(black);
-        yesRadio.setForeground(black);
-        noRadio.setForeground(black);
 
         steelgrade_label.setForeground(black);
-        tooltype_label.setForeground(black);
+        tooltip_label.setForeground(black);
         material_label.setForeground(black);
-        lmd_label.setForeground(black);
-        maintenanceInterval_label.setForeground(black);
-        maintenance_label.setForeground(black);
 
         Font labelFont = new Font("Segoe UI", Font.BOLD, 14);
         Font fieldFont = new Font("Segoe UI", Font.PLAIN, 14);
-        Font radioFont = new Font("Segoe UI", Font.BOLD, 12);
 
         steelgrade_label.setFont(labelFont);
-        tooltype_label.setFont(labelFont);
+        tooltip_label.setFont(labelFont);
         material_label.setFont(labelFont);
-        lmd_label.setFont(labelFont);
-        maintenanceInterval_label.setFont(labelFont);
-        maintenance_label.setFont(labelFont);
 
         steelgrade_field.setFont(fieldFont);
         tooltype_field.setFont(fieldFont);
         material_field.setFont(fieldFont);
-        lmd_field.setFont(fieldFont);
-        maintenanceInterval_field.setFont(fieldFont);
-        yesRadio.setFont(radioFont);
-        noRadio.setFont(radioFont);
     }
 
-    private void setupToolsPlaceholders() {
-        lmd_field.setText(WARRANTY_PLACEHOLDER);
-        lmd_field.setForeground(new Color(100, 100, 100, 180));
-        lmd_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
-
-        lmd_field.addFocusListener(new java.awt.event.FocusAdapter() {
-            @Override
-            public void focusGained(java.awt.event.FocusEvent e) {
-                if (lmd_field.getText().equals(WARRANTY_PLACEHOLDER)) {
-                    lmd_field.setText("");
-                    lmd_field.setForeground(Color.BLACK);
-                    lmd_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-                }
-            }
-
-            @Override
-            public void focusLost(java.awt.event.FocusEvent e) {
-                if (lmd_field.getText().isEmpty()) {
-                    lmd_field.setText(WARRANTY_PLACEHOLDER);
-                    lmd_field.setForeground(new Color(100, 100, 100, 180));
-                    lmd_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
-                }
-            }
-        });
-    }
-
-    //GETTERS
+    // GETTERS
     public String getSteelGradeInput() {
         return steelgrade_field.getText();
     }
-
     public String getToolTypeInput() {
         return tooltype_field.getText();
     }
-
     public String getMaterialInput() {
         return material_field.getText();
     }
 
-    public String getLMDInput() {
-        String text = lmd_field.getText();
-        if (text.equals(WARRANTY_PLACEHOLDER)) {
-            return "";
-        }
-        return text;
-    }
-
-    public int getMaintenanceIntervalDays() {
-        try {
-            if (maintenanceInterval_field.getText().trim().isEmpty()) {
-                return 0;
-            }
-            return Integer.parseInt(maintenanceInterval_field.getText().trim());
-        } catch (NumberFormatException e) {
-            return 0;
-        }
-    }
-
-    public boolean getMaintenanceNeeded() {
-        return yesRadio.isSelected();
-    }
-
-    //SETTERS
+    // SETTERS
     public void setSteelGradeInput(String steelGrade) {
         steelgrade_field.setText(steelGrade);
     }
-
     public void setToolTypeInput(String toolType) {
         tooltype_field.setText(toolType);
     }
-
     public void setMaterialInput(String material) {
         material_field.setText(material);
     }
 
-    public void setLMDInput(String date) {
-        if (date == null || date.trim().isEmpty()) {
-            lmd_field.setText(WARRANTY_PLACEHOLDER);
-            lmd_field.setForeground(new Color(100, 100, 100, 180));
-            lmd_field.setFont(new Font("Segoe UI", Font.ITALIC, 13));
-        } else {
-            lmd_field.setText(date);
-            lmd_field.setForeground(Color.BLACK);
-            lmd_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        }
-    }
-
-    public void setMaintenanceIntervalDays(int days) {
-        maintenanceInterval_field.setText(String.valueOf(days));
-    }
-
-    public void setMaintenanceNeeded(boolean needsMaintenance) {
-        if (needsMaintenance) {
-            yesRadio.setSelected(true);
-        } else {
-            noRadio.setSelected(true);
-        }
-    }
-
+    // METHODS
     @Override
     public void setupButtonListeners() {
         ADDButton.addActionListener(_ -> addItem());
@@ -315,9 +171,6 @@ public class ToolsPanel extends PanelAppearance implements PanelActionListeners 
         steelgrade_field.setText("");
         tooltype_field.setText("");
         material_field.setText("");
-        setLMDInput("");
-        maintenanceInterval_field.setText("");
-        setMaintenanceNeeded(false);
     }
 
     private double parsePrice(String priceStr) {
@@ -341,7 +194,7 @@ public class ToolsPanel extends PanelAppearance implements PanelActionListeners 
                 getSteelGradeInput(),
                 getMaterialInput(),
                 getMaintenanceNeeded(),
-                getLMDInput(),
+                getLastMaintenanceDateInput(),
                 getMaintenanceIntervalDays()
         );
     }
@@ -378,51 +231,16 @@ public class ToolsPanel extends PanelAppearance implements PanelActionListeners 
             return false;
         }
 
-        if (validateDateField(getPurchaseDateInput(), "Purchase Date")) return false;
-        if (validateDateField(getLMDInput(), "Last Maintenance Date")) return false;
-
-        if (isFutureDate(getLMDInput())) {
-            showError("Last Maintenance Date cannot be a future date");
-            return false;
-        }
-
-        try {
-            int interval = getMaintenanceIntervalDays();
-            if (interval < 0) {
-                showError("Maintenance Interval cannot be negative");
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            showError("Maintenance Interval must be a valid number");
-            return false;
-        }
-
-        return true;
-    }
-
-    private boolean isFutureDate(String dateStr) {
-        try {
-            if (dateStr == null || dateStr.isEmpty() || dateStr.equals(WARRANTY_PLACEHOLDER)) {
-                return false;
-            }
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-            LocalDate inputDate = LocalDate.parse(dateStr, formatter);
-            LocalDate today = LocalDate.now();
-            return inputDate.isAfter(today);
-        } catch (Exception e) {
-            return false;
-        }
+        if (!validateDateField(getPurchaseDateInput(), "Purchase Date")) return false;
+        return validateDateField(getLastMaintenanceDateInput(), "Last Maintenance Date");
     }
 
     private boolean validateDateField(String dateText, String fieldName) {
-        if (dateText == null || dateText.isEmpty() || dateText.equals(WARRANTY_PLACEHOLDER)) {
+        if (!dateText.isEmpty() && !dateText.matches("\\d{2}/\\d{2}/\\d{4}")) {
+            showError(fieldName + " must be in MM/DD/YYYY format");
             return false;
         }
-        if (!dateText.matches("\\d{2}/\\d{2}/\\d{4}")) {
-            showError(fieldName + " must be in MM/DD/YYYY format");
-            return true;
-        }
-        return false;
+        return true;
     }
 
     private void addItem() {
@@ -521,7 +339,7 @@ public class ToolsPanel extends PanelAppearance implements PanelActionListeners 
         setDescriptionInput(tool.getDescription());
         setLocationInput(tool.getLocation());
         setMaintenanceNeeded(tool.getMaintenanceNeeded());
-        setLMDInput(tool.getLastMaintenanceDate());
+        setLastMaintenanceDateInput(tool.getLastMaintenanceDate());
         setMaintenanceIntervalDays(tool.getMaintenanceIntervalDays());
     }
 }

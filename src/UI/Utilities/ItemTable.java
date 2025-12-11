@@ -78,12 +78,11 @@ public class ItemTable extends JScrollPane {
     }
 
     private void setupTableRenderers() {
-        // 1. Renderer for Price column ONLY - with word wrapping
         TableCellRenderer priceRenderer = (table, value, isSelected, _, row, column) -> {
 
             JTextArea textArea = new JTextArea();
-            textArea.setLineWrap(true);           // Word wrapping for Price
-            textArea.setWrapStyleWord(true);      // Wrap at word boundaries
+            textArea.setLineWrap(true);
+            textArea.setWrapStyleWord(true);
             textArea.setFont(table.getFont());
             textArea.setOpaque(true);
             textArea.setAlignmentX(Component.CENTER_ALIGNMENT); // Try to center
@@ -96,9 +95,8 @@ public class ItemTable extends JScrollPane {
                 textArea.setBackground(table.getBackground());
             }
 
-            // Format price with commas and 2 decimal places
             if (value instanceof Double) {
-                textArea.setText(String.format("$%,.2f", (Double) value));
+                textArea.setText(String.format("₱%,.2f", (Double) value));
             } else if (value != null) {
                 textArea.setText(value.toString());
             } else {
@@ -129,7 +127,6 @@ public class ItemTable extends JScrollPane {
             return panel;
         };
 
-// 2. Renderer for Quantity/Number columns - JLabel for perfect centering
         DefaultTableCellRenderer numberRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
@@ -141,10 +138,8 @@ public class ItemTable extends JScrollPane {
                 ((JLabel) c).setHorizontalAlignment(SwingConstants.CENTER);
                 ((JLabel) c).setVerticalAlignment(SwingConstants.TOP);
 
-                // Set padding
                 setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
-                // Format with commas for large numbers
                 if (value instanceof Integer || value instanceof Long) {
                     setText(String.format("%,d", ((Number) value).intValue()));
                 } else if (value != null) {
@@ -155,12 +150,11 @@ public class ItemTable extends JScrollPane {
             }
         };
 
-// 3. Renderer for text columns - word wrapping
         TableCellRenderer textRenderer = (table, value, isSelected, _, row, column) -> {
 
             JTextArea textArea = new JTextArea();
-            textArea.setLineWrap(true);           // Word wrapping
-            textArea.setWrapStyleWord(true);      // Wrap at word boundaries
+            textArea.setLineWrap(true);
+            textArea.setWrapStyleWord(true);
             textArea.setFont(table.getFont());
             textArea.setOpaque(true);
 
@@ -192,7 +186,6 @@ public class ItemTable extends JScrollPane {
             return textArea;
         };
 
-// Apply renderers
         for (int i = 0; i < table.getColumnCount(); i++) {
             String colName = table.getColumnName(i);
 
@@ -206,10 +199,8 @@ public class ItemTable extends JScrollPane {
                     colName.equalsIgnoreCase("Number") ||
                     colName.equalsIgnoreCase("PDate") ||
                     colName.equalsIgnoreCase("Purchase Date")) {
-                // Quantity/Number columns - perfect centering (JLabel)
                 table.getColumnModel().getColumn(i).setCellRenderer(numberRenderer);
             } else {
-                // Text columns (Name, Location, Vendor, Details) - word wrapping
                 table.getColumnModel().getColumn(i).setCellRenderer(textRenderer);
             }
         }
@@ -253,11 +244,9 @@ public class ItemTable extends JScrollPane {
                 }
             }
 
-            // Set the row height (with a maximum limit)
             table.setRowHeight(row, Math.min(maxHeight, 300));
         }
 
-        // Force the table to update
         table.repaint();
     }
 

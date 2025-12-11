@@ -87,8 +87,7 @@ public class Dashboard extends JFrame {
                         "<li>Add new items using the form</li>" +
                         "<li>Click on items in the table to edit</li>" +
                         "<li>Use 'View All' to search all items</li>" +
-                        "<li>Click Refresh on 'View All' to refresh the data and " +
-                        "Delete to delete selected data</li>" +
+                        "<li>Use refresh button to update the tables from separate panels " +
                         "</ul>" +
                         "<p><b>Features:</b></p>" +
                         "<ul>" +

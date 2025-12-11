@@ -43,7 +43,7 @@
         @Override
         public String descriptionDetails() {
             return super.descriptionDetails() +
-                    String.format("Type: %s\n Usage: %s\nCondition: %s", itemType, usage,condition);
+                    String.format("Type: %s\nUsage: %s\nCondition: %s", itemType, usage,condition);
         }
 
         @Override

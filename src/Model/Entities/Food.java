@@ -15,9 +15,9 @@ public class Food extends Item{
 
     public Food(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, String location, String expiryDate, String dietaryInfo, boolean isPerishable){
         super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.FOOD, location);
-        this.expiryDate = expiryDate;
-        this.dietaryInfo = dietaryInfo;
-        this.isPerishable = isPerishable;
+        setExpiryDate(expiryDate);
+        setIsPerishable(isPerishable);
+        setDietaryInfo(dietaryInfo);
     }
 
     //GETTERS
@@ -79,19 +79,13 @@ public class Food extends Item{
     @Override
     public String descriptionDetails(){
         StringBuilder details = new StringBuilder(super.descriptionDetails());
-
-        // Add Perishable status
-        details.append("\nType: ").append(getIsPerishable() ? "Perishable" : "Non-Perishable");
-
-        // Add Dietary Info if not empty or "N/A"
+        details.append("Type: ").append(getIsPerishable() ? "Perishable" : "Non-Perishable");
         if (dietaryInfo != null && !dietaryInfo.trim().isEmpty() && !dietaryInfo.equals("N/A")) {
             details.append("\nDietary Info: ").append(dietaryInfo);
         }
 
-        // Add Expiry Date
         details.append("\nExpiry Date: ").append(expiryDate);
 
-        // Add Status
         if (isExpired()) {
             details.append("\nStatus: EXPIRED (").append(Math.abs(getDaysUntilExpiry())).append(" days expired)");
         } else if (isExpiringSoon()) {
