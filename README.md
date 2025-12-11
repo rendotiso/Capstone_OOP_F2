@@ -18,7 +18,7 @@ Prerequisites
 
 Option 1: Running the JAR (Recommended)
 1.  Go to the [Releases](../../releases) section of this repository
-2.  Download the latest release file: `Organizer.jar`.
+2.  Download the latest release file: `Organizer.jar`
 3.  Open your terminal/command prompt in the downloads folder and run:  
     ```bash
     java -jar Organizer.jar
@@ -29,11 +29,11 @@ Option 2: Building from Source
     https://github.com/rendotiso/Capstone_OOP_F2.git
     ```
 2.  Run in any IDE:
-    *   Open your IDE (IntelliJ IDEA recommended).
-    *   Open the project folder.
-    *   Navigate to `src/Main.java` and click Run.
+    *   Open your IDE (IntelliJ IDEA recommended)
+    *   Open the project folder
+    *   Navigate to `src/Main.java` and click Run
 
-# Member List
+# Team Jewels Member List
 1. Anne Gwyn Amaya
 2. Laraine Keisha Capacio
 3. Ravenelle Celeres
