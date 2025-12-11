@@ -153,7 +153,7 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
                         clothing.getName(),
                         clothing.getQuantity(),
                         clothing.getLocation(),
-                        clothing.getVendor(),
+                        clothing.getPurchaseDate(),
                         clothing.getPurchasePrice(),
                         clothing.descriptionDetails()
                 });
