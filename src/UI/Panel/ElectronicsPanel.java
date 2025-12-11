@@ -242,7 +242,8 @@ public class ElectronicsPanel extends PanelMaintainableAppearance implements Pan
                 getBrandInput(),
                 getModelInput(),
                 getMaintenanceNeeded(),
-                getLMDInput()
+                getLMDInput(),
+                getMaintenanceIntervalDays()
         );
     }
 

@@ -9,7 +9,7 @@ public class PanelMaintainableAppearance extends PanelAppearance {
     protected JCheckBox maintenanceNeededCheckBox;
     protected JSpinner maintenanceIntervalDateDays;
     protected JLabel maintenanceIntervalDateDays_label;
-    protected JPanel radiopanel1;
+    protected JPanel radiopanel;
     protected static final String LAST_MAINTENANCE_PLACEHOLDER = "MM/DD/YYYY";
 
     public PanelMaintainableAppearance() {
@@ -36,7 +36,7 @@ public class PanelMaintainableAppearance extends PanelAppearance {
         }
 
         maintenanceIntervalDateDays_label = new JLabel("MAINTENANCE INTERVAL (DAYS):");
-        radiopanel1 = new JPanel();
+        radiopanel = new JPanel();
 
         maintenanceNeededCheckBox.setFocusable(false);
     }
@@ -68,9 +68,9 @@ public class PanelMaintainableAppearance extends PanelAppearance {
         formGbc.weightx = 1.0;
         formGbc.anchor = GridBagConstraints.WEST;
 
-        radiopanel1.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        radiopanel1.add(maintenanceNeededCheckBox);
-        panel.add(radiopanel1, formGbc);
+        radiopanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        radiopanel.add(maintenanceNeededCheckBox);
+        panel.add(radiopanel, formGbc);
     }
 
     protected void addMaintenanceIntervalRow(JPanel panel, GridBagConstraints formGbc, int row) {
@@ -111,7 +111,7 @@ public class PanelMaintainableAppearance extends PanelAppearance {
 
         lastMaintenanceDate_field.setBackground(bg);
         maintenanceIntervalDateDays.setBackground(bg);
-        radiopanel1.setBackground(bg);
+        radiopanel.setBackground(bg);
         maintenanceNeededCheckBox.setBackground(bg);
 
         lastMaintenanceDate_field.setForeground(black);

@@ -8,24 +8,19 @@ import java.time.format.DateTimeParseException;
 
 public class Food extends Item{
     private String expiryDate;
-    private boolean isCanned;
     private boolean isPerishable;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy");
     private static final int EXPIRING_SOON_DAYS = 7;
 
-    public Food(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, String location, String expiryDate, boolean isCanned, boolean isPerishable){
+    public Food(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, String location, String expiryDate, boolean isPerishable){
         super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.FOOD, location);
         this.expiryDate = expiryDate;
-        this.isCanned = isCanned;
         this.isPerishable = isPerishable;
     }
 
     //GETTERS
     public String getExpiryDate() {
         return expiryDate;
-    }
-    public boolean getIsCanned(){
-        return isCanned;
     }
     public boolean getIsPerishable(){
         return isPerishable;
@@ -37,9 +32,6 @@ public class Food extends Item{
     }
     public void setIsPerishable(boolean perishable) {
         isPerishable = perishable;
-    }
-    public void setIsCanned(boolean isCanned){
-        this.isCanned = isCanned;
     }
 
     //METHODS
@@ -64,7 +56,7 @@ public class Food extends Item{
 
     public boolean isExpiringSoon(){
         int days = getDaysUntilExpiry();
-        return days > 0 && days <= EXPIRING_SOON_DAYS;
+        return days >= 0 && days <= EXPIRING_SOON_DAYS;
     }
 
     public int getDaysUntilExpiry(){
@@ -78,16 +70,28 @@ public class Food extends Item{
 
     @Override
     public String descriptionDetails(){
-        String itemType = (getIsPerishable() ? "Perishable" : "Non-Perishable") + (getIsCanned() ? " (Canned)" : "");
-        String status = isExpired() ? "EXPIRED" : (isExpiringSoon() ? "Expiring Soon" : "OK");
-        if(getDaysUntilExpiry() > 0 ) return super.descriptionDetails() +  String.format("Type: %s\nExpiry Date: %s\nStatus: %s (%d days left)",
-                        itemType, expiryDate, status, getDaysUntilExpiry());
-        return super.descriptionDetails() +  String.format("Type: %s\nExpiry Date: %s\nStatus: %s ",
-                itemType, expiryDate, status);
+        String itemType = getIsPerishable() ? "Perishable" : "Non-Perishable";
+
+        String status;
+        if (isExpired()) {
+            status = "EXPIRED";
+        } else if (isExpiringSoon()) {
+            status = "URGENT: Expiring Soon";
+        } else {
+            status = "Good";
+        }
+
+        return String.format("%sType: %s\nExpiry Date: %s\nStatus: %s (%d days remaining)",
+                super.descriptionDetails(),
+                itemType,
+                expiryDate,
+                status,
+                getDaysUntilExpiry());
     }
 
     @Override
     public double calculateValue(){
+        if (isExpired()) return 0.0;
         return getPurchasePrice() * getQuantity();
     }
 }

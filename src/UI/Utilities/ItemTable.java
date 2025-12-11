@@ -49,7 +49,7 @@ public class ItemTable extends JScrollPane {
     }
 
     private void setupTableAppearance() {
-        table.setRowHeight(30); // Initial row height
+        table.setRowHeight(30);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
