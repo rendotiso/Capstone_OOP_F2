@@ -51,10 +51,16 @@ public abstract class Item {
     public void setDescription(String description) {
         this.description = description;
     }
-    public void setQuantity(int quantity) {
+    public void setQuantity(int quantity) throws IllegalArgumentException {
+        if (quantity < 0) {
+            throw new IllegalArgumentException("Quantity cannot be negative");
+        }
         this.quantity = quantity;
     }
-    public void setPurchasePrice(double purchasePrice) {
+    public void setPurchasePrice(double purchasePrice) throws IllegalArgumentException {
+        if(purchasePrice<0){
+            throw new IllegalArgumentException("Purchase price cannot be negative");
+        }
         this.purchasePrice = purchasePrice;
     }
     public void setPurchaseDate(String purchaseDate) {

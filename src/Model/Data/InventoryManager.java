@@ -6,6 +6,7 @@ import Model.Enums.Category;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 public class InventoryManager {
@@ -64,9 +65,13 @@ public class InventoryManager {
     }
 
     public List<Item> getItemsByCategory(Category category) {
-        return items.stream()
-                .filter(item -> item.getCategory() == category)
-                .collect(Collectors.toList());
+        List<Item> itemsByCategory = new ArrayList<>();
+        for(Item item : items){
+            if(item.getCategory() == category){
+                itemsByCategory.add(item);
+            }
+        }
+        return itemsByCategory;
     }
 
     public boolean searchItem(Item item, String searchTerm) {
