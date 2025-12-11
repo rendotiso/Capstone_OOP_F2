@@ -142,11 +142,11 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
 
     @Override
     public void setupButtonListeners() {
-        ADDButton.addActionListener(_ -> addItem());
-        UPDATEButton.addActionListener(_ -> updateItem());
-        REMOVEButton.addActionListener(_ -> removeItem());
-        CLEARButton.addActionListener(_ -> clearForm());
-        REFRESHButton.addActionListener(_ -> refreshForm());
+        ADDButton.addActionListener(e -> addItem());
+        UPDATEButton.addActionListener(e -> updateItem());
+        REMOVEButton.addActionListener(e -> removeItem());
+        CLEARButton.addActionListener(e -> clearForm());
+        REFRESHButton.addActionListener(e -> refreshForm());
     }
 
     @Override

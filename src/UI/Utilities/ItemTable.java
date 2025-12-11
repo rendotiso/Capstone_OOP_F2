@@ -78,7 +78,7 @@ public class ItemTable extends JScrollPane {
     }
 
     private void setupTableRenderers() {
-        TableCellRenderer priceRenderer = (table, value, isSelected, _, row, column) -> {
+        TableCellRenderer priceRenderer = (table, value, isSelected, e, row, column) -> {
 
             JTextArea textArea = new JTextArea();
             textArea.setLineWrap(true);
@@ -150,7 +150,7 @@ public class ItemTable extends JScrollPane {
             }
         };
 
-        TableCellRenderer textRenderer = (table, value, isSelected, _, row, column) -> {
+        TableCellRenderer textRenderer = (table, value, isSelected, e, row, column) -> {
 
             JTextArea textArea = new JTextArea();
             textArea.setLineWrap(true);

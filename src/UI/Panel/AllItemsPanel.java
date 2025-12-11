@@ -251,14 +251,14 @@ public class AllItemsPanel extends JPanel {
     }
 
     private void setupListeners() {
-        clearButton.addActionListener(_ -> {
+        clearButton.addActionListener(e -> {
             searchField.setText("");
             loadAllItems();
         });
-        searchButton.addActionListener(_ -> searchFunction());
-        searchField.addActionListener(_ -> searchFunction());
-        refreshButton.addActionListener(_ -> refreshFunction());
-        deleteButton.addActionListener(_ -> deleteFunction());
+        searchButton.addActionListener(e -> searchFunction());
+        searchField.addActionListener(e -> searchFunction());
+        refreshButton.addActionListener(e -> refreshFunction());
+        deleteButton.addActionListener(e -> deleteFunction());
     }
 
     private void setupTableSelectionListener() {

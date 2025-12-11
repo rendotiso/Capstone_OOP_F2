@@ -84,7 +84,7 @@ public class Tool extends Item implements Maintainable {
         String statusMessage;
         int daysRemaining = getDaysUntilMaintenanceDue();
         if (maintenanceNeeded) {
-            statusMessage = "UUrgent! Maintenance Needed!";
+            statusMessage = "Urgent! Maintenance Needed!";
         }
         else if (maintenanceIntervalDays > 0) {
             if (daysRemaining < 0) {

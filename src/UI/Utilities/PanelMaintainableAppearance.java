@@ -237,7 +237,7 @@ public class PanelMaintainableAppearance extends PanelAppearance {
     }
 
     protected void setupMaintenanceListener() {
-        maintenanceNeededCheckBox.addChangeListener(_ -> updateVisualState());
+        maintenanceNeededCheckBox.addChangeListener(e -> updateVisualState());
         maintenanceIntervalDateDays.addChangeListener(e -> updateVisualState());
     }
 
