@@ -12,9 +12,9 @@
                              String purchaseDate, String vendor, String location, String itemType,
                              String usage, String isCondition) {
             super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.MISCELLANEOUS, location);
-            this.itemType = itemType;
-            this.usage = usage;
-            this.condition = isCondition;
+            setItemType(itemType);
+            setUsage(usage);
+            setCondition(isCondition);
         }
 
         //GETTERS

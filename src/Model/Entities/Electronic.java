@@ -13,14 +13,16 @@ public class Electronic extends Item implements Maintainable {
     private String model;
     private boolean maintenanceNeeded;
     private String lastMaintenanceDate;
+    private int maintenanceIntervalDays;
 
-    public Electronic(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, String location, String warrantyPeriod, String brand, String model, boolean maintenanceNeeded, String lastMaintenanceDate) {
+    public Electronic(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, String location, String warrantyPeriod, String brand, String model, boolean maintenanceNeeded, String lastMaintenanceDate, int maintenanceIntervalDays) {
         super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.ELECTRONICS, location);
         setWarrantyPeriod(warrantyPeriod);
         setBrand(brand);
         setModel(model);
-        this.maintenanceNeeded = maintenanceNeeded;
-        this.lastMaintenanceDate = lastMaintenanceDate;
+        setLastMaintenanceDate(lastMaintenanceDate);
+        setMaintenanceNeeded(maintenanceNeeded);
+        setMaintenanceIntervalDays(maintenanceIntervalDays);
     }
 
     //GETTERS
@@ -39,6 +41,9 @@ public class Electronic extends Item implements Maintainable {
     public String getLastMaintenanceDate() {
         return lastMaintenanceDate;
     }
+    public int getMaintenanceIntervalDays(){
+        return maintenanceIntervalDays;
+    }
 
     //SETTERS
     public void setWarrantyPeriod(String warrantyPeriod) {
@@ -53,39 +58,50 @@ public class Electronic extends Item implements Maintainable {
     public void setLastMaintenanceDate(String lastMaintenanceDate) {
         this.lastMaintenanceDate = lastMaintenanceDate;
     }
+    public void setMaintenanceNeeded(boolean maintenanceNeeded){ this.maintenanceNeeded = maintenanceNeeded;}
+    public void setMaintenanceIntervalDays(int maintenanceIntervalDays) {
+        this.maintenanceIntervalDays = maintenanceIntervalDays;
+    }
 
     //METHODS
     @Override
+    public boolean needsMaintenance() {
+        // Same logic as Tool class - check if days until maintenance is due
+        return getDaysUntilMaintenanceDue() <= 0;
+    }
+
+    @Override
     public int getDaysUntilMaintenanceDue() {
         if (lastMaintenanceDate == null || lastMaintenanceDate.isEmpty()) {
-            return 0;
+            return 0; // Treat as immediately due
         }
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
             LocalDate lastMaintenance = LocalDate.parse(lastMaintenanceDate, formatter);
-            LocalDate nextMaintenanceDate = lastMaintenance.plusDays(365);
+
+            LocalDate nextMaintenanceDate = lastMaintenance.plusDays(maintenanceIntervalDays);
             LocalDate today = LocalDate.now();
-            if (today.isBefore(nextMaintenanceDate)) {
-                return (int) ChronoUnit.DAYS.between(today, nextMaintenanceDate);
-            } else {
-                return 0;
-            }
+
+            return (int) ChronoUnit.DAYS.between(today, nextMaintenanceDate);
+
         } catch (DateTimeParseException e) {
             return 0;
         }
     }
-
-    @Override
-    public boolean needsMaintenance(){
-        return getDaysUntilMaintenanceDue() <= 0;
-    }
     @Override
     public String descriptionDetails() {
-        String maintain;
-        if(needsMaintenance()) maintain = "Yes!";
-        else maintain = "No";
-        return super.descriptionDetails() + String.format("Brand: %s\nModel: %s\n" +
-            "Maintenance Needed: %s \nDays Until Maintenance: %d", brand, model, maintain, getDaysUntilMaintenanceDue());
+        String maintenanceStatus = needsMaintenance() ? "MAINTENANCE REQUIRED" : "Good Condition";
+
+        return String.format("""
+                        %s\
+                        Brand: %s
+                        Model: %s
+                        Maintenance Status: %s (%d days remaining)""",
+                super.descriptionDetails(),
+                brand,
+                model,
+                maintenanceStatus,
+                getDaysUntilMaintenanceDue());
     }
 
     @Override

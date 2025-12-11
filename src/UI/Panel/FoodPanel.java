@@ -16,8 +16,7 @@ import java.util.List;
 
 public class FoodPanel extends PanelAppearance implements PanelActionListeners {
     private JTextField expiryDate_field;
-    private JComboBox<String> dietaryInfo_combobox;
-    private JLabel expiryDate_label, dietaryInfo_label, perish_label;
+    private JLabel expiryDate_label, perish_label;
     private JPanel perishPanel;
     private JCheckBox perishCheckBox;
     private final InventoryManager inventoryManager;
@@ -25,10 +24,6 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
     private static final String[] FOOD_LOCATIONS = {
             "REFRIGERATOR", "PANTRY", "FREEZER",
             "FOOD STORAGE RACK", "KITCHEN SHELVES", "COUNTERTOP CONTAINERS"
-    };
-    private static final String[] DIETARY_OPTIONS = {
-            "N/A", "Vegan", "Vegetarian", "Gluten-Free",
-            "Contains Nuts", "Dairy-Free"
     };
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
@@ -53,10 +48,7 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
 
     private void initFoodComponents() {
         expiryDate_field = new JTextField(8);
-        dietaryInfo_combobox = new JComboBox<>(DIETARY_OPTIONS);
-
         expiryDate_label = new JLabel("EXPIRY DATE:");
-        dietaryInfo_label = new JLabel("DIETARY INFO:");
         perish_label = new JLabel("PERISHABLE?");
 
         perishPanel = new JPanel();
@@ -79,25 +71,9 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
         int row = setupFormLayout(panel, formGbc);
 
         addFormRow(panel, formGbc, expiryDate_label, expiryDate_field, row++);
-        addComboBoxRow(panel, formGbc, dietaryInfo_label, dietaryInfo_combobox, row++);
         addCheckBoxRow(panel, formGbc, perish_label, perishPanel, perishCheckBox, row++);
 
         setupDescriptionPanel(row, formGbc);
-    }
-
-    private void addComboBoxRow(JPanel panel, GridBagConstraints formGbc, JLabel label,
-                                JComboBox<String> comboBox, int row) {
-        formGbc.gridx = 0; formGbc.gridy = row;
-        formGbc.fill = GridBagConstraints.NONE;
-        formGbc.weightx = 0;
-        formGbc.anchor = GridBagConstraints.WEST;
-        panel.add(label, formGbc);
-
-        formGbc.gridx = 1; formGbc.gridy = row;
-        formGbc.fill = GridBagConstraints.HORIZONTAL;
-        formGbc.weightx = 1.0;
-        formGbc.anchor = GridBagConstraints.WEST;
-        panel.add(comboBox, formGbc);
     }
 
     private void addCheckBoxRow(JPanel panel, GridBagConstraints formGbc, JLabel label,
@@ -123,16 +99,13 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
         Color black = new Color(-16777216);
 
         expiryDate_field.setBackground(bg);
-        dietaryInfo_combobox.setBackground(bg);
         perishPanel.setBackground(bg);
         perishCheckBox.setBackground(bg);
 
         expiryDate_field.setForeground(black);
-        dietaryInfo_combobox.setForeground(black);
         perishCheckBox.setForeground(black);
 
         expiryDate_label.setForeground(black);
-        dietaryInfo_label.setForeground(black);
         perish_label.setForeground(black);
 
         Font labelFont = new Font("Segoe UI", Font.BOLD, 14);
@@ -140,11 +113,9 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
         Font checkboxFont = new Font("Segoe UI", Font.BOLD, 12);
 
         expiryDate_label.setFont(labelFont);
-        dietaryInfo_label.setFont(labelFont);
         perish_label.setFont(labelFont);
 
         expiryDate_field.setFont(fieldFont);
-        dietaryInfo_combobox.setFont(fieldFont);
         perishCheckBox.setFont(checkboxFont);
     }
 
@@ -183,10 +154,6 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
         return text;
     }
 
-    public String getDietaryInfoInput() {
-        return (String) dietaryInfo_combobox.getSelectedItem();
-    }
-
     public boolean isPerishable() {
         return perishCheckBox.isSelected();
     }
@@ -201,26 +168,6 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
             expiryDate_field.setText(date);
             expiryDate_field.setForeground(Color.BLACK);
             expiryDate_field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        }
-    }
-
-    public void setDietaryInfoInput(String dietaryInfo) {
-        if (dietaryInfo == null || dietaryInfo.trim().isEmpty()) {
-            dietaryInfo_combobox.setSelectedItem("N/A");
-        } else {
-            dietaryInfo_combobox.setSelectedItem(dietaryInfo);
-            // If the dietary info is not in the default options, add it to the combobox
-            boolean found = false;
-            for (int i = 0; i < dietaryInfo_combobox.getItemCount(); i++) {
-                if (dietaryInfo_combobox.getItemAt(i).equals(dietaryInfo)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                dietaryInfo_combobox.addItem(dietaryInfo);
-                dietaryInfo_combobox.setSelectedItem(dietaryInfo);
-            }
         }
     }
 
@@ -283,7 +230,6 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
     public void clearForm() {
         super.clearForm();
         setExpiryDateInput("");
-        setDietaryInfoInput("N/A");
         setPerishable(false);
     }
 
@@ -305,7 +251,6 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
                 getVendorInput(),
                 getLocationInput(),
                 getExpiryDateInput(),
-                getDietaryInfoInput(),
                 isPerishable()
         );
     }
@@ -476,7 +421,6 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
         setPriceInput(String.valueOf(food.getPurchasePrice()));
         setPurchaseDateInput(food.getPurchaseDate());
         setExpiryDateInput(food.getExpiryDate());
-        setDietaryInfoInput(food.getDietaryInfo());
         setPerishable(food.getIsPerishable());
         setDescriptionInput(food.getDescription());
         setLocationInput(food.getLocation());

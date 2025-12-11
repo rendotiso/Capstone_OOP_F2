@@ -43,8 +43,8 @@ public class AllItemsPanel extends JPanel {
         // Styling
         searchPanel.setBackground(new Color(70, 130, 180));
         searchField.setBackground(Color.WHITE);
-        searchButton.setBackground(new Color(100, 149, 237));
-        clearButton.setBackground(new Color(100, 149, 237));
+        searchButton.setBackground(new Color(105,165,225));
+        clearButton.setBackground(new Color(105,165,225));
         searchButton.setForeground(Color.WHITE);
         clearButton.setForeground(Color.WHITE);
 
@@ -71,11 +71,11 @@ public class AllItemsPanel extends JPanel {
         totalDisplay.setBackground(Color.WHITE);
 
         JLabel totalText = new JLabel("TOTAL: ");
-        totalText.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        totalText.setFont(new Font("Segue UI", Font.BOLD, 14));
         totalText.setForeground(new Color(70, 130, 180));
 
         totalValueLabel = new JLabel("$0.00");
-        totalValueLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        totalValueLabel.setFont(new Font("Segue UI", Font.BOLD, 14));
         totalValueLabel.setForeground(new Color(0, 100, 0));
 
         totalValueLabel.putClientProperty("html.disable", Boolean.TRUE);
@@ -153,8 +153,8 @@ public class AllItemsPanel extends JPanel {
 
         refreshButton.setFocusable(false);
         deleteButton.setFocusable(false);
-        Color refreshColor = new Color(0x74c69d);
-        Color deleteColor = new Color(0xc10a0a);
+        Color refreshColor = new Color(111,168,214);
+        Color deleteColor = new Color(215, 70, 70);
         refreshButton.setBackground(refreshColor);
         deleteButton.setBackground(deleteColor);
         refreshButton.setForeground(Color.WHITE);
@@ -440,23 +440,6 @@ public class AllItemsPanel extends JPanel {
 
                     return textArea;
                 }else if (column == 7) {
-                    switch (value) {
-                        case Double v -> priceRenderer.setText(String.format("$%,.2f", v));
-                        case Number number -> {
-                            double v = number.doubleValue();
-                            priceRenderer.setText(String.format("$%,.2f", v));
-                        }
-                        case String s -> {
-                            try {
-                                double val = Double.parseDouble(s);
-                                priceRenderer.setText(String.format("$%,.2f", val));
-                            } catch (NumberFormatException e) {
-                                priceRenderer.setText(value.toString());
-                            }
-                        }
-                        default -> priceRenderer.setText(value.toString());
-                    }
-
                     return priceRenderer.getTableCellRendererComponent(
                             table, value, isSelected, hasFocus, row, column);
                 }

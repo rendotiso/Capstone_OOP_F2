@@ -20,16 +20,25 @@ public class Dashboard extends JFrame {
         setResizable(false);
         setLocationRelativeTo(null);
 
-        setupCardLayout();
+        setters();
         addPanels();
         setupListeners();
-        loadAndSetIcon();
         setVisible(true);
     }
 
-    private void setupCardLayout() {
+    private void setters() {
         cardLayoutManager = new CardLayout();
         cardlayout.setLayout(cardLayoutManager);
+
+        homeButton.setName("homeButton");
+        toolsButton.setName("toolsButton");
+        electronicsButton.setName("electronicsButton");
+        miscellaneousButton.setName("miscellaneousButton");
+        clothingButton.setName("clothingButton");
+        foodButton.setName("foodButton");
+        Panel.setName("Panel");
+        cardlayout.setName("cardlayout");
+        organizerLabel.setName("organizerLabel");
     }
 
     private void addPanels() {
@@ -47,19 +56,6 @@ public class Dashboard extends JFrame {
         cardlayout.add(toolsPanel, "TOOLS");
         cardlayout.add(miscPanel, "MISCELLANEOUS");
         cardLayoutManager.show(cardlayout, "VIEW_ALL");
-    }
-
-    private void loadAndSetIcon() {
-        try{
-            ImageIcon loadedIcon;
-            java.net.URL imageUrl = getClass().getResource("Model/Images/Organizer.png");
-            assert imageUrl != null;
-            loadedIcon = new ImageIcon(imageUrl);
-            organizerLabel.setIcon(loadedIcon);
-            organizerLabel.setText("");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
     }
 
     private void setupListeners() {

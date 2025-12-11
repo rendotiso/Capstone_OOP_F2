@@ -16,19 +16,19 @@ public class Tool extends Item implements Maintainable {
 
     //maintenance attributes
     private boolean maintenanceNeeded;
-    private String LastMaintenanceDate;
+    private String lastMaintenanceDate;
     private int maintenanceIntervalDays;
 
     public Tool(String name, String description, int quantity, double purchasePrice, String purchaseDate,
                 String vendor, String location, String toolType, String steelGrade, String material, boolean maintenanceNeeded,
-                String LastMaintenanceDate, int maintenanceIntervalDays) {
+                String lastMaintenanceDate, int maintenanceIntervalDays) {
         super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.TOOLS, location);
-        this.toolType = toolType;
-        this.steelGrade = steelGrade;
-        this.material = material;
-        this.maintenanceNeeded = maintenanceNeeded;
-        this.LastMaintenanceDate = LastMaintenanceDate;
-        this.maintenanceIntervalDays = maintenanceIntervalDays;
+        setToolType(toolType);
+        setSteelGrade(steelGrade);
+        setMaterial(material);
+        setMaintenanceNeeded(maintenanceNeeded);
+        setLastMaintenanceDate(lastMaintenanceDate);
+        setMaintenanceIntervalDays(maintenanceIntervalDays);
     }
 
     //GETTERS
@@ -43,7 +43,7 @@ public class Tool extends Item implements Maintainable {
         return maintenanceNeeded;
     }
     public String getLastMaintenanceDate() {
-        return LastMaintenanceDate;
+        return lastMaintenanceDate;
     }
     public int getMaintenanceIntervalDays() {
         return maintenanceIntervalDays;
@@ -60,11 +60,11 @@ public class Tool extends Item implements Maintainable {
     public void setMaintenanceNeeded(boolean maintenanceNeeded) {
         this.maintenanceNeeded = maintenanceNeeded;
     }
-    public void setLastMaintenanceDate(String LastMaintenanceDate) {
-        this.LastMaintenanceDate = LastMaintenanceDate;
+    public void setLastMaintenanceDate(String lastMaintenanceDate) {
+        this.lastMaintenanceDate = lastMaintenanceDate;
     }
-    public void setMaintenanceIntervalDays(int days) {
-        this.maintenanceIntervalDays = days;
+    public void setMaintenanceIntervalDays(int maintenanceIntervalDays) {
+        this.maintenanceIntervalDays = maintenanceIntervalDays;
     }
 
     //METHODS
@@ -74,29 +74,37 @@ public class Tool extends Item implements Maintainable {
     }
     @Override
     public int getDaysUntilMaintenanceDue() {
-        if (LastMaintenanceDate == null || LastMaintenanceDate.isEmpty()) {
+        if (lastMaintenanceDate == null || lastMaintenanceDate.isEmpty()) {
             return 0;
         }
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-            LocalDate lastMaintenance = LocalDate.parse(LastMaintenanceDate, formatter);
-            LocalDate nextMaintenanceDate = lastMaintenance.plusDays(365);
+            LocalDate lastMaintenance = LocalDate.parse(lastMaintenanceDate, formatter);
+
+            LocalDate nextMaintenanceDate = lastMaintenance.plusDays(maintenanceIntervalDays);
             LocalDate today = LocalDate.now();
-            if (today.isBefore(nextMaintenanceDate)) {
-                return (int) ChronoUnit.DAYS.between(today, nextMaintenanceDate);
-            } else {
-                return 0;
-            }
+
+            return (int) ChronoUnit.DAYS.between(today, nextMaintenanceDate);
+
         } catch (DateTimeParseException e) {
             return 0;
         }
     }
     @Override
     public String descriptionDetails() {
-        String maintenanceStatus = needsMaintenance() ? "NEEDS MAINTENANCE" : "OK";
-        int daysLeft = getDaysUntilMaintenanceDue();
-        return String.format("%sType: %s\nSteel Grade: %s\nMaterial: %s\nMaintenance: %s (%d days)",
-                super.descriptionDetails(), toolType, steelGrade, material, maintenanceStatus, daysLeft);
+        String maintenanceStatus = needsMaintenance() ? "MAINTENANCE REQUIRED" : "Good Condition";
+        return String.format("""
+                        %s\
+                        Type: %s
+                        Steel Grade: %s
+                        Material: %s
+                        Maintenance Status: %s (%d days remaining)""",
+                super.descriptionDetails(),
+                toolType,
+                steelGrade,
+                material,
+                maintenanceStatus,
+                getDaysUntilMaintenanceDue());
     }
     @Override
     public double calculateValue() {

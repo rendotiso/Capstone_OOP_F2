@@ -30,11 +30,9 @@ public class Clothing extends Item {
     public void setCondition(String condition) {
         this.condition = condition;
     }
-
     public void setFabricType(String fabricType) {
-        this.fabricType = fabricType != null ? fabricType.trim() : "";
+        this.fabricType = fabricType;
     }
-
     public void setSize(String size) {
         this.size = size;
     }
@@ -44,7 +42,6 @@ public class Clothing extends Item {
     public double calculateValue() {
         return getPurchasePrice() * getQuantity();
     }
-
     @Override
     public String descriptionDetails() {
         return super.descriptionDetails() + String.format("Size: %s\nCondition: %s", size, condition);

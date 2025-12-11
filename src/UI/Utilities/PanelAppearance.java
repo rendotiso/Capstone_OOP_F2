@@ -6,7 +6,6 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
 public class PanelAppearance extends JPanel {
-    // Common attributes
     protected JPanel panelist, rootPanel, title_panel, panel, table_panel, description_panel, panelButton;
     protected JTextField name_field, vendor_field, price_field, purchaseDate_field;
     protected JTextArea description_textarea;
@@ -19,7 +18,6 @@ public class PanelAppearance extends JPanel {
     protected JSpinner quantity_spinner;
     protected int selectedIndex = -1;
 
-    // Common placeholder texts
     protected static final String DATE_PLACEHOLDER = "MM/DD/YYYY";
 
     public PanelAppearance() {
@@ -29,8 +27,9 @@ public class PanelAppearance extends JPanel {
         setupPlaceholders();
     }
 
+
+
     protected void initComponents() {
-        // Initialize panels
         panelist = new JPanel();
         rootPanel = new JPanel();
         title_panel = new JPanel();
@@ -39,7 +38,6 @@ public class PanelAppearance extends JPanel {
         description_panel = new JPanel();
         panelButton = new JPanel();
 
-        // Initialize form fields
         name_field = new JTextField(8);
         vendor_field = new JTextField(8);
         price_field = new JTextField(8);
@@ -49,11 +47,9 @@ public class PanelAppearance extends JPanel {
         description_textarea.setLineWrap(true);
         description_textarea.setWrapStyleWord(true);
 
-        // Initialize spinner for quantity with left-aligned text
         quantity_spinner = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
         customizeSpinner();
 
-        // Initialize labels
         title_label = new JLabel();
         name_label = new JLabel("NAME:");
         quantity_label = new JLabel("QUANTITY:");
@@ -63,23 +59,19 @@ public class PanelAppearance extends JPanel {
         purchaseDate_label = new JLabel("PURCHASE DATE:");
         description_label = new JLabel("DESCRIPTION/NOTE:");
 
-        // Initialize buttons
         ADDButton = new JButton("ADD");
         CLEARButton = new JButton("CLEAR");
         UPDATEButton = new JButton("UPDATE");
         REMOVEButton = new JButton("REMOVE");
         REFRESHButton = new JButton("REFRESH");
 
-        // Initialize location combo box
         location_combobox = new JComboBox<>(new String[]{
                 "STORAGE BOX", "WARDROBE", "UNDERBED STORAGE", "CLOSET",
                 "DRAWER CLOSET", "HANGING RACK"
         });
 
-        // Initialize text area scroll
         textAreaScroll = new JScrollPane(description_textarea);
 
-        // Initialize item table
         String[] columnNames = {"Name", "Qty", "Location", "PDate", "Price", "Details"};
         itemTable = new ItemTable(columnNames);
     }
@@ -103,7 +95,6 @@ public class PanelAppearance extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
 
-        // Title panel
         title_panel.setLayout(new FlowLayout(FlowLayout.LEFT));
         title_panel.add(title_label);
 
@@ -114,7 +105,6 @@ public class PanelAppearance extends JPanel {
         gbc.weightx = 1.0;
         rootPanel.add(title_panel, gbc);
 
-        // Form panel
         panel.setLayout(new GridBagLayout());
         GridBagConstraints formGbc = new GridBagConstraints();
         formGbc.insets = new Insets(5, 5, 5, 5);
@@ -122,10 +112,8 @@ public class PanelAppearance extends JPanel {
 
         int row = setupFormLayout(panel, formGbc);
 
-        // Description panel
         setupDescriptionPanel(row, formGbc);
 
-        // Add form panel to root panel
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
@@ -134,7 +122,6 @@ public class PanelAppearance extends JPanel {
         gbc.fill = GridBagConstraints.BOTH;
         rootPanel.add(panel, gbc);
 
-        // Table panel
         table_panel.setLayout(new BorderLayout());
         table_panel.add(itemTable, BorderLayout.CENTER);
 
@@ -151,22 +138,11 @@ public class PanelAppearance extends JPanel {
     protected int setupFormLayout(JPanel panel, GridBagConstraints formGbc) {
         int row = 0;
 
-        // Name field
         addFormRow(panel, formGbc, name_label, name_field, row++);
-
-        // Quantity field
         addFormRow(panel, formGbc, quantity_label, quantity_spinner, row++);
-
-        // Location field
         addFormRow(panel, formGbc, location_label, location_combobox, row++);
-
-        // Vendor field
         addFormRow(panel, formGbc, vendor_label, vendor_field, row++);
-
-        // Price field
         addFormRow(panel, formGbc, price_label, price_field, row++);
-
-        // Purchase Date field
         addFormRow(panel, formGbc, purchaseDate_label, purchaseDate_field, row++);
 
         return row;
@@ -192,13 +168,11 @@ public class PanelAppearance extends JPanel {
         GridBagConstraints descGbc = new GridBagConstraints();
         descGbc.insets = new Insets(5, 5, 5, 5);
 
-        // Description label
         descGbc.gridx = 0; descGbc.gridy = 0;
         descGbc.gridwidth = 1;
         descGbc.fill = GridBagConstraints.HORIZONTAL;
         description_panel.add(description_label, descGbc);
 
-        // Text area
         descGbc.gridx = 0; descGbc.gridy = 1;
         descGbc.gridwidth = 1;
         descGbc.fill = GridBagConstraints.BOTH;
@@ -206,7 +180,6 @@ public class PanelAppearance extends JPanel {
         textAreaScroll.setPreferredSize(new Dimension(200, 80));
         description_panel.add(textAreaScroll, descGbc);
 
-        // Buttons panel
         descGbc.gridx = 0; descGbc.gridy = 2;
         descGbc.gridwidth = 1;
         descGbc.fill = GridBagConstraints.NONE;
@@ -221,7 +194,6 @@ public class PanelAppearance extends JPanel {
         panelButton.add(REFRESHButton);
         description_panel.add(panelButton, descGbc);
 
-        // Add description panel to main form panel
         formGbc.gridx = 0; formGbc.gridy = row;
         formGbc.gridwidth = 2;
         formGbc.fill = GridBagConstraints.BOTH;
@@ -236,10 +208,8 @@ public class PanelAppearance extends JPanel {
         Color placeholderColor = new Color(100, 100, 100, 180);
         Color buttonColor = new Color(70, 130, 180);
 
-        // Set panels opaque
         setPanelsOpaque();
 
-        // Set panel backgrounds
         panelist.setBackground(bg);
         rootPanel.setBackground(bg);
         title_panel.setBackground(header);
@@ -248,23 +218,12 @@ public class PanelAppearance extends JPanel {
         table_panel.setBackground(bg);
         description_panel.setBackground(bg);
 
-        // Set component backgrounds
         setComponentBackgrounds(bg);
-
-        // Set foreground colors
         setComponentForegrounds(black, placeholderColor);
-
-        // Set label colors
         title_label.setForeground(Color.WHITE);
         setLabelColors(black);
-
-        // Set button colors
         setButtonColors(buttonColor);
-
-        // Set fonts
         setFonts();
-
-        // Customize spinner
         customizeSpinnerAppearance(bg, black);
     }
 
@@ -411,19 +370,15 @@ public class PanelAppearance extends JPanel {
     public String getNameInput() {
         return name_field.getText();
     }
-
     public int getQuantityInput() {
         return (int) quantity_spinner.getValue();
     }
-
     public String getVendorInput() {
         return vendor_field.getText();
     }
-
     public String getPriceInput() {
         return price_field.getText();
     }
-
     public String getPurchaseDateInput() {
         String text = purchaseDate_field.getText();
         if (text.equals(DATE_PLACEHOLDER)) {
@@ -435,7 +390,6 @@ public class PanelAppearance extends JPanel {
     public String getDescriptionInput() {
         return description_textarea.getText();
     }
-
     public String getLocationInput() {
         return (String) location_combobox.getSelectedItem();
     }
@@ -444,15 +398,12 @@ public class PanelAppearance extends JPanel {
     public void setNameInput(String name) {
         name_field.setText(name);
     }
-
     public void setQuantityInput(int quantity) {
         quantity_spinner.setValue(quantity);
     }
-
     public void setVendorInput(String vendor) {
         vendor_field.setText(vendor);
     }
-
     public void setPriceInput(String price) {
         price_field.setText(price);
     }
@@ -481,11 +432,9 @@ public class PanelAppearance extends JPanel {
         title_label.setText(title);
     }
 
-    // Common utility methods
     protected void showError(String message) {
         JOptionPane.showMessageDialog(this, message, "Input Error", JOptionPane.ERROR_MESSAGE);
     }
-
     protected void showSuccess(String message) {
         JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
     }

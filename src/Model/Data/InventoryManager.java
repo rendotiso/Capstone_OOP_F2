@@ -27,15 +27,15 @@ public class InventoryManager {
         return instance;
     }
 
-    // ADDITEM
+    // ADD ITEM
     public void addItem(Item item) throws IOException {
         if(item == null) throw new IllegalArgumentException("Item cannot be null");
         items.add(item);
         savetoFile();
     }
 
-    //DELETEITEM
-    public boolean removeItem(Item item) throws IOException {
+    //DELETE ITEM
+    public void removeItem(Item item) {
         if (item == null) {
             throw new IllegalArgumentException("Item cannot be null");
         }
@@ -46,11 +46,10 @@ public class InventoryManager {
         }
 
         savetoFile();
-        return removed;
     }
 
     //UPDATE ITEM
-    public void updateItem(int index, Item item) throws IOException {
+    public void updateItem(int index, Item item) {
         if (item == null) {
             throw new IllegalArgumentException("Updated item cannot be null");
         }
