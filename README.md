@@ -19,7 +19,7 @@ Prerequisites
 Option 1: Running the JAR (Recommended)
 1.  Go to the [Releases](../../releases) section of this repository
 2.  Download the latest release file: `Organizer.jar`.
-3.  Double-click the file, or open your terminal in the downloads folder and run:  
+3.  Open your terminal/command prompt in the downloads folder and run:  
     ```bash
     java -jar Organizer.jar
     ```
