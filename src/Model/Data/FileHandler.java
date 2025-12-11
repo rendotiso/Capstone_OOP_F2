@@ -101,7 +101,7 @@ public class FileHandler {
                     String size = items[8];
                     String condition = items[9];
                     String fabric = items[10];
-                    return new Clothing(name, description, quantity, price, purchaseDate, vendor, location, size, condition, fabric);
+                    return new Clothing(name, description, quantity, price, purchaseDate, vendor, location, condition, fabric, size);
                 case ELECTRONICS:
                     String warranty = items[8];
                     String brand = items[9];

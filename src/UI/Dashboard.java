@@ -59,22 +59,22 @@ public class Dashboard extends JFrame {
     }
 
     private void setupListeners() {
-        homeButton.addActionListener(_ -> cardLayoutManager.show(cardlayout, "VIEW_ALL"));
+        homeButton.addActionListener(e -> cardLayoutManager.show(cardlayout, "VIEW_ALL"));
         homeButton.setFocusable(false);
-        clothingButton.addActionListener(_ -> cardLayoutManager.show(cardlayout, "CLOTHING"));
+        clothingButton.addActionListener(e -> cardLayoutManager.show(cardlayout, "CLOTHING"));
         clothingButton.setFocusable(false);
-        electronicsButton.addActionListener(_ -> cardLayoutManager.show(cardlayout, "ELECTRONICS"));
+        electronicsButton.addActionListener(e -> cardLayoutManager.show(cardlayout, "ELECTRONICS"));
         electronicsButton.setFocusable(false);
-        foodButton.addActionListener(_ -> cardLayoutManager.show(cardlayout, "FOOD"));
+        foodButton.addActionListener(e -> cardLayoutManager.show(cardlayout, "FOOD"));
         foodButton.setFocusable(false);
-        toolsButton.addActionListener(_ -> cardLayoutManager.show(cardlayout, "TOOLS"));
+        toolsButton.addActionListener(e -> cardLayoutManager.show(cardlayout, "TOOLS"));
         toolsButton.setFocusable(false);
-        miscellaneousButton.addActionListener(_ -> cardLayoutManager.show(cardlayout, "MISCELLANEOUS"));
+        miscellaneousButton.addActionListener(e -> cardLayoutManager.show(cardlayout, "MISCELLANEOUS"));
         miscellaneousButton.setFocusable(false);
 
-        helpButton.addActionListener(_ -> showHelp());
+        helpButton.addActionListener(e -> showHelp());
         helpButton.setFocusable(false);
-        exitButton.addActionListener(_ ->System.exit(0));
+        exitButton.addActionListener(e ->System.exit(0));
         exitButton.setFocusable(false);
     }
 
