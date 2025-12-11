@@ -25,7 +25,7 @@ Option 1: Running the JAR (Recommended)
 Option 2: Building from Source
 1.  Clone the Repository:
     ```bash
-    git clone https://github.com/[YOUR-USERNAME]/[YOUR-REPO-NAME].git
+    https://github.com/rendotiso/Capstone_OOP_F2.git
     ```
 2.  Run in any IDE:
     *   Open your IDE (IntelliJ IDEA recommended).
