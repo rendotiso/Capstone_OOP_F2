@@ -440,23 +440,6 @@ public class AllItemsPanel extends JPanel {
 
                     return textArea;
                 }else if (column == 7) {
-                    switch (value) {
-                        case Double v -> priceRenderer.setText(String.format("$%,.2f", v));
-                        case Number number -> {
-                            double v = number.doubleValue();
-                            priceRenderer.setText(String.format("$%,.2f", v));
-                        }
-                        case String s -> {
-                            try {
-                                double val = Double.parseDouble(s);
-                                priceRenderer.setText(String.format("$%,.2f", val));
-                            } catch (NumberFormatException e) {
-                                priceRenderer.setText(value.toString());
-                            }
-                        }
-                        default -> priceRenderer.setText(value.toString());
-                    }
-
                     return priceRenderer.getTableCellRendererComponent(
                             table, value, isSelected, hasFocus, row, column);
                 }

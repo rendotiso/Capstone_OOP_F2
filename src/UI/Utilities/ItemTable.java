@@ -79,59 +79,54 @@ public class ItemTable extends JScrollPane {
 
     private void setupTableRenderers() {
         // 1. Renderer for Price column ONLY - with word wrapping
-        TableCellRenderer priceRenderer = new TableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                                                           boolean isSelected, boolean hasFocus,
-                                                           int row, int column) {
+        TableCellRenderer priceRenderer = (table, value, isSelected, _, row, column) -> {
 
-                JTextArea textArea = new JTextArea();
-                textArea.setLineWrap(true);           // Word wrapping for Price
-                textArea.setWrapStyleWord(true);      // Wrap at word boundaries
-                textArea.setFont(table.getFont());
-                textArea.setOpaque(true);
-                textArea.setAlignmentX(Component.CENTER_ALIGNMENT); // Try to center
+            JTextArea textArea = new JTextArea();
+            textArea.setLineWrap(true);           // Word wrapping for Price
+            textArea.setWrapStyleWord(true);      // Wrap at word boundaries
+            textArea.setFont(table.getFont());
+            textArea.setOpaque(true);
+            textArea.setAlignmentX(Component.CENTER_ALIGNMENT); // Try to center
 
-                if (isSelected) {
-                    textArea.setForeground(table.getSelectionForeground());
-                    textArea.setBackground(table.getSelectionBackground());
-                } else {
-                    textArea.setForeground(table.getForeground());
-                    textArea.setBackground(table.getBackground());
-                }
-
-                // Format price with commas and 2 decimal places
-                if (value instanceof Double) {
-                    textArea.setText(String.format("$%,.2f", (Double) value));
-                } else if (value != null) {
-                    textArea.setText(value.toString());
-                } else {
-                    textArea.setText("");
-                }
-
-                textArea.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
-
-                // Wrap in panel for better centering attempt
-                JPanel panel = new JPanel(new BorderLayout());
-                panel.setOpaque(true);
-                if (isSelected) {
-                    panel.setBackground(table.getSelectionBackground());
-                } else {
-                    panel.setBackground(table.getBackground());
-                }
-                panel.add(textArea, BorderLayout.CENTER);
-
-                // Adjust row height (though Price rarely needs it)
-                int cWidth = table.getColumnModel().getColumn(column).getWidth();
-                textArea.setSize(new Dimension(cWidth, Integer.MAX_VALUE));
-                int prefH = textArea.getPreferredSize().height;
-
-                if (table.getRowHeight(row) < prefH) {
-                    table.setRowHeight(row, prefH);
-                }
-
-                return panel;
+            if (isSelected) {
+                textArea.setForeground(table.getSelectionForeground());
+                textArea.setBackground(table.getSelectionBackground());
+            } else {
+                textArea.setForeground(table.getForeground());
+                textArea.setBackground(table.getBackground());
             }
+
+            // Format price with commas and 2 decimal places
+            if (value instanceof Double) {
+                textArea.setText(String.format("$%,.2f", (Double) value));
+            } else if (value != null) {
+                textArea.setText(value.toString());
+            } else {
+                textArea.setText("");
+            }
+
+            textArea.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+
+            // Wrap in panel for better centering attempt
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.setOpaque(true);
+            if (isSelected) {
+                panel.setBackground(table.getSelectionBackground());
+            } else {
+                panel.setBackground(table.getBackground());
+            }
+            panel.add(textArea, BorderLayout.CENTER);
+
+            // Adjust row height (though Price rarely needs it)
+            int cWidth = table.getColumnModel().getColumn(column).getWidth();
+            textArea.setSize(new Dimension(cWidth, Integer.MAX_VALUE));
+            int prefH = textArea.getPreferredSize().height;
+
+            if (table.getRowHeight(row) < prefH) {
+                table.setRowHeight(row, prefH);
+            }
+
+            return panel;
         };
 
 // 2. Renderer for Quantity/Number columns - JLabel for perfect centering
@@ -161,45 +156,40 @@ public class ItemTable extends JScrollPane {
         };
 
 // 3. Renderer for text columns - word wrapping
-        TableCellRenderer textRenderer = new TableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                                                           boolean isSelected, boolean hasFocus,
-                                                           int row, int column) {
+        TableCellRenderer textRenderer = (table, value, isSelected, _, row, column) -> {
 
-                JTextArea textArea = new JTextArea();
-                textArea.setLineWrap(true);           // Word wrapping
-                textArea.setWrapStyleWord(true);      // Wrap at word boundaries
-                textArea.setFont(table.getFont());
-                textArea.setOpaque(true);
+            JTextArea textArea = new JTextArea();
+            textArea.setLineWrap(true);           // Word wrapping
+            textArea.setWrapStyleWord(true);      // Wrap at word boundaries
+            textArea.setFont(table.getFont());
+            textArea.setOpaque(true);
 
-                if (isSelected) {
-                    textArea.setForeground(table.getSelectionForeground());
-                    textArea.setBackground(table.getSelectionBackground());
-                } else {
-                    textArea.setForeground(table.getForeground());
-                    textArea.setBackground(table.getBackground());
-                }
-
-                if (value != null) {
-                    textArea.setText(value.toString());
-                } else {
-                    textArea.setText("");
-                }
-
-                textArea.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
-
-                // Adjust row height for wrapped text
-                int cWidth = table.getColumnModel().getColumn(column).getWidth();
-                textArea.setSize(new Dimension(cWidth, Integer.MAX_VALUE));
-                int prefH = textArea.getPreferredSize().height;
-
-                if (table.getRowHeight(row) < prefH) {
-                    table.setRowHeight(row, prefH);
-                }
-
-                return textArea;
+            if (isSelected) {
+                textArea.setForeground(table.getSelectionForeground());
+                textArea.setBackground(table.getSelectionBackground());
+            } else {
+                textArea.setForeground(table.getForeground());
+                textArea.setBackground(table.getBackground());
             }
+
+            if (value != null) {
+                textArea.setText(value.toString());
+            } else {
+                textArea.setText("");
+            }
+
+            textArea.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+
+            // Adjust row height for wrapped text
+            int cWidth = table.getColumnModel().getColumn(column).getWidth();
+            textArea.setSize(new Dimension(cWidth, Integer.MAX_VALUE));
+            int prefH = textArea.getPreferredSize().height;
+
+            if (table.getRowHeight(row) < prefH) {
+                table.setRowHeight(row, prefH);
+            }
+
+            return textArea;
         };
 
 // Apply renderers
