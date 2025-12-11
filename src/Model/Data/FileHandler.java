@@ -107,18 +107,18 @@ public class FileHandler {
                     String brand = items[9];
                     String model = items[10];
                     boolean maintenanceNeeded = Boolean.parseBoolean(items[11]);
-                    // Handle old data that might not have lastMaintenanceDate
+
                     String lastMaintenanceDate = (items.length > 12 && !items[12].isEmpty()) ? items[12] : "";
-                    // Handle old data that might not have maintenanceIntervalDays
+
                     int maintenanceIntervalDays = (items.length > 13 && !items[13].isEmpty()) ? Integer.parseInt(items[13]) : 0;
                     return new Electronic(name, description, quantity, price, purchaseDate, vendor, location,
                             warranty, brand, model, maintenanceNeeded, lastMaintenanceDate, maintenanceIntervalDays);
                 case FOOD:
                     String expiry = items[8];
-                    // Check if the data is old format (isCanned boolean) or new format (dietaryInfo string)
+
                     String dietaryInfo;
                     if (items.length > 9) {
-                        // Try to parse as boolean (old format), if fails use as string (new format)
+
                         try {
                             boolean isCanned = Boolean.parseBoolean(items[9]);
                             dietaryInfo = isCanned ? "Canned" : "N/A";

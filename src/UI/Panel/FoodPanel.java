@@ -285,16 +285,16 @@ public class FoodPanel extends PanelAppearance implements PanelActionListeners {
 
     private Food createFoodFromForm() {
         return new Food(
-                getNameInput(),           // 1. name
-                getDescriptionInput(),    // 2. description
-                getQuantityInput(),       // 3. quantity
-                parsePrice(getPriceInput()), // 4. price
-                getPurchaseDateInput(),   // 5. purchase date
-                getVendorInput(),         // 6. vendor
-                getLocationInput(),       // 7. location
-                getExpiryDateInput(),     // 8. expiry date
-                getDietaryInfoInput(),    // 9. dietary info
-                isPerishable()           // 10. perishable
+                getNameInput(),
+                getDescriptionInput(),
+                getQuantityInput(),
+                parsePrice(getPriceInput()),
+                getPurchaseDateInput(),
+                getVendorInput(),
+                getLocationInput(),
+                getExpiryDateInput(),
+                getDietaryInfoInput(),
+                isPerishable()
         );
     }
 
