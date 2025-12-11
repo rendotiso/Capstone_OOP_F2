@@ -115,19 +115,11 @@ public class FileHandler {
                             warranty, brand, model, maintenanceNeeded, lastMaintenanceDate, maintenanceIntervalDays);
                 case FOOD:
                     String expiry = items[8];
-
-                    String dietaryInfo;
-                    if (items.length > 9) {
-
-                        try {
-                            boolean isCanned = Boolean.parseBoolean(items[9]);
-                            dietaryInfo = isCanned ? "Canned" : "N/A";
-                        } catch (Exception e) {
-                            dietaryInfo = items[9];
-                        }
-                    } else {
-                        dietaryInfo = "N/A";
+                    String dietaryInfo = "N/A";
+                    if (items.length > 9 && items[9] != null && !items[9].trim().isEmpty()) {
+                        dietaryInfo = items[9];
                     }
+
                     boolean isPerishable = (items.length > 10) ? Boolean.parseBoolean(items[10]) : false;
                     return new Food(name, description, quantity, price, purchaseDate, vendor, location, expiry, dietaryInfo, isPerishable);
                 case TOOLS:
