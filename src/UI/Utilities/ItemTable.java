@@ -206,8 +206,9 @@ public class ItemTable extends JScrollPane {
         for (int i = 0; i < table.getColumnCount(); i++) {
             String colName = table.getColumnName(i);
 
-            if (colName.equalsIgnoreCase("Price") || colName.equalsIgnoreCase("Pri")) {
-                // Price column - word wrapping with centering attempt
+            if (colName.equalsIgnoreCase("Price") ||
+                    colName.equalsIgnoreCase("Pri" ) ||
+                    colName.equalsIgnoreCase("Value")) {
                 table.getColumnModel().getColumn(i).setCellRenderer(priceRenderer);
             } else if (colName.equalsIgnoreCase("Qty") ||
                     colName.equalsIgnoreCase("Quantity") ||
