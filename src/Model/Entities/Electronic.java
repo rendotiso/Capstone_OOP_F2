@@ -20,9 +20,9 @@ public class Electronic extends Item implements Maintainable {
         setWarrantyPeriod(warrantyPeriod);
         setBrand(brand);
         setModel(model);
-        this.maintenanceNeeded = maintenanceNeeded;
-        this.lastMaintenanceDate = lastMaintenanceDate;
-        this.maintenanceIntervalDays = maintenanceIntervalDays;
+        setLastMaintenanceDate(lastMaintenanceDate);
+        setMaintenanceNeeded(maintenanceNeeded);
+        setMaintenanceIntervalDays(maintenanceIntervalDays);
     }
 
     //GETTERS
@@ -92,10 +92,11 @@ public class Electronic extends Item implements Maintainable {
     public String descriptionDetails() {
         String maintenanceStatus = needsMaintenance() ? "MAINTENANCE REQUIRED" : "Good Condition";
 
-        return String.format("%s" +
-                        "Brand: %s\n" +
-                        "Model: %s\n" +
-                        "Maintenance Status: %s (%d days remaining)",
+        return String.format("""
+                        %s\
+                        Brand: %s
+                        Model: %s
+                        Maintenance Status: %s (%d days remaining)""",
                 super.descriptionDetails(),
                 brand,
                 model,

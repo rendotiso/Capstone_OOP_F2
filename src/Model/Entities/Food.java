@@ -14,8 +14,8 @@ public class Food extends Item{
 
     public Food(String name, String description, int quantity, double purchasePrice, String purchaseDate, String vendor, String location, String expiryDate, boolean isPerishable){
         super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.FOOD, location);
-        this.expiryDate = expiryDate;
-        this.isPerishable = isPerishable;
+        setExpiryDate(expiryDate);
+        setIsPerishable(isPerishable);
     }
 
     //GETTERS

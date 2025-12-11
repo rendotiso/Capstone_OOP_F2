@@ -14,14 +14,14 @@ public abstract class Item {
 
     public Item(String name, String description, int quantity, double purchasePrice, String
             purchaseDate, String vendor, Category category, String location) {
-        this.name = name;
-        this.description = description;
-        this.quantity = quantity;
-        this.purchasePrice = purchasePrice;
-        this.purchaseDate = purchaseDate;
-        this.vendor = vendor;
-        this.category = category;
-        this.location = location;
+        setName(name);
+        setDescription(description);
+        setQuantity(quantity);
+        setPurchasePrice(purchasePrice);
+        setPurchaseDate(purchaseDate);
+        setVendor(vendor);
+        setCategory(category);
+        setLocation(location);
     }
 
     //GETTERS

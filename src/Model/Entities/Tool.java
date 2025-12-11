@@ -23,12 +23,12 @@ public class Tool extends Item implements Maintainable {
                 String vendor, String location, String toolType, String steelGrade, String material, boolean maintenanceNeeded,
                 String lastMaintenanceDate, int maintenanceIntervalDays) {
         super(name, description, quantity, purchasePrice, purchaseDate, vendor, Category.TOOLS, location);
-        this.toolType = toolType;
-        this.steelGrade = steelGrade;
-        this.material = material;
-        this.maintenanceNeeded = maintenanceNeeded;
-        this.lastMaintenanceDate = lastMaintenanceDate;
-        this.maintenanceIntervalDays = maintenanceIntervalDays;
+        setToolType(toolType);
+        setSteelGrade(steelGrade);
+        setMaterial(material);
+        setMaintenanceNeeded(maintenanceNeeded);
+        setLastMaintenanceDate(lastMaintenanceDate);
+        setMaintenanceIntervalDays(maintenanceIntervalDays);
     }
 
     //GETTERS
@@ -60,7 +60,7 @@ public class Tool extends Item implements Maintainable {
     public void setMaintenanceNeeded(boolean maintenanceNeeded) {
         this.maintenanceNeeded = maintenanceNeeded;
     }
-    public void setLastMaintenanceDate(String LastMaintenanceDate) {
+    public void setLastMaintenanceDate(String lastMaintenanceDate) {
         this.lastMaintenanceDate = lastMaintenanceDate;
     }
     public void setMaintenanceIntervalDays(int maintenanceIntervalDays) {
@@ -93,11 +93,12 @@ public class Tool extends Item implements Maintainable {
     @Override
     public String descriptionDetails() {
         String maintenanceStatus = needsMaintenance() ? "MAINTENANCE REQUIRED" : "Good Condition";
-        return String.format("%s" +
-                        "Type: %s\n" +
-                        "Steel Grade: %s\n" +
-                        "Material: %s\n" +
-                        "Maintenance Status: %s (%d days remaining)",
+        return String.format("""
+                        %s\
+                        Type: %s
+                        Steel Grade: %s
+                        Material: %s
+                        Maintenance Status: %s (%d days remaining)""",
                 super.descriptionDetails(),
                 toolType,
                 steelGrade,

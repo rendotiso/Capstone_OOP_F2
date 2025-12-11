@@ -16,7 +16,7 @@ import java.util.List;
 
 public class FoodPanel extends PanelAppearance implements PanelActionListeners {
     private JTextField expiryDate_field;
-    private JLabel expiryDate_label, perish_label, canned_label;
+    private JLabel expiryDate_label, perish_label;
     private JPanel perishPanel;
     private JCheckBox perishCheckBox;
     private final InventoryManager inventoryManager;
