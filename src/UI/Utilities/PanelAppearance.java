@@ -27,8 +27,6 @@ public class PanelAppearance extends JPanel {
         setupPlaceholders();
     }
 
-
-
     protected void initComponents() {
         panelist = new JPanel();
         rootPanel = new JPanel();

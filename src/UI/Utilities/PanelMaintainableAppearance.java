@@ -14,7 +14,7 @@ public class PanelMaintainableAppearance extends PanelAppearance {
 
     public PanelMaintainableAppearance() {
         super();
-        setupMaintenanceListener(); // Added listener initialization
+        setupMaintenanceListener();
     }
 
     @Override
@@ -25,10 +25,9 @@ public class PanelMaintainableAppearance extends PanelAppearance {
         lastMaintenanceDate_label = new JLabel("LAST MAINTENANCE DATE:");
         maintenanceNeeded_label = new JLabel("MAINTENANCE NEEDED NOW?");
 
-        maintenanceNeededCheckBox = new JCheckBox("YES"); // Added text for clarity
+        maintenanceNeededCheckBox = new JCheckBox("YES");
         maintenanceNeededCheckBox.setFocusable(false);
 
-        // UPDATED LOGIC: Minimum is now 0 (No Schedule), Max increased to 10 years (3650)
         maintenanceIntervalDateDays = new JSpinner(new SpinnerNumberModel(30, 0, 3650, 1));
         JSpinner.NumberEditor intervalEditor = new JSpinner.NumberEditor(maintenanceIntervalDateDays, "#");
         maintenanceIntervalDateDays.setEditor(intervalEditor);
@@ -219,10 +218,10 @@ public class PanelMaintainableAppearance extends PanelAppearance {
         int interval = (int) maintenanceIntervalDateDays.getValue();
 
         if (isBroken) {
-            maintenanceNeeded_label.setForeground(new Color(215, 70, 70)); // Red
+            maintenanceNeeded_label.setForeground(new Color(215, 70, 70));
             maintenanceNeeded_label.setText("MAINTENANCE NEEDED: URGENT");
         } else {
-            maintenanceNeeded_label.setForeground(new Color(-16777216)); // Black
+            maintenanceNeeded_label.setForeground(new Color(-16777216));
             maintenanceNeeded_label.setText("MAINTENANCE NEEDED NOW?");
         }
 
@@ -232,17 +231,13 @@ public class PanelMaintainableAppearance extends PanelAppearance {
             lastMaintenanceDate_label.setForeground(new Color(100, 100, 100));
         } else {
             maintenanceIntervalDateDays_label.setText("MAINTENANCE INTERVAL (DAYS):");
-            maintenanceIntervalDateDays_label.setForeground(new Color(-16777216)); // Black
+            maintenanceIntervalDateDays_label.setForeground(new Color(-16777216));
             lastMaintenanceDate_label.setForeground(new Color(-16777216));
         }
     }
 
-    // Setup listeners for both Checkbox and Spinner
     protected void setupMaintenanceListener() {
-        // Listener for Checkbox
         maintenanceNeededCheckBox.addChangeListener(_ -> updateVisualState());
-
-        // Listener for Spinner
         maintenanceIntervalDateDays.addChangeListener(e -> updateVisualState());
     }
 
@@ -251,6 +246,6 @@ public class PanelMaintainableAppearance extends PanelAppearance {
         super.clearForm();
         setMaintenanceNeeded(false);
         setLastMaintenanceDateInput("");
-        setMaintenanceIntervalDays(30); // Reset to default
+        setMaintenanceIntervalDays(30);
     }
 }
