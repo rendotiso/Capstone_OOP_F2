@@ -69,7 +69,7 @@ public class FileHandler {
                     electronic.getMaintenanceNeeded() + "," +
                     electronic.getLastMaintenanceDate();
             case Food food -> base + "," + food.getExpiryDate() + "," +
-                    food.getIsCanned() + "," + food.getIsPerishable();
+                    food.getDietaryInfo() + "," + food.getIsPerishable();
             case Tool tool -> base + "," + tool.getToolType() + "," +
                     tool.getSteelGrade() + "," + tool.getMaterial() + "," +
                     tool.getMaintenanceNeeded() + "," +
@@ -113,9 +113,9 @@ public class FileHandler {
                             warranty, brand, model, maintenanceNeeded, lastMaintenanceDate);
                 case FOOD:
                     String expiry = items[8];
-                    boolean isCanned = Boolean.parseBoolean(items[9]);
+                    String dietaryInfo = items[9];
                     boolean isPerishable = Boolean.parseBoolean(items[10]);
-                    return new Food(name, description, quantity, price, purchaseDate, vendor, location, expiry, isCanned, isPerishable);
+                    return new Food(name, description, quantity, price, purchaseDate, vendor, location, expiry, dietaryInfo, isPerishable);
                 case TOOLS:
                     String toolType = items[8];
                     String steelGrade = items[9];

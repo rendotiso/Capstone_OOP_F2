@@ -6,7 +6,6 @@ import Model.Entities.Item;
 import Model.Enums.Category;
 import UI.Utilities.PanelAppearance;
 import UI.Utilities.PanelActionListeners;
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -17,6 +16,10 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
     private JLabel condition_label, fabrictype_label, size_label;
     private JComboBox<String> size_combobox;
     private final InventoryManager inventoryManager;
+    private static final String[] CLOTHING_LOCATIONS = {
+            "CLOSET", "DRESSER", "WARDROBE", "LAUNDRY ROOM",
+            "BEDROOM", "STORAGE CLOSET", "CLOTHING RACK"
+    };
 
     public ClothingPanel() {
         inventoryManager = InventoryManager.getInstance();
@@ -39,7 +42,6 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
     private void initClothingComponents() {
         condition_field = new JTextField(8);
         fabrictype_field = new JTextField(8);
-
         size_combobox = new JComboBox<>(new String[]{
                 "XS", "S", "M", "L", "XL", "XXL"
         });
@@ -47,34 +49,41 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
         condition_label = new JLabel("CONDITION:");
         fabrictype_label = new JLabel("FABRIC TYPE:");
         size_label = new JLabel("SIZE:");
+
+        location_combobox.removeAllItems();
+        for (String location : CLOTHING_LOCATIONS) {
+            location_combobox.addItem(location);
+        }
     }
 
     private void setupClothingLayout() {
-        // Don't override the panel layout - it's already set in PanelAppearance
-        // Instead, we need to add our clothing-specific fields to the existing layout
+        panel.setLayout(new GridBagLayout());
+        GridBagConstraints formGbc = new GridBagConstraints();
+        formGbc.insets = new Insets(5, 5, 5, 5);
+        formGbc.anchor = GridBagConstraints.WEST;
 
-        // Get the constraints for adding to the panel
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(3, 4, 3, 4);
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
+        int row = setupFormLayout(panel, formGbc);
 
-        // Add clothing fields after the base form fields
-        // We'll assume there are 6 base fields (0-5), so start at row 6
-        int startRow = 6;
+        addFormRow(panel, formGbc, condition_label, condition_field, row++);
+        addFormRow(panel, formGbc, fabrictype_label, fabrictype_field, row++);
+        addComboBoxRow(panel, formGbc, size_label, size_combobox, row++);
 
-        addFormRow(panel, gbc, condition_label, condition_field, startRow++);
-        addFormRow(panel, gbc, fabrictype_label, fabrictype_field, startRow++);
-        addFormRow(panel, gbc, size_label, size_combobox, startRow++);
+        setupDescriptionPanel(row, formGbc);
+    }
 
-        // Update the description panel position
-        gbc.gridx = 0;
-        gbc.gridy = startRow;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weighty = 0.6;
-        panel.add(description_panel, gbc);
+    private void addComboBoxRow(JPanel panel, GridBagConstraints formGbc, JLabel label,
+                                JComboBox<String> comboBox, int row) {
+        formGbc.gridx = 0; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.NONE;
+        formGbc.weightx = 0;
+        formGbc.anchor = GridBagConstraints.WEST;
+        panel.add(label, formGbc);
+
+        formGbc.gridx = 1; formGbc.gridy = row;
+        formGbc.fill = GridBagConstraints.HORIZONTAL;
+        formGbc.weightx = 1.0;
+        formGbc.anchor = GridBagConstraints.WEST;
+        panel.add(comboBox, formGbc);
     }
 
     private void setupClothingAppearance() {
@@ -103,35 +112,34 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
         condition_field.setFont(fieldFont);
         fabrictype_field.setFont(fieldFont);
         size_combobox.setFont(fieldFont);
-
-        condition_field.setPreferredSize(new Dimension(110, 26));
-        fabrictype_field.setPreferredSize(new Dimension(110, 26));
-        size_combobox.setPreferredSize(new Dimension(110, 26));
     }
 
     //GETTERS
     public String getConditionInput() {
         return condition_field.getText();
     }
+
     public String getFabricTypeInput() {
         return fabrictype_field.getText();
     }
+
     public String getSizeInput() {
         return (String) size_combobox.getSelectedItem();
     }
 
-    // SETTERS
+    //SETTERS
     public void setConditionInput(String condition) {
         condition_field.setText(condition);
     }
+
     public void setFabrictypeInput(String fabricType) {
         fabrictype_field.setText(fabricType);
     }
+
     public void setSizeInput(String size) {
         size_combobox.setSelectedItem(size);
     }
 
-    //METHODS
     @Override
     public void setupButtonListeners() {
         ADDButton.addActionListener(_ -> addItem());
@@ -148,12 +156,11 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
 
         for (Item item : inventoryManager.getItemsByCategory(Category.CLOTHING)) {
             if (item instanceof Clothing clothing) {
-                // FIXED: Match ItemTable column order
                 itemTable.addRow(new Object[]{
                         clothing.getName(),
                         clothing.getQuantity(),
                         clothing.getLocation(),
-                        clothing.getVendor(),
+                        clothing.getPurchaseDate(),
                         clothing.getPurchasePrice(),
                         clothing.descriptionDetails()
                 });
@@ -266,7 +273,6 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
         return true;
     }
 
-    // Event handlers
     private void addItem() {
         try {
             if (validateForm()) {
@@ -276,6 +282,8 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
                 clearForm();
                 showSuccess("Clothing item added successfully!");
             }
+        } catch (IOException e) {
+            showError("Error saving item: " + e.getMessage());
         } catch (Exception e) {
             showError("Error: " + e.getMessage());
         }
@@ -286,7 +294,7 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
             try {
                 if (validateForm()) {
                     Clothing clothing = createClothingFromForm();
-                    java.util.List<Item> allItems = inventoryManager.getAllItems();
+                    List<Item> allItems = inventoryManager.getAllItems();
                     List<Item> clothingItems = inventoryManager.getItemsByCategory(Category.CLOTHING);
 
                     if (selectedIndex < clothingItems.size()) {
@@ -353,7 +361,7 @@ public class ClothingPanel extends PanelAppearance implements PanelActionListene
         setNameInput(clothing.getName());
         setQuantityInput(clothing.getQuantity());
         setVendorInput(clothing.getVendor());
-        setPriceInput(String.format("$%,.2f", clothing.getPurchasePrice())); // Format price
+        setPriceInput(String.valueOf(clothing.getPurchasePrice()));
         setPurchaseDateInput(clothing.getPurchaseDate());
         setConditionInput(clothing.getCondition());
         setFabrictypeInput(clothing.getFabricType());
